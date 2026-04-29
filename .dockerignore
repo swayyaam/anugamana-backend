@@ -1,0 +1,28 @@
+# Environment variables and secrets
+.env
+.env.*
+*.pem
+secrets/
+
+# Git repository metadata
+.git/
+.gitignore
+
+# Local Databases (to prevent baking local states into the image)
+*.db
+*.sqlite3
+chroma_db/
+chroma/
+
+# Python caching and artifacts
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Virtual environments
+venv/
+env/
+.venv/

@@ -1,0 +1,10 @@
+venv/
+__pycache__/
+*.pyc
+*.pyo
+.env
+chroma_gita/
+*.pkl
+dist/
+*.egg-info/
+.DS_Store
