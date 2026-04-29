@@ -1,9 +1,10 @@
 import requests
 from bs4 import BeautifulSoup
 import json
+import os
 import time
 import re
-import copy  # Moved to top level
+import copy
 
 # ---------------- CONFIG ---------------- #
 
@@ -18,7 +19,7 @@ HEADERS = {
 BASE_URL = "https://vedabase.io"
 BG_INDEX = "https://vedabase.io/en/library/bg/"
 
-OUTPUT_FILE = "gita_full.json"
+OUTPUT_FILE = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "data", "gita_full.json")
 REQUEST_DELAY = 1  # seconds (be polite)
 
 # ---------------- HELPERS ---------------- #

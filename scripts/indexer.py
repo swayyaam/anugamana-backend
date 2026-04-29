@@ -40,7 +40,8 @@ def get_embedding(text):
     return pooled_output[0].tolist()
 
 print("Loading Gita data...")
-with open("gita_full.json", "r", encoding="utf-8") as f:
+_data_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "data", "gita_full.json")
+with open(_data_path, "r", encoding="utf-8") as f:
     verses = json.load(f)
 
 print("Indexing verses to Pinecone...")
