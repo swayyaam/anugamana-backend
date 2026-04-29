@@ -1,6 +1,7 @@
 import structlog
 from tenacity import retry, stop_after_attempt, wait_exponential
 from app import state
+from app.config import LLM_MODEL
 
 logger = structlog.get_logger(__name__)
 
@@ -26,7 +27,7 @@ async def generate_advice(query: str, verse_text: str) -> str | None:
 
     try:
         response = await state.claude.messages.create(
-            model="claude-haiku-4-5",
+            model=LLM_MODEL,
             max_tokens=256,
             system=_SYSTEM_PROMPT,
             messages=[{"role": "user", "content": user_prompt}],
