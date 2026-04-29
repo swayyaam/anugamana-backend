@@ -12,7 +12,7 @@ pip install -r requirements.txt
 
 Create a `.env` file:
 ```
-GEMINI_API_KEY=your_key_here
+ANTHROPIC_API_KEY=your_key_here
 ```
 
 Build the search index (first run only):

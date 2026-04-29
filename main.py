@@ -19,7 +19,7 @@ from pydantic import BaseModel, Field
 from transformers import AutoTokenizer
 from optimum.onnxruntime import ORTModelForFeatureExtraction, ORTModelForSequenceClassification
 from pinecone import Pinecone
-from google import genai
+import anthropic
 from upstash_redis import Redis
 
 # Security: Rate Limiting Imports
@@ -43,17 +43,17 @@ structlog.configure(
 )
 logger = structlog.get_logger(__name__)
 
-GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
+ANTHROPIC_API_KEY = os.getenv("ANTHROPIC_API_KEY")
 
 try:
-    if GEMINI_API_KEY:
-        client = genai.Client(api_key=GEMINI_API_KEY)
-        logger.info("gemini_connected")
+    if ANTHROPIC_API_KEY:
+        client = anthropic.AsyncAnthropic(api_key=ANTHROPIC_API_KEY)
+        logger.info("claude_connected")
     else:
         client = None
-        logger.warning("gemini_api_key_missing")
+        logger.warning("anthropic_api_key_missing")
 except Exception as e:
-    logger.error("gemini_client_init_error", error=str(e))
+    logger.error("claude_client_init_error", error=str(e))
     client = None
 
 # Initialize Upstash Redis
@@ -185,13 +185,12 @@ def rerank_pairs(query: str, texts: list[str]) -> list[float]:
 @retry(stop=stop_after_attempt(3), wait=wait_exponential(multiplier=1, min=2, max=10))
 async def generate_advice(query: str, verse_text: str):
     """
-    Uses Gemini (New SDK) to generate personalized advice.
+    Uses Claude to generate personalized advice.
     Retries up to 3 times with exponential backoff on failure.
     """
     if not client:
         return None
 
-    # Security: Use System Instructions for persona (prevents prompt injection)
     system_instruction = (
         "You are Lord Krishna, a wise and compassionate spiritual guide from the Bhagavad Gita. "
         "You speak with warmth and empathy. You always ground your advice in the verse provided. "
@@ -207,12 +206,13 @@ async def generate_advice(query: str, verse_text: str):
     )
 
     try:
-        response = await client.aio.models.generate_content(
-            model="gemini-2.5-flash",
-            contents=user_prompt,
-            config={"system_instruction": system_instruction},
+        response = await client.messages.create(
+            model="claude-haiku-4-5",
+            max_tokens=256,
+            system=system_instruction,
+            messages=[{"role": "user", "content": user_prompt}],
         )
-        return response.text
+        return response.content[0].text
     except Exception as e:
         logger.error("llm_error", error=str(e))
         raise  # Re-raise so tenacity can retry
