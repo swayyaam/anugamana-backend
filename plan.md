@@ -655,7 +655,431 @@ Weekly review of 👎 queries
 
 ---
 
-## Full Pipeline Summary
+## Phase 8 — Sarvam AI Integrations
+
+> Sarvam AI is an Indian AI company built specifically for Indic languages.
+> With ~$1000 credit, this is a first-class part of the pipeline — not an afterthought.
+> It makes Anugamana accessible to the actual audience of the Bhagavad Gita.
+
+### Sarvam Product Map
+
+| Product | What it does | API endpoint |
+|---|---|---|
+| **Bulbul** | Text-to-speech — Indian languages + Sanskrit | `/text-to-speech` |
+| **Saaras** | Speech-to-text — Indian languages | `/speech-to-text` |
+| **Mayura** | Translation between Indian languages + English | `/translate` |
+| **Sarvam-2B** | LLM fine-tuned on 10 Indic languages | `/chat/completions` |
+| **Indic Embeddings** | Embedding model for Indic scripts | `/embeddings` |
+| **Transliteration** | Convert between Devanagari ↔ Roman scripts | `/transliterate` |
+
+---
+
+### Integration 1 — Sanskrit Verse Recitation (Bulbul TTS)
+
+**The most impactful, most unique feature of this entire project.**
+
+Western TTS (Google, ElevenLabs, OpenAI) handles Sanskrit poorly — wrong stress, wrong vowel lengths, wrong pronunciation of anusvara and visarga. Sarvam's Bulbul was trained on Indic scripts and produces natural Sanskrit recitation.
+
+**What it enables:**
+- Every verse returned includes an audio URL for the Sanskrit/Devanagari recitation
+- User hears the verse pronounced correctly — a completely different experience from reading
+
+**Implementation:**
+```python
+# app/services/sarvam_tts.py
+async def get_verse_audio(verse_id: str, devanagari: str) -> str:
+    # check audio cache first
+    cached = audio_cache.get(verse_id)
+    if cached:
+        return cached
+
+    audio = await sarvam_client.tts(
+        text=devanagari,
+        target_language_code="hi-IN",   # Sanskrit routed through Hindi voice
+        speaker="meera",                 # female, clear pronunciation
+        model="bulbul:v1"
+    )
+    # save to data/audio_cache/{verse_id}.mp3
+    path = save_audio(verse_id, audio)
+    audio_cache.set(verse_id, path)
+    return path
+```
+
+**Audio cache:** TTS is called once per verse and cached permanently to `data/audio_cache/`. 627 verses = 627 audio files generated once at index time, not per request.
+
+**Pre-generation:** Run `scripts/generate_audio.py` once after indexing to pre-generate all verse audio. No TTS latency at query time.
+
+---
+
+### Integration 2 — Multilingual Query Input (Mayura Translation)
+
+**The second most impactful integration — expands the entire user base.**
+
+The Bhagavad Gita's primary audience is Indian. A significant portion of that audience thinks and feels in Hindi, Bengali, Tamil, Telugu, Kannada, or Malayalam — not English. Forcing English-only queries is a massive barrier.
+
+**Supported input languages:**
+`hi` (Hindi), `bn` (Bengali), `ta` (Tamil), `te` (Telugu), `kn` (Kannada), `ml` (Malayalam), `gu` (Gujarati), `mr` (Marathi), `pa` (Punjabi), `or` (Odia)
+
+**Pipeline position:** immediately after language detection, before guardrail
+
+```
+user query: "मुझे अपने जीवन के उद्देश्य के बारे में मार्गदर्शन चाहिए"
+        │
+        ▼
+[language detect] → "hi" (Hindi)
+        │
+        ▼
+[Mayura translate] → "I need guidance about my life's purpose"
+        │
+        ▼
+[rest of pipeline runs in English internally]
+        │
+        ▼
+[response generated in English by Claude]
+        │
+        ▼
+[Mayura translate response back to Hindi]
+        │
+        ▼
+user receives Hindi guidance
+```
+
+The entire retrieval pipeline stays English internally — translation is a thin wrapper at input and output. No pipeline changes required.
+
+---
+
+### Integration 3 — Multilingual Guidance Output (Mayura Translation)
+
+Claude generates guidance in English. Mayura translates it to the user's detected language before returning.
+
+```python
+# app/services/sarvam_translate.py
+async def translate(text: str, source: str, target: str) -> str:
+    if source == target:
+        return text
+    return await sarvam_client.translate(
+        input=text,
+        source_language_code=source,
+        target_language_code=target,
+        model="mayura:v1",
+        mode="formal"   # spiritual context → formal register
+    )
+```
+
+**Response includes both languages:**
+```json
+{
+  "ai_guidance": "You must act without attachment to outcomes...",
+  "ai_guidance_translated": "आपको परिणामों की चिंता किए बिना कर्म करना चाहिए...",
+  "response_language": "hi"
+}
+```
+
+---
+
+### Integration 4 — Guidance Audio (Bulbul TTS)
+
+Not just the verse — the Claude-generated guidance can also be read aloud in the user's language.
+
+Unlike verse audio (pre-cached), guidance audio is generated per-request since each response is unique.
+
+```python
+async def guidance_to_audio(text: str, language: str) -> str:
+    audio = await sarvam_client.tts(
+        text=text,
+        target_language_code=language,   # e.g. "hi-IN", "ta-IN", "bn-IN"
+        speaker="meera",
+        model="bulbul:v1"
+    )
+    # temporary file, returned as base64 or presigned URL
+    return encode_audio(audio)
+```
+
+Full audio response for the user: verse recitation (Sanskrit) + guidance reading (their language).
+
+---
+
+### Integration 5 — Voice Query Input (Saaras STT)
+
+Users speak their question instead of typing it. Particularly valuable for:
+- Older users less comfortable with typing
+- Mobile users
+- Users more comfortable speaking in Hindi than typing English
+
+```
+[user speaks in Hindi via mic]
+        │
+        ▼
+[Saaras STT] → transcript in Hindi
+        │
+        ▼
+[Mayura translate] → English
+        │
+        ▼
+[pipeline runs normally]
+```
+
+**API endpoint added:** `POST /search/voice` — accepts audio file, returns same response schema as `/search`.
+
+```python
+async def transcribe(audio_bytes: bytes, language: str) -> str:
+    return await sarvam_client.stt(
+        file=audio_bytes,
+        language_code=language,    # detected or user-specified
+        model="saaras:v2"
+    )
+```
+
+---
+
+### Integration 6 — Indic Embeddings for Devanagari (4th Vector Type)
+
+BGE-M3 handles 100+ languages but is a general multilingual model. Sarvam's embedding model is specifically fine-tuned on Indic scripts — it understands Sanskrit/Devanagari nuance at a deeper level.
+
+**Use case:** Add a 4th vector type per verse using Sarvam embeddings on the `devanagari` field. Catches users who search using Devanagari script or Sanskrit terms directly.
+
+```
+Verse 2.47
+├── gita_verses collection
+│   ├── "2.47_meaning"       → BGE-M3 embed(text_for_embedding)
+│   ├── "2.47_translation"   → BGE-M3 embed(translation)
+│   └── "2.47_devanagari"    → Sarvam embed(devanagari)          ← NEW
+│
+└── gita_purport collection
+    └── purport chunks...
+```
+
+**New ChromaDB collection:** `gita_devanagari` — Sarvam embeddings only (different dimension from BGE-M3, must be separate collection).
+
+At query time: if Sarvam detects the query contains Devanagari/Sanskrit, search `gita_devanagari` too and fuse with RRF.
+
+---
+
+### Integration 7 — Hindi Enrichment (Sarvam-2B LLM)
+
+The enrichment phase (Phase 2) generates `meaning_fields` in English only. With Sarvam-2B, generate a parallel Hindi version of the same fields:
+
+```json
+{
+  "meaning_fields": {
+    "situations": "...",    // English
+    "teaching":   "...",
+    "emotions":   "...",
+    "concepts":   "..."
+  },
+  "meaning_fields_hi": {
+    "situations": "...",    // Hindi — generated by Sarvam-2B
+    "teaching":   "...",
+    "emotions":   "...",
+    "concepts":   "..."
+  }
+}
+```
+
+**Why Sarvam-2B over translating the English fields with Mayura:**
+Sarvam-2B understands the Gita in Hindi natively. It generates natural Hindi that reflects how a Hindi speaker would describe the verse — not a mechanical translation of the English output. The vocabulary, idioms, and framing are authentically Indic.
+
+**Indexed as separate vectors:** `2.47_meaning_hi` → Sarvam embed(Hindi meaning text)
+
+Hindi queries now match Hindi meaning vectors directly, without any translation step.
+
+---
+
+### Integration 8 — Regional Language Purport Summaries (Mayura)
+
+The full purport (Prabhupada's commentary) is in English. Generate translated summaries for the top Indian languages and store them in `gita_enriched.json`:
+
+```json
+{
+  "purport_summaries": {
+    "en": "...",   // original
+    "hi": "...",   // Mayura translation
+    "bn": "...",   // Bengali
+    "ta": "...",   // Tamil
+    "te": "...",   // Telugu
+  }
+}
+```
+
+These are sent to Claude/Sarvam-2B as context when the user's language is detected — the model gets commentary in the user's own language, producing more natural and culturally resonant guidance.
+
+---
+
+### Integration 9 — Transliteration (Roman ↔ Devanagari)
+
+Users may type Sanskrit in Roman script (`"karmanye vadhikaraste"`) or Devanagari (`"कर्मण्येवाधिकारस्ते"`). Transliteration normalises both to the same searchable form before retrieval.
+
+```python
+# at query time: if query contains Devanagari, also produce Roman form
+# if query is Roman Sanskrit, also produce Devanagari form
+# both forms searched against sparse index
+roman  = transliterate(query, "devanagari", "roman")
+devnag = transliterate(query, "roman", "devanagari")
+# both added to sparse search
+```
+
+Also used in the frontend — display verse in whichever script the user prefers.
+
+---
+
+### Language Detection Architecture
+
+All Sarvam integrations depend on knowing the query language. Language detection sits at the very top of the pipeline:
+
+```python
+# app/services/language_detect.py
+SUPPORTED_LANGUAGES = {
+    "en": "English",
+    "hi": "Hindi",
+    "bn": "Bengali",
+    "ta": "Tamil",
+    "te": "Telugu",
+    "kn": "Kannada",
+    "ml": "Malayalam",
+    "gu": "Gujarati",
+    "mr": "Marathi",
+    "pa": "Punjabi",
+    "sa": "Sanskrit",    # Devanagari
+}
+
+async def detect_language(text: str) -> str:
+    # Sarvam's language detection or heuristic (Devanagari unicode range check first)
+    if contains_devanagari(text):
+        return "hi"   # treat as Hindi/Sanskrit
+    return await sarvam_client.detect_language(text)
+```
+
+---
+
+### Updated Full Query Pipeline (With Sarvam)
+
+```
+user query (text or voice)
+    │
+    ├── voice? → [Saaras STT] → transcript
+    │
+    ▼
+[language detect] → detected_lang
+    │
+    ├── non-English? → [Mayura] → English query (stored separately for response)
+    ├── Sanskrit/Devanagari? → [Transliterate] → both forms for sparse search
+    │
+    ▼
+[input guardrail] — on-topic?
+    │
+    ▼
+[HyDE + query expansion]
+    │
+    ▼
+[hybrid retrieval]
+  Dense  → ChromaDB gita_verses + gita_purport   (BGE-M3)
+  Sparse → sparse_index                           (BGE-M3)
+  Indic  → ChromaDB gita_devanagari               (Sarvam, if Indic query)
+    │
+    ▼
+[RRF fusion → group → rerank → MMR]
+    │
+    ▼
+[RAG generation — Claude in English]
+    │
+    ├── [Mayura] translate guidance → detected_lang
+    ├── [Bulbul] guidance audio → detected_lang
+    │
+    ▼
+[Bulbul] verse audio → Sanskrit (pre-cached, instant)
+    │
+    ▼
+response: verses + translations + guidance + audio
+    │
+    ▼
+[evaluation logging]
+```
+
+---
+
+### Updated Response Schema (With Sarvam)
+
+```json
+{
+  "results": [
+    {
+      "verse_id":             "2.47",
+      "chapter":              2,
+      "verse":                47,
+      "devanagari":           "कर्मण्येवाधिकारस्ते...",
+      "sanskrit":             "karmaṇy evādhikāras te...",
+      "translation":          "You have a right to perform...",
+      "score":                0.94,
+      "verse_audio_url":      "/audio/2.47.mp3",
+      "ai_guidance":          "You must act without attachment...",
+      "ai_guidance_hi":       "आपको परिणामों की चिंता किए बिना...",
+      "guidance_audio_url":   "/audio/guidance_<hash>.mp3"
+    }
+  ],
+  "query_meta": {
+    "detected_language":  "hi",
+    "original_query":     "मुझे मार्गदर्शन चाहिए",
+    "translated_query":   "I need guidance",
+    "guardrail":          "relevant",
+    "retrieval_ms":       120,
+    "rerank_ms":          45,
+    "generation_ms":      800,
+    "translation_ms":     150,
+    "tts_ms":             200
+  }
+}
+```
+
+---
+
+### Priority Matrix
+
+| Integration | Impact | Effort | Credit usage | Build when |
+|---|---|---|---|---|
+| Bulbul TTS — verse audio | Very high | Low | Low (pre-cached) | Phase 8 |
+| Mayura — query translation | Very high | Low | Medium | Phase 8 |
+| Mayura — response translation | Very high | Low | Medium | Phase 8 |
+| Bulbul TTS — guidance audio | High | Low | Medium (per-request) | Phase 8 |
+| Saaras STT — voice queries | High | Medium | Medium | Phase 9 |
+| Indic embeddings — 4th vector | Medium | Medium | Low | Phase 9 |
+| Hindi enrichment (Sarvam-2B) | Medium | Medium | Medium | Phase 9 |
+| Regional purport summaries | Medium | Low | High (627 × N langs) | Phase 9 |
+| Transliteration | Low-Medium | Low | Negligible | Phase 8 |
+
+**Phase 8** = build alongside search pipeline (core Sarvam features)
+**Phase 9** = add after evaluation confirms baseline pipeline works
+
+---
+
+### New Services Needed
+
+| Module | Responsibility |
+|---|---|
+| `app/services/language_detect.py` | Detect query language, Devanagari check |
+| `app/services/sarvam_tts.py` | Bulbul TTS with audio cache |
+| `app/services/sarvam_stt.py` | Saaras STT for voice input |
+| `app/services/sarvam_translate.py` | Mayura translation in/out |
+| `app/routes/voice.py` | `POST /search/voice` endpoint |
+| `scripts/generate_audio.py` | Pre-generate all 627 verse audio files |
+
+---
+
+### New Data Files
+
+| File | Description |
+|---|---|
+| `data/audio_cache/` | Pre-generated Sanskrit verse audio (627 .mp3 files) |
+| `data/gita_multilingual.json` | Purport summaries in regional languages |
+
+---
+
+### Environment Variables to Add
+
+```
+SARVAM_API_KEY=...
+```
+
+---
 
 ```
 vedabase.io
@@ -664,23 +1088,44 @@ vedabase.io
 scripts/scraper.py          →  data/gita_full.json
     │
     ▼
-[Phase 1] analyze_gita.py   →  data/gita_analysis.md
+scripts/analyze_gita.py     →  data/gita_analysis.md
     │                           (thematic map, HyDE vocab, eval seeds, guardrail vocab)
     ▼
 scripts/enrich.py           →  data/gita_enriched.json
-    │                           (meaning_fields + text_for_embedding)
+    │                           (meaning_fields EN + HI, text_for_embedding)
     ▼
-scripts/indexer.py          →  data/chroma_db/  +  data/sparse_index.pkl
-    │                           (BGE-M3, 2 ChromaDB collections + sparse index)
+scripts/indexer.py          →  data/chroma_db/          (BGE-M3 dense)
+    │                       →  data/chroma_devanagari/  (Sarvam Indic embeddings)
+    │                       →  data/sparse_index.pkl    (BGE-M3 sparse)
     ▼
-app/services/guardrail.py       input classification
-app/services/hyde.py            query transformation (HyDE + expansion)
-app/services/retrieval.py       hybrid search + RRF fusion
-app/services/reranker.py        cross-encoder + MMR
-app/services/rag.py             Claude generation with faithfulness constraint
+scripts/generate_audio.py   →  data/audio_cache/        (Bulbul TTS, 627 verse files)
     │
     ▼
-app/routes/search.py            POST /search
+── REQUEST PATH ──────────────────────────────────────────────
+    │
+    ├── voice? → sarvam_stt.py (Saaras) → transcript
+    ▼
+language_detect.py              detect language
+    │
+    ├── non-English? → sarvam_translate.py (Mayura) → English query
+    ├── Indic script? → transliterate both forms for sparse search
+    ▼
+guardrail.py                    on-topic check (Claude, max_tokens=5)
+    ▼
+hyde.py                         HyDE + query expansion (Claude)
+    ▼
+retrieval.py                    BGE-M3 dense + sparse + Sarvam Indic (parallel)
+                                → RRF fusion → group by verse_id
+    ▼
+reranker.py                     cross-encoder + MMR → top 5
+    ▼
+rag.py                          Claude RAG (English, faithfulness constraint)
+    │
+    ├── sarvam_translate.py     translate guidance → user language (Mayura)
+    └── sarvam_tts.py           guidance audio in user language (Bulbul)
+    ▼
+app/routes/search.py            POST /search  →  verses + audio + guidance
+app/routes/voice.py             POST /search/voice
     │
     ▼
 scripts/evaluate.py             MRR / Recall@5 / NDCG against golden dataset
@@ -691,19 +1136,25 @@ data/feedback.db                passive logging → feedback loop
 
 ## Scripts to Build (in order)
 
-| # | Script / Module | Status |
-|---|---|---|
-| 1 | `scripts/scraper.py` | Done |
-| 2 | `scripts/analyze_gita.py` | To build |
-| 3 | `scripts/enrich.py` | To build |
-| 4 | `scripts/indexer.py` | To rebuild |
-| 5 | `scripts/evaluate.py` | To build |
-| 6 | `app/services/guardrail.py` | To build |
-| 7 | `app/services/hyde.py` | To build |
-| 8 | `app/services/retrieval.py` | To rebuild |
-| 9 | `app/services/reranker.py` | To rebuild |
-| 10 | `app/services/rag.py` | To rebuild |
-| 11 | `app/routes/search.py` | To update |
+| # | Script / Module | Phase | Status |
+|---|---|---|---|
+| 1 | `scripts/scraper.py` | 0 | Done |
+| 2 | `scripts/analyze_gita.py` | 1 | To build |
+| 3 | `scripts/enrich.py` | 2 | To build |
+| 4 | `scripts/indexer.py` | 3 | To rebuild |
+| 5 | `scripts/evaluate.py` | 5 | To build |
+| 6 | `scripts/generate_audio.py` | 8 | To build |
+| 7 | `app/services/guardrail.py` | 6 | To build |
+| 8 | `app/services/hyde.py` | 4 | To build |
+| 9 | `app/services/retrieval.py` | 4 | To rebuild |
+| 10 | `app/services/reranker.py` | 4 | To rebuild |
+| 11 | `app/services/rag.py` | 4 | To rebuild |
+| 12 | `app/services/language_detect.py` | 8 | To build |
+| 13 | `app/services/sarvam_tts.py` | 8 | To build |
+| 14 | `app/services/sarvam_stt.py` | 9 | To build |
+| 15 | `app/services/sarvam_translate.py` | 8 | To build |
+| 16 | `app/routes/search.py` | 4 | To update |
+| 17 | `app/routes/voice.py` | 9 | To build |
 
 ---
 
@@ -714,6 +1165,8 @@ beautifulsoup4>=4.12.0      # scraper (already added)
 FlagEmbedding>=1.2.0        # BGE-M3 (dense + sparse)
 chromadb>=0.5.0             # vector store
 sentence-transformers>=3.0  # cross-encoder reranker
+sarvamai>=0.1.0             # Sarvam AI (TTS, STT, translation, LLM)
+langdetect>=1.0.9           # fallback language detection
 ```
 
 ---
@@ -724,9 +1177,12 @@ sentence-transformers>=3.0  # cross-encoder reranker
 |---|---|
 | `data/gita_full.json` | Raw scraped verses |
 | `data/gita_analysis.md` | Gita thematic analysis — informs all prompts |
-| `data/gita_enriched.json` | Verses + enriched meaning fields |
-| `data/chroma_db/` | ChromaDB dense vector store |
+| `data/gita_enriched.json` | Verses + enriched meaning fields (English + Hindi) |
+| `data/gita_multilingual.json` | Purport summaries in regional Indian languages |
+| `data/chroma_db/` | ChromaDB dense vector store (BGE-M3) |
+| `data/chroma_devanagari/` | ChromaDB Indic vector store (Sarvam embeddings) |
 | `data/sparse_index.pkl` | BGE-M3 sparse index for keyword retrieval |
+| `data/audio_cache/` | Pre-generated Sanskrit verse audio (627 .mp3 files) |
 | `data/golden_dataset.json` | Hand-curated (query, expected_verse) eval pairs |
 | `data/eval_results.json` | MRR / Recall@5 history per pipeline version |
 | `data/feedback.db` | SQLite: query logs + user feedback |
@@ -753,3 +1209,11 @@ sentence-transformers>=3.0  # cross-encoder reranker
 | Evaluation | Golden dataset + MRR@5 + LLM-as-judge faithfulness | Can't know if pipeline is good without measuring it |
 | Guardrails | Input classifier (fast Claude call) + output constraint in prompt | Prevent garbage retrieval; ensure faithful generation |
 | Feedback loop | Passive SQLite logging → weekly review → golden dataset growth | Continuous improvement grounded in real failures |
+| Sanskrit TTS | Sarvam Bulbul (pre-cached per verse) | Western TTS mispronounces Sanskrit; Sarvam trained on Indic scripts |
+| Multilingual input | Sarvam Mayura (translate query → English → pipeline) | Gita's audience is Indian; forcing English is a barrier |
+| Multilingual output | Sarvam Mayura (translate Claude guidance → user's language) | Response should be in the user's language |
+| Guidance audio | Sarvam Bulbul (per-request, user's language) | Full audio experience: verse in Sanskrit + guidance in their language |
+| Voice input | Sarvam Saaras STT | Accessibility for users more comfortable speaking than typing |
+| Indic embeddings | Sarvam embeddings on Devanagari field (4th vector type) | Better Sanskrit/Devanagari query matching than general multilingual model |
+| Hindi enrichment | Sarvam-2B generates Hindi meaning_fields natively | Authentic Hindi framing vs mechanical translation of English output |
+| Language detection | Sarvam detect + Devanagari unicode heuristic | Must know language before any translation or routing decision |
