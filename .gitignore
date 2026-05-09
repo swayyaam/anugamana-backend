@@ -8,3 +8,12 @@ chroma_gita/
 dist/
 *.egg-info/
 .DS_Store
+
+# generated data files — reproduce by running scripts in order
+data/*.json
+data/*.md
+data/chroma_db/
+data/chroma_devanagari/
+data/sparse_index.pkl
+data/audio_cache/
+data/feedback.db
