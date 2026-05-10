@@ -1,110 +1,151 @@
+"""
+POST /search — full RAG pipeline endpoint.
+
+Pipeline:
+  1. Input guardrail (on-topic check)
+  2. HyDE + query expansion (parallel Claude calls)
+  3. Hybrid retrieval (dense ChromaDB + sparse BGE-M3, RRF fusion)
+  4. Cross-encoder reranking + MMR diversity
+  5. RAG generation (Claude, per verse)
+  6. Latency logging
+"""
+
 import asyncio
+import time
+
 import structlog
 from fastapi import APIRouter, HTTPException, Request
+from pydantic import BaseModel
 
-from app import state
 from app.limiter import limiter
-from app.models import SearchRequest
-from app.services.embedder import encode_query, rerank_pairs
-from app.services.llm import generate_advice
-from app.services import cache
+from app.services import guardrail, hyde, retrieval, reranker, rag
 
 logger = structlog.get_logger(__name__)
 router = APIRouter()
 
+OFF_TOPIC_MESSAGE = (
+    "Anugamana is designed for spiritual and philosophical guidance. "
+    "Try asking about a life situation, an emotion, or a concept from the Bhagavad Gita."
+)
+
+
+class SearchRequest(BaseModel):
+    query: str
+    top_k: int = 3  # number of verses to return (max 5)
+
+
+class VerseResult(BaseModel):
+    verse_id: str
+    chapter: int
+    verse: int
+    devanagari: str
+    sanskrit: str
+    translation: str
+    score: float
+    ai_guidance: str
+
+
+class QueryMeta(BaseModel):
+    guardrail: str
+    retrieval_ms: int
+    rerank_ms: int
+    generation_ms: int
+    total_ms: int
+
+
+class SearchResponse(BaseModel):
+    results: list[VerseResult]
+    query_meta: QueryMeta
+
 
 @router.get("/")
 def home():
-    status = "Online" if state.embedder and state.pc_index else "Maintenance Mode (Models Loading)"
-    return {"message": "Anugamana API: Pinecone Search + Re-Ranking + RAG", "status": status}
+    return {"message": "Anugamana — Bhagavad Gita semantic search", "status": "online"}
 
 
-@router.post("/search")
-@limiter.limit("15/minute")
-async def search_verses(request: Request, payload: SearchRequest):
-    if not state.embedder or not state.pc_index or not state.reranker:
-        raise HTTPException(status_code=503, detail="Search services are initializing. Please try again in a few seconds.")
+@router.post("/search", response_model=SearchResponse)
+@limiter.limit("20/minute")
+async def search(request: Request, payload: SearchRequest):
+    query = payload.query.strip()
+    if not query:
+        raise HTTPException(status_code=400, detail="Query cannot be empty.")
 
-    try:
-        cache_key = cache.make_cache_key(payload.query)
-        cached = cache.get_cached(cache_key)
-        if cached:
-            logger.info("cache_hit", query=payload.query)
-            return cached
+    top_k = max(1, min(payload.top_k, 5))
+    t_start = time.time()
 
-        logger.info("cache_miss", query=payload.query)
+    # 1. Guardrail
+    guard_result = await guardrail.classify(query)
+    if guard_result == "off_topic":
+        logger.info("guardrail_rejected", query=query)
+        raise HTTPException(status_code=422, detail=OFF_TOPIC_MESSAGE)
 
-        query_embedding = await asyncio.to_thread(encode_query, payload.query)
+    # 2. HyDE + expansion
+    hyde_text, all_queries = await hyde.transform(query)
 
-        filter_dict = {"chapter": {"$eq": payload.chapter}} if payload.chapter else None
-        pc_results = await asyncio.to_thread(
-            state.pc_index.query,
-            vector=query_embedding,
-            top_k=payload.limit * 2,
-            include_metadata=True,
-            filter=filter_dict,
+    # 3. Retrieval
+    t_retrieval = time.time()
+    loop = asyncio.get_event_loop()
+    candidates = await loop.run_in_executor(
+        None, retrieval.retrieve, hyde_text, all_queries
+    )
+    retrieval_ms = int((time.time() - t_retrieval) * 1000)
+
+    if not candidates:
+        return SearchResponse(
+            results=[],
+            query_meta=QueryMeta(
+                guardrail=guard_result,
+                retrieval_ms=retrieval_ms,
+                rerank_ms=0,
+                generation_ms=0,
+                total_ms=int((time.time() - t_start) * 1000),
+            ),
         )
 
-        initial_results = [
-            {
-                "id": match["id"],
-                "chapter": match["metadata"].get("chapter"),
-                "verse": match["metadata"].get("verse"),
-                "text": match["metadata"].get("text", ""),
-                "translation": match["metadata"].get("translation", ""),
-                "meaning": match["metadata"].get("meaning", ""),
-                "score": match["score"],
-            }
-            for match in pc_results["matches"]
-        ]
+    # 4. Rerank + MMR
+    t_rerank = time.time()
+    top_verses = await loop.run_in_executor(
+        None, reranker.rerank, query, candidates
+    )
+    top_verses = top_verses[:top_k]
+    rerank_ms = int((time.time() - t_rerank) * 1000)
 
-        if not initial_results:
-            return {"results": []}
+    # 5. RAG generation (sequential per verse, Haiku is fast)
+    t_gen = time.time()
+    guidances = await loop.run_in_executor(
+        None, rag.generate_batch, query, top_verses
+    )
+    generation_ms = int((time.time() - t_gen) * 1000)
 
-        rerank_texts = [f"{r['translation']} {r['meaning']}" for r in initial_results]
-        cross_scores = await asyncio.to_thread(rerank_pairs, payload.query, rerank_texts)
+    # 6. Build response
+    results = []
+    for verse, guidance in zip(top_verses, guidances):
+        results.append(VerseResult(
+            verse_id=verse["verse_id"],
+            chapter=int(verse["chapter"]),
+            verse=int(verse["verse"]),
+            devanagari=verse.get("devanagari", ""),
+            sanskrit=verse.get("sanskrit", ""),
+            translation=verse["translation"],
+            score=round(verse.get("cross_score", verse.get("rrf_score", 0.0)), 4),
+            ai_guidance=guidance,
+        ))
 
-        top_results = sorted(
-            [{"score": float(s), "data": initial_results[i]} for i, s in enumerate(cross_scores)],
-            key=lambda x: x["score"],
-            reverse=True,
-        )[:payload.limit]
+    total_ms = int((time.time() - t_start) * 1000)
+    logger.info(
+        "search_complete",
+        query=query,
+        results=len(results),
+        total_ms=total_ms,
+    )
 
-        rag_advice = None
-        if top_results and payload.limit == 1:
-            try:
-                top = top_results[0]["data"]
-                rag_advice = await generate_advice(
-                    payload.query,
-                    f"{top['translation']} {top['meaning']}",
-                )
-            except Exception:
-                logger.warning("rag_advice_failed_after_retries")
-
-        final_results = []
-        for i, item in enumerate(top_results):
-            d = item["data"]
-            entry = {
-                "text": d.get("text", ""),
-                "metadata": {
-                    "chapter": d.get("chapter"),
-                    "verse": d.get("verse"),
-                    "text": d.get("text", ""),
-                    "translation": d.get("translation", ""),
-                    "meaning": d.get("meaning", ""),
-                },
-                "score": item["score"],
-            }
-            if i == 0 and rag_advice:
-                entry["metadata"]["ai_advice"] = rag_advice
-            final_results.append(entry)
-
-        final_response = {"results": final_results}
-        cache.set_cached(cache_key, final_response)
-        return final_response
-
-    except HTTPException:
-        raise
-    except Exception as e:
-        logger.error("internal_search_error", error=str(e), exc_info=True)
-        raise HTTPException(status_code=500, detail="An internal error occurred while processing the search.")
+    return SearchResponse(
+        results=results,
+        query_meta=QueryMeta(
+            guardrail=guard_result,
+            retrieval_ms=retrieval_ms,
+            rerank_ms=rerank_ms,
+            generation_ms=generation_ms,
+            total_ms=total_ms,
+        ),
+    )
