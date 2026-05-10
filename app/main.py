@@ -42,6 +42,13 @@ async def lifespan(app: FastAPI):
     except Exception as e:
         logger.error("reranker_warmup_failed", error=str(e))
 
+    try:
+        from app.services.feedback_logger import init_db
+        init_db()
+        logger.info("feedback_db_ready")
+    except Exception as e:
+        logger.error("feedback_db_init_failed", error=str(e))
+
     logger.info("startup_complete")
     yield
     logger.info("shutdown")
