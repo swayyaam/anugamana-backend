@@ -349,29 +349,168 @@ Visualization + clustering is a few hours of scipy/UMAP work.
 
 ---
 
-## Part 5 — Recommended Roadmap
+## Part 5 — Roadmap
+
+### The Approach
+
+Take 1 month (May 10 – June 10) to finish building everything properly.
+Get real MRR numbers. Then write a paper that actually reflects the work.
+
+A strong paper submitted once beats a rushed paper rejected twice.
+
+---
+
+### What to Target in 2026
+
+**1. arXiv — June/July**
+The moment Phase 5 gives you MRR numbers, post to arXiv.
+Free, instant, permanent. Establishes your priority date.
+This is not optional — do this before any conference submission.
+
+**2. EMNLP 2026 Workshop — August submission**
+Conference: Budapest, October 24–29, 2026
+Workshop deadlines: typically August 2026
+This is your primary conference target for 2026.
+By August you'll have a properly built system, real numbers, and time to write well.
+Target workshop: SURGeLLM (RAG + retrieval) or NLP4DH (digital humanities angle)
+
+**3. FIRE 2026 — Sept/Oct submission**
+Forum for Information Retrieval Evaluation — Indian IR conference
+Perfect fit for the multilingual Indic RAG angle (Paper 3)
+Check fire.irsi.res.in for exact dates
+
+That's it. Two conference submissions in 2026 is the right target.
+Anything more is overcommitting before the system is complete.
+
+---
+
+### Month-by-Month Timeline
 
 ```
-NOW          Build the pipeline (Phases 0-8)
-             Keep notes on every design decision and why
+MAY 10–20    Phase 3 — Indexer
+             BGE-M3 embeddings, ChromaDB, sparse index
+             No rush. Build it right.
 
-Phase 5      Build golden evaluation dataset (80-100 query-verse pairs)
-             Run MRR@5, Recall@5, NDCG@5 on baseline vs. full system
+MAY 20–30    Phase 4 — Search Pipeline
+             Guardrail, HyDE, hybrid retrieval, reranker, RAG
+             Test manually with 20–30 real queries before moving on
 
-Month 1-2    Write Paper 1 (core contribution)
-             Post on arXiv immediately
+JUNE 1–10    Phase 5 — Evaluation
+             Build golden dataset: 80 (query, expected_verse) pairs
+             Run MRR@5, Recall@5, NDCG@5 on 4 conditions:
+               - BM25 baseline
+               - Dense only (no enrichment)
+               - Dense with enrichment
+               - Full system (enrichment + HyDE + hybrid)
 
-Month 2-3    Submit Paper 1 to SIGIR or ECIR
-             Write Paper 2 (HyDE) in parallel — quick win
+JUNE 10      POST TO ARXIV
+             The moment you have numbers, post.
+             Everything after this is bonus.
 
-Month 3-4    Write Paper 4 (methods) — most citable, lowest marginal effort
-             Submit Paper 2 to ECIR or ACL Findings
+JUNE 10–30   Phase 6–7 — Guardrails + Feedback loop
+             Also: write Paper 1 first draft in parallel
 
-Month 5-6    Write Paper 6 (digital humanities) — different audience, low effort
-             Start Paper 3 once Sarvam integration complete
+JULY         Write + revise Paper 1 properly
+             Get feedback from anyone who will read it
+             Phases 8–9 (Sarvam) if time allows
 
-Month 8+     Paper 5 (faithfulness) once you have real user data
-             Paper 3 (multilingual) once Phase 8/9 complete
+AUGUST       Submit Paper 1 to EMNLP 2026 workshop
+             Submit Paper 2 (HyDE) to arXiv
+
+SEPT–OCT     Submit Paper 3 (Multilingual) to FIRE 2026
+             Attend EMNLP 2026 in Budapest (October 24–29)
+             Even as audience — network, meet researchers in your area
+
+NOV–DEC      Start ECIR 2027 paper (Paper 4 — methods, most citable)
+             Start NAACL 2027 / ACL 2027 ARR cycle for Paper 1 full version
+```
+
+---
+
+### EMNLP 2026 Full Dates
+
+**EMNLP 2026** — Budapest, Hungary
+
+| Date | Event |
+|---|---|
+| May 25 | ARR main track deadline (missed — target August workshop instead) |
+| July 7–13 | Author response period |
+| August 2 | EMNLP commitment deadline |
+| August 20 | Notification of acceptance |
+| September 20 | Camera-ready due |
+| **October 24–29** | **Conference** |
+
+### ACL 2026 Workshops — Live Right Now
+
+**ACL 2026** — San Diego, California — July 2–7, 2026
+Main track: CLOSED (deadline was Feb 2026)
+**Workshops: OPEN — deadlines likely mid-to-late May 2026**
+
+Today is May 10. You have days, not weeks. Check each workshop website immediately.
+
+#### Workshops directly relevant to your work (ranked by fit)
+
+**PRIORITY 1 — Submit to these first:**
+
+| Workshop | Fit | Paper | Deadline |
+|---|---|---|---|
+| **SURGeLLM** — Structured Understanding, Retrieval & Generation in LLM Era | PERFECT | Paper 1 | Check website NOW |
+| **RAG4Reports** — Multilingual Report Generation via RAG | VERY HIGH | Papers 1 & 3 | Check website NOW |
+| **NLP4DH** — NLP for the Digital Humanities (6th edition) | VERY HIGH | Paper 6 | Check website NOW |
+
+**SURGeLLM** is your best fit — it explicitly covers "structure-aware understanding, retrieval,
+generation, and evaluation in the era of LLMs" and brings together NLP + IR + data management.
+Your Paper 1 (semantic enrichment for retrieval) fits perfectly in scope.
+
+**RAG4Reports** is the first workshop specifically on RAG + multilingual generation.
+Your work is RAG + multilingual (10 Indian languages). Strong fit for Papers 1 and 3.
+
+**NLP4DH** (Digital Humanities) is perfect for Paper 6 (computational semantic map of the Gita).
+It's a full-day conference within ACL, not just a workshop — higher prestige.
+
+**PRIORITY 2 — Consider if time allows:**
+
+| Workshop | Fit | Paper |
+|---|---|---|
+| **CustomNLP4U** — Customizing NLP for a Domain | HIGH | Paper 4 (corpus analysis as prompt primitive) |
+| **MeLLMs** — Multilinguality in the Era of LLMs | HIGH | Paper 3 (Indic multilingual RAG) |
+| **DravidianLangTech** — NLP for Dravidian Languages | MEDIUM-HIGH | Paper 3 (Tamil, Telugu, Kannada support) |
+| **TrustNLP** — Trustworthy NLP | MEDIUM | Paper 5 (faithfulness evaluation) |
+| **C3NLP** — Cross-Cultural Considerations in NLP | MEDIUM | Cultural/multilingual angle |
+| **MAGMaR** — Multimodal Augmented Generation via Retrieval | MEDIUM | RAG architecture |
+
+**Action required today:**
+Go to each Priority 1 workshop website and find the submission deadline.
+If any deadline is before May 25, prioritise that over EMNLP ARR.
+A workshop paper at ACL 2026 is better than missing EMNLP ARR.
+
+### Full Multi-Paper Roadmap (Updated)
+
+```
+May 10       CHECK ACL 2026 workshop deadlines (SURGeLLM, RAG4Reports, NLP4DH)
+
+May 10–25    Build Phases 3–5, get MRR numbers
+             Write Paper 1 draft in parallel
+
+May 25       ARR submission → EMNLP 2026 main track (Paper 1)
+             + any ACL 2026 workshop with May 25 deadline
+
+May 25       Post to arXiv immediately after ARR submission
+
+~June 1      ACL 2026 workshop deadline (if not May 25) — submit Paper 1 or Paper 6
+             ACL 2026 conference: July 2–7, San Diego
+
+June–July    Write Paper 2 (HyDE) — 80% already built, quick win
+
+Aug          EMNLP 2026 workshop submission (Paper 2 or Paper 6)
+             EMNLP conference: October 24–29, Budapest
+
+Sept–Oct     FIRE 2026 submission (Paper 3 — Multilingual Indic RAG)
+
+Oct–Nov      ECIR 2027 submission (Paper 4 — most citable methods paper)
+
+2027+        Paper 5 (Faithfulness) — needs 6 months real user data
+             Paper 3 full version once Sarvam integration complete
 ```
 
 ---
@@ -460,5 +599,75 @@ These are your most important references. Read them in this order:
 
 ---
 
-*Last updated: May 2026*
-*Enrichment running: 160/700 verses complete*
+## Part 9 — All Conferences Worth Watching
+
+### Tier 1 — Top venues, highest impact
+
+| Conference | Location | Dates | Main Deadline | Status |
+|---|---|---|---|---|
+| **EMNLP 2026** | Budapest, Hungary | Oct 24–29 | **May 25 ARR** | OPEN — PRIMARY TARGET |
+| **ACL 2026 Workshops** | San Diego, CA | Jul 2–7 | ~May 15–June 1 | OPEN — CHECK TODAY |
+| **ACL 2026 Main** | San Diego, CA | Jul 2–7 | Feb 2026 | CLOSED |
+| **SIGIR 2026 Workshops** | Melbourne, Australia | Jul 24 | Varies | CHECK individual workshops |
+| **SIGIR 2026 Main** | Melbourne, Australia | Jul 20–24 | Jan–Feb 2026 | CLOSED (all tracks) |
+| **NAACL 2027** | TBD | 2027 | Oct/Nov 2026 | Future cycle |
+
+**SIGIR 2026 main track is fully closed.** All deadlines were January–February 2026.
+Full papers: Jan 22 | Short papers: Feb 12 | Industry: Feb 26 | All passed.
+SIGIR workshops are July 24 — individual workshop paper deadlines vary, check accepted workshops list.
+
+ACL 2026 workshop list published April 9 — workshops open RIGHT NOW.
+See Part 5 for the specific ACL workshops to target.
+
+### Tier 2 — Strong venues, more accessible
+
+| Conference | Focus | Typical Deadline | Notes |
+|---|---|---|---|
+| **ECIR** | European IR | October | Good for Paper 1 & 4 |
+| **CIKM** | Knowledge + IR | May/June | Broader audience |
+| **COLING** | Computational linguistics | Every 2 years | International, broad scope |
+| **EACL** | European ACL | Oct/Nov | ACL family |
+| **COLM** | Language modeling | March/April | New but growing fast |
+
+### Tier 3 — Specialised, high fit for this project
+
+| Conference | Focus | Typical Deadline | Why it fits |
+|---|---|---|---|
+| **FIRE** | Indian language IR | July/Aug | Perfect for Paper 3 (Indic RAG) |
+| **DH (Digital Humanities)** | Computational humanities | Jan/Feb | Perfect for Paper 6 |
+| **FAccT** | Fairness, accountability | Jan/Feb | Perfect for Paper 5 |
+| **WSDM** | Web search & data mining | Aug/Sept | Good for retrieval papers |
+
+### Workshops (easier to get in, same venue)
+
+These run inside EMNLP/ACL/NAACL. Good for first papers or niche contributions.
+Deadlines typically 6–8 weeks before the main conference.
+
+- **ML4AL** — Machine Learning for Ancient Languages (ACL workshop, where Mandikal published)
+- **LoResMT** — Low-Resource Machine Translation (multilingual angle)
+- **WILDRE** — Workshop on Indian Language Data: Resources and Evaluation
+- **MIA** — Multilingual Information Access
+- **TrustNLP** — Trustworthy NLP (faithfulness/evaluation angle)
+- **BioNLP / HumNLP** — sometimes covers cultural/religious text domains
+
+### Journals (slower, but permanent)
+
+| Journal | Focus | Notes |
+|---|---|---|
+| **TACL** (Transactions of ACL) | Top NLP journal | Prestigious, slow (6-12 months) |
+| **IRJ** (Information Retrieval Journal) | IR research | Good for a long-form version of Paper 1 |
+| **JASIST** | Information science | Broad, good for Paper 5 |
+| **LLC** (Literary & Linguistic Computing) | Digital humanities | Good for Paper 6 |
+| **Journal of Hindu Studies** | Indic studies | Non-CS audience, broad reach |
+
+### How to track deadlines
+
+- **aideadlin.es** — aggregates all AI/NLP/ML conference deadlines in one place
+- **conferencelist.info** — broader academic calendar
+- **ACL Anthology** (aclanthology.org) — browse past papers at every ACL-family venue
+
+---
+
+*Last updated: May 10, 2026*
+*Status: Phase 2 complete (700/700 verses enriched). Phase 3 next.*
+*EMNLP 2026 ARR deadline: May 25, 2026 — 15 days.*
