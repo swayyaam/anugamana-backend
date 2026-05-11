@@ -9,6 +9,9 @@ dist/
 *.egg-info/
 .DS_Store
 
+# docs — kept local only
+docs/
+
 # generated data files — reproduce by running scripts in order
 data/*.json
 data/*.md
