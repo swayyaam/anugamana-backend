@@ -186,3 +186,20 @@ def retrieve(hyde_text: str, all_queries: list[str]) -> list[dict]:
             verses.append({**meta, "rrf_score": verse_scores[vid]})
 
     return verses
+
+
+def retrieve_by_verse_id(verse_id: str) -> list[dict]:
+    """
+    Direct verse lookup — bypasses embedding and search entirely.
+    Used by the direct_lookup query route for queries like "verse 2.47".
+    Returns a list with one verse dict (rrf_score=1.0) or [] if not found.
+    """
+    verses_col, _ = _load_chroma()
+    results = verses_col.get(
+        ids=[f"{verse_id}_meaning"],
+        include=["metadatas"],
+    )
+    if not results["ids"]:
+        return []
+    meta = results["metadatas"][0]
+    return [{**meta, "rrf_score": 1.0}]
