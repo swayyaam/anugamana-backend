@@ -24,20 +24,25 @@ Anugamana solves this with **synthetic semantic enrichment**: for every verse, a
 ### Full Pipeline
 
 ```
-User query (text or voice, any Indian language)
-        │
-        ├── voice? → Saaras STT → transcript
-        ▼
-Language detection → detected_lang
-        │
-        ├── non-English? → Mayura translation → English query
-        ├── Devanagari? → transliterate both forms for sparse search
+User query
         ▼
 Input guardrail — on-topic classifier (Claude Haiku, max_tokens=5)
+  fails open → assume relevant if API down
+        ▼
+Query routing — detects query type, fast-paths when possible
+  ├── direct_lookup ("2.47", "BG 6.5", "verse 18.66")
+  │     → skip HyDE + retrieval + reranker (~2s saved)
+  │     → direct ChromaDB fetch by verse ID
+  ├── sanskrit (Devanagari script detected)
+  │     → skip HyDE Claude call (~200ms saved)
+  │     → embed raw query directly
+  └── semantic (everything else)
+        → full pipeline ↓
         ▼
 HyDE + query expansion — 2 parallel Claude Haiku calls
   HyDE: generate hypothetical Prabhupada commentary, embed that
   Expansion: 3 semantic rephrasings for improved recall
+  fails independently: HyDE → raw query, expansion → single query
         ▼
 Hybrid retrieval — all in parallel
   Dense  → ChromaDB gita_verses   (BGE-M3, meaning + translation vectors)
@@ -47,22 +52,25 @@ Hybrid retrieval — all in parallel
 RRF fusion → group by verse_id → top 10 verses
         ▼
 Cross-encoder reranking (ms-marco-MiniLM-L-6-v2)
+  fails → sort by RRF score
         ▼
 MMR diversity pass → top 5 verses
+  fails → top-k by score
+        ▼
+Confidence threshold
+  normalize scores to [0–1] within result set
+  drop verses with normalized_score < 0.1 (outliers)
+  flag low_confidence if scores form a tight cluster
         ▼
 RAG generation — Claude Haiku per verse
   context: verse + 3-paragraph parent window from purport
   constraint: use ONLY the provided verse and commentary
-        │
-        ├── Mayura: translate guidance → user's language
-        ├── Bulbul: guidance audio → user's language
+  fails → return verse without guidance (empty string)
         ▼
-Bulbul: verse audio in Sanskrit (pre-cached, zero latency)
-        ▼
-Response: verses + Sanskrit audio + guidance + translated guidance
+Response: verses + normalized scores + AI guidance
         │
         ▼
-Async: LLM-as-judge faithfulness score → SQLite feedback log
+Async (non-blocking): LLM-as-judge faithfulness score → SQLite feedback log
 ```
 
 ### Why HyDE
@@ -101,20 +109,20 @@ These are concatenated into `text_for_embedding` — the primary search target. 
 | *"how do I stop overthinking"* | `situations` |
 | *"karma yoga teaching"* | `teaching` |
 | *"karmanye vadhikaraste"* | sparse index |
-| *"what does 2.47 say"* | sparse + translation vector |
+| *"what does 2.47 say"* | direct_lookup route → ChromaDB fetch |
 
 ---
 
 ## Data Pipeline
 
 ```
-scripts/scraper.py       →  data/gita_full.json          700 verses (Devanagari + Sanskrit + translation + purport)
-scripts/analyze_gita.py  →  data/gita_chapter_analyses.json  18 chapter analyses (thematic map, HyDE vocab, edge cases)
-scripts/enrich.py        →  data/gita_enriched.json      700 × meaning_fields + text_for_embedding
-scripts/indexer.py       →  data/chroma_db/              2603 vectors (meaning + translation + purport chunks)
-                         →  data/sparse_index.pkl         8952 unique BGE-M3 lexical tokens
-scripts/build_dataset.py →  data/golden_dataset.json     evaluation query-verse pairs
-scripts/evaluate.py      →  data/eval_results.json        MRR@5, Recall@5, NDCG@5 per pipeline version
+scripts/scraper.py       →  data/gita_full.json               700 verses (Devanagari + Sanskrit + translation + purport)
+scripts/analyze_gita.py  →  data/gita_chapter_analyses.json   18 chapter analyses (thematic map, HyDE vocab, edge cases)
+scripts/enrich.py        →  data/gita_enriched.json           700 × meaning_fields + text_for_embedding
+scripts/indexer.py       →  data/chroma_db/                   2603 vectors (meaning + translation + purport chunks)
+                         →  data/sparse_index.pkl              8952 unique BGE-M3 lexical tokens
+scripts/build_dataset.py →  data/golden_dataset.json          evaluation query-verse pairs
+scripts/evaluate.py      →  data/eval_results.json             MRR@5, Recall@5, NDCG@5 per pipeline version
 ```
 
 ### Vector Index Structure
@@ -164,15 +172,30 @@ Response:
     }
   ],
   "query_meta": {
-    "guardrail":    "relevant",
-    "retrieval_ms": 120,
-    "rerank_ms":    45,
-    "generation_ms": 800,
-    "total_ms":     1200,
-    "response_id":  42
+    "guardrail":           "relevant",
+    "query_route":         "semantic",
+    "retrieval_ms":        120,
+    "rerank_ms":           45,
+    "generation_ms":       800,
+    "total_ms":            1200,
+    "response_id":         42,
+    "degraded_stages":     [],
+    "confidence_filtered": 0,
+    "low_confidence":      false
   }
 }
 ```
+
+**`query_route`** values:
+- `"semantic"` — full pipeline
+- `"direct_lookup"` — verse reference detected, skipped HyDE/retrieval/reranker
+- `"sanskrit"` — Devanagari detected, skipped HyDE
+
+**`score`** is normalized to `[0, 1]` within the result set. `1.0` = best match, values near `0` = marginal.
+
+**`degraded_stages`** lists any pipeline stages that failed and fell back (e.g. `["hyde", "expansion"]`).
+
+**`confidence_filtered`** is the count of results dropped because their score was too far below the top result.
 
 ### `GET /metrics`
 
@@ -282,7 +305,7 @@ python scripts/scraper.py
 # 2. Analyze corpus
 python scripts/analyze_gita.py
 
-# 3. Enrich all 700 verses (~$1.50, ~20 min)
+# 3. Enrich all 700 verses (~$1.50, ~20 min with Claude Haiku)
 python scripts/enrich.py
 
 # 4. Index into ChromaDB + sparse index (~15 min, downloads BGE-M3 ~570MB)
@@ -321,13 +344,23 @@ python scripts/evaluate.py
 | 8 | Sarvam integrations (TTS, translation) | 🔲 Next |
 | 9 | Voice input, Indic embeddings, Hindi enrichment | 🔲 Planned |
 
+### Production Improvements
+
+| Improvement | Status |
+|---|---|
+| Graceful degradation — every stage has a fallback, never returns 500 | ✅ Done |
+| Confidence threshold — normalized 0–1 scores, drops outlier results | ✅ Done |
+| Query routing — direct lookup and Sanskrit fast paths | ✅ Done |
+| Response caching (Redis) — latency improvement for repeated queries | 🔲 Planned |
+| PostgreSQL for feedback — needed before any real traffic | 🔲 Planned |
+| Domain-specific reranker — ms-marco is trained on web search, not scripture | 🔲 Planned |
+| Qdrant — replace ChromaDB for high-concurrency production load | 🔲 Planned |
+
 ---
 
 ## Research
 
 This project is the basis for an academic paper on **vocabulary-gap bridging in ancient text retrieval** — using synthetic semantic enrichment to close the gap between modern casual queries and 5000-year-old Sanskrit commentary. Target venue: EMNLP 2026 / ACL workshops.
-
-See `docs/research.md` for the full research roadmap, related work analysis, and publication timeline.
 
 ---
 
