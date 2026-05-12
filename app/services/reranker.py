@@ -6,12 +6,19 @@ far more accurate than vector cosine similarity alone.
 
 MMR (Maximal Marginal Relevance): after reranking, select top 5 results
 that balance relevance vs diversity — prevents returning 5 near-identical verses.
+
+Graceful degradation:
+  cross-encoder fails → sort by rrf_score, log "reranker" in degraded_stages
+  MMR fails           → return top-k by score, log "mmr" in degraded_stages
 """
 
 from functools import lru_cache
 import numpy as np
+import structlog
 from sentence_transformers import CrossEncoder
 from FlagEmbedding import BGEM3FlagModel
+
+logger = structlog.get_logger(__name__)
 
 RERANK_MODEL = "cross-encoder/ms-marco-MiniLM-L-6-v2"
 MMR_LAMBDA = 0.7        # 0 = pure diversity, 1 = pure relevance
@@ -85,26 +92,37 @@ def _mmr(
     return [candidates[i] for i in selected_indices]
 
 
-def rerank(query: str, verses: list[dict]) -> list[dict]:
+def rerank(query: str, verses: list[dict]) -> tuple[list[dict], list[str]]:
     """
     Cross-encode (query, translation) pairs, then apply MMR.
-    Returns top TOP_RESULTS diverse, relevant verses.
+    Returns (top_verses, degraded_stages).
     """
     if not verses:
-        return []
+        return [], []
 
-    cross_encoder = _load_cross_encoder()
+    degraded: list[str] = []
 
-    pairs = [(query, v["translation"]) for v in verses]
-    scores = cross_encoder.predict(pairs)
+    # Cross-encoder scoring with fallback to rrf_score
+    try:
+        cross_encoder = _load_cross_encoder()
+        pairs = [(query, v["translation"]) for v in verses]
+        scores = cross_encoder.predict(pairs)
+        for verse, score in zip(verses, scores):
+            verse["cross_score"] = float(score)
+        ranked = sorted(verses, key=lambda v: v["cross_score"], reverse=True)
+    except Exception as e:
+        logger.warning("cross_encoder_failed", error=str(e))
+        degraded.append("reranker")
+        for v in verses:
+            v["cross_score"] = v.get("rrf_score", 0.0)
+        ranked = sorted(verses, key=lambda v: v["cross_score"], reverse=True)
 
-    for verse, score in zip(verses, scores):
-        verse["cross_score"] = float(score)
+    # MMR diversity pass with fallback to simple top-k
+    try:
+        diverse = _mmr(ranked, query, TOP_RESULTS, MMR_LAMBDA)
+    except Exception as e:
+        logger.warning("mmr_failed", error=str(e))
+        degraded.append("mmr")
+        diverse = ranked[:TOP_RESULTS]
 
-    # Sort by cross-encoder score
-    ranked = sorted(verses, key=lambda v: v["cross_score"], reverse=True)
-
-    # MMR diversity pass
-    diverse = _mmr(ranked, query, TOP_RESULTS, MMR_LAMBDA)
-
-    return diverse
+    return diverse, degraded

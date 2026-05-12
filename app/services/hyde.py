@@ -6,17 +6,23 @@ then embed that instead of the raw query. The hypothetical lives in the same
 semantic space as the indexed Prabhupada purports → much stronger retrieval.
 
 Query expansion: generate 3 rephrasings to improve recall on short queries.
-Both run as parallel Claude calls.
+Both run as parallel Claude calls with independent fallbacks.
+
+Graceful degradation:
+  HyDE fails    → use raw query as embed text, log "hyde" in degraded_stages
+  expansion fails → use [query] only, log "expansion" in degraded_stages
 """
 
 import asyncio
 import os
 import anthropic
+import structlog
 from dotenv import load_dotenv
 
 load_dotenv()
 
 _client = anthropic.Anthropic(api_key=os.getenv("ANTHROPIC_API_KEY"))
+logger = structlog.get_logger(__name__)
 
 HYDE_SYSTEM = """\
 You are generating a hypothetical passage from Srila Prabhupada's Bhagavad Gita As It Is
@@ -59,16 +65,30 @@ def _expansion_call(query: str) -> list[str]:
     return lines[:3]
 
 
-async def transform(query: str) -> tuple[str, list[str]]:
+async def transform(query: str) -> tuple[str, list[str], list[str]]:
     """
-    Returns (hyde_text, [original_query, expansion_1, expansion_2, expansion_3]).
-    Runs HyDE and expansion in parallel threads (SDK is sync).
+    Returns (hyde_text, all_queries, degraded_stages).
+    HyDE and expansion fail independently — each has its own fallback.
     """
     loop = asyncio.get_event_loop()
     hyde_fut = loop.run_in_executor(None, _hyde_call, query)
     exp_fut = loop.run_in_executor(None, _expansion_call, query)
 
-    hyde_text, expansions = await asyncio.gather(hyde_fut, exp_fut)
+    results = await asyncio.gather(hyde_fut, exp_fut, return_exceptions=True)
+    degraded: list[str] = []
 
-    all_queries = [query] + expansions
-    return hyde_text, all_queries
+    if isinstance(results[0], Exception):
+        logger.warning("hyde_failed", error=str(results[0]))
+        degraded.append("hyde")
+        hyde_text = query  # fall back to raw query as embed text
+    else:
+        hyde_text = results[0]
+
+    if isinstance(results[1], Exception):
+        logger.warning("expansion_failed", error=str(results[1]))
+        degraded.append("expansion")
+        expansions: list[str] = []
+    else:
+        expansions = results[1]
+
+    return hyde_text, [query] + expansions, degraded

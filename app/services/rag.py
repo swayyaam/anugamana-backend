@@ -1,6 +1,9 @@
 """
 RAG generation: Claude produces guidance grounded strictly in the retrieved
 verse + parent-window commentary. Faithfulness constraint is baked into system prompt.
+
+Graceful degradation: if Claude call fails, generate() returns "" (empty guidance).
+The verse is still returned to the user — only the AI commentary is missing.
 """
 
 import json
@@ -10,11 +13,13 @@ from pathlib import Path
 from functools import lru_cache
 
 import anthropic
+import structlog
 from dotenv import load_dotenv
 
 load_dotenv()
 
 _client = anthropic.Anthropic(api_key=os.getenv("ANTHROPIC_API_KEY"))
+logger = structlog.get_logger(__name__)
 
 ROOT = Path(__file__).parent.parent.parent
 DATA_DIR = ROOT / "data"
@@ -76,14 +81,17 @@ def generate(query: str, verse: dict) -> str:
         f"Commentary:\n{commentary}"
     )
 
-    response = _client.messages.create(
-        model="claude-haiku-4-5-20251001",
-        max_tokens=400,
-        system=RAG_SYSTEM,
-        messages=[{"role": "user", "content": user_message}],
-    )
-
-    return response.content[0].text.strip()
+    try:
+        response = _client.messages.create(
+            model="claude-haiku-4-5-20251001",
+            max_tokens=400,
+            system=RAG_SYSTEM,
+            messages=[{"role": "user", "content": user_message}],
+        )
+        return response.content[0].text.strip()
+    except Exception as e:
+        logger.warning("rag_generation_failed", verse_id=verse_id, error=str(e))
+        return ""  # verse still returned; only guidance is missing
 
 
 def generate_batch(query: str, verses: list[dict]) -> list[str]:

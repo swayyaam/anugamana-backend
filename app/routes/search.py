@@ -1,7 +1,11 @@
 """
-POST /search      — full RAG pipeline
+POST /search      — full RAG pipeline with graceful degradation
 GET  /metrics     — rolling system metrics
 POST /feedback    — thumbs up/down on a response
+
+Degradation: every stage has a fallback. The pipeline never returns HTTP 500.
+Failed stages are reported in query_meta.degraded_stages so clients/monitoring
+can react appropriately.
 """
 
 import asyncio
@@ -46,12 +50,13 @@ class VerseResult(BaseModel):
 
 
 class QueryMeta(BaseModel):
-    guardrail: str
-    retrieval_ms: int
-    rerank_ms: int
-    generation_ms: int
-    total_ms: int
-    response_id: int | None = None
+    guardrail:       str
+    retrieval_ms:    int
+    rerank_ms:       int
+    generation_ms:   int
+    total_ms:        int
+    response_id:     int | None = None
+    degraded_stages: list[str] = []
 
 
 class SearchResponse(BaseModel):
@@ -68,13 +73,7 @@ class FeedbackRequest(BaseModel):
 # Background tasks
 # ---------------------------------------------------------------------------
 
-def _run_judge(
-    response_id: int,
-    query: str,
-    top_verse: dict,
-    guidance: str,
-) -> None:
-    """Run LLM-as-judge and update faith_score. Runs in a background thread."""
+def _run_judge(response_id: int, query: str, top_verse: dict, guidance: str) -> None:
     try:
         result = judge.judge(
             query=query,
@@ -86,7 +85,7 @@ def _run_judge(
         if score is not None:
             feedback_logger.update_faith_score(response_id, float(score))
     except Exception:
-        pass  # never let judge failure surface to user
+        pass
 
 
 # ---------------------------------------------------------------------------
@@ -107,50 +106,57 @@ async def search(request: Request, payload: SearchRequest):
 
     top_k = max(1, min(payload.top_k, 5))
     t_start = time.time()
+    degraded: list[str] = []
 
-    # 1. Guardrail
+    # 1. Guardrail — never raises (fails open internally)
     guard_result = await guardrail.classify(query)
     if guard_result == "off_topic":
         logger.info("guardrail_rejected", query=query)
         raise HTTPException(status_code=422, detail=OFF_TOPIC_MESSAGE)
 
-    # 2. HyDE + expansion
-    hyde_text, all_queries = await hyde.transform(query)
+    # 2. HyDE + expansion — independent fallbacks, returns 3-tuple
+    hyde_text, all_queries, hyde_degraded = await hyde.transform(query)
+    degraded.extend(hyde_degraded)
 
     # 3. Retrieval
     t_retrieval = time.time()
     loop = asyncio.get_event_loop()
-    candidates = await loop.run_in_executor(
-        None, retrieval.retrieve, hyde_text, all_queries
-    )
+    try:
+        candidates = await loop.run_in_executor(
+            None, retrieval.retrieve, hyde_text, all_queries
+        )
+    except Exception as e:
+        logger.error("retrieval_failed", error=str(e))
+        candidates = []
+        degraded.append("retrieval")
     retrieval_ms = int((time.time() - t_retrieval) * 1000)
 
     if not candidates:
-        response_id = feedback_logger.log_response(
-            query=query, hyde_query=hyde_text,
-            verse_ids=[], top_verse_id=None,
-            latency_ms=int((time.time() - t_start) * 1000),
-        )
+        response_id = _safe_log_response(query, hyde_text, [], None,
+                                         int((time.time() - t_start) * 1000))
         return SearchResponse(
             results=[],
             query_meta=QueryMeta(
                 guardrail=guard_result,
                 retrieval_ms=retrieval_ms,
-                rerank_ms=0, generation_ms=0,
+                rerank_ms=0,
+                generation_ms=0,
                 total_ms=int((time.time() - t_start) * 1000),
                 response_id=response_id,
+                degraded_stages=degraded,
             ),
         )
 
-    # 4. Rerank + MMR
+    # 4. Rerank + MMR — returns 2-tuple with degraded stages
     t_rerank = time.time()
-    top_verses = await loop.run_in_executor(
+    top_verses, rerank_degraded = await loop.run_in_executor(
         None, reranker.rerank, query, candidates
     )
+    degraded.extend(rerank_degraded)
     top_verses = top_verses[:top_k]
     rerank_ms = int((time.time() - t_rerank) * 1000)
 
-    # 5. RAG generation
+    # 5. RAG generation — per-verse failures return "" internally
     t_gen = time.time()
     guidances = await loop.run_in_executor(
         None, rag.generate_batch, query, top_verses
@@ -158,18 +164,15 @@ async def search(request: Request, payload: SearchRequest):
     generation_ms = int((time.time() - t_gen) * 1000)
     total_ms = int((time.time() - t_start) * 1000)
 
-    # 6. Log response
+    # 6. Feedback logging — swallow failures, never block response
     verse_ids = [v["verse_id"] for v in top_verses]
-    response_id = feedback_logger.log_response(
-        query=query,
-        hyde_query=hyde_text,
-        verse_ids=verse_ids,
-        top_verse_id=verse_ids[0] if verse_ids else None,
-        latency_ms=total_ms,
+    response_id = _safe_log_response(
+        query, hyde_text, verse_ids,
+        verse_ids[0] if verse_ids else None, total_ms,
     )
 
-    # 7. Async faithfulness judge (non-blocking)
-    if top_verses and guidances:
+    # 7. Async judge — already daemon thread, already safe
+    if top_verses and guidances and guidances[0] and response_id:
         threading.Thread(
             target=_run_judge,
             args=(response_id, query, top_verses[0], guidances[0]),
@@ -190,7 +193,8 @@ async def search(request: Request, payload: SearchRequest):
             ai_guidance=guidance,
         ))
 
-    logger.info("search_complete", query=query, results=len(results), total_ms=total_ms)
+    logger.info("search_complete", query=query, results=len(results),
+                total_ms=total_ms, degraded=degraded)
 
     return SearchResponse(
         results=results,
@@ -201,8 +205,29 @@ async def search(request: Request, payload: SearchRequest):
             generation_ms=generation_ms,
             total_ms=total_ms,
             response_id=response_id,
+            degraded_stages=degraded,
         ),
     )
+
+
+def _safe_log_response(
+    query: str,
+    hyde_query: str,
+    verse_ids: list[str],
+    top_verse_id: str | None,
+    latency_ms: int,
+) -> int | None:
+    try:
+        return feedback_logger.log_response(
+            query=query,
+            hyde_query=hyde_query,
+            verse_ids=verse_ids,
+            top_verse_id=top_verse_id,
+            latency_ms=latency_ms,
+        )
+    except Exception as e:
+        logger.warning("feedback_log_failed", error=str(e))
+        return None
 
 
 @router.get("/metrics")
