@@ -28,6 +28,10 @@ OFF_TOPIC_MESSAGE = (
     "Try asking about a life situation, an emotion, or a concept from the Bhagavad Gita."
 )
 
+# Confidence threshold constants — tune after evaluating real query data
+MIN_CONFIDENCE = 0.1   # normalized score below this → drop the verse
+LOW_CONFIDENCE_GAP = 0.3  # if best-to-worst gap < this → flag as low_confidence
+
 
 # ---------------------------------------------------------------------------
 # Request / response models
@@ -50,13 +54,15 @@ class VerseResult(BaseModel):
 
 
 class QueryMeta(BaseModel):
-    guardrail:       str
-    retrieval_ms:    int
-    rerank_ms:       int
-    generation_ms:   int
-    total_ms:        int
-    response_id:     int | None = None
-    degraded_stages: list[str] = []
+    guardrail:            str
+    retrieval_ms:         int
+    rerank_ms:            int
+    generation_ms:        int
+    total_ms:             int
+    response_id:          int | None = None
+    degraded_stages:      list[str] = []
+    confidence_filtered:  int = 0    # verses dropped by confidence threshold
+    low_confidence:       bool = False  # True when scores form a tight cluster
 
 
 class SearchResponse(BaseModel):
@@ -156,7 +162,36 @@ async def search(request: Request, payload: SearchRequest):
     top_verses = top_verses[:top_k]
     rerank_ms = int((time.time() - t_rerank) * 1000)
 
-    # 5. RAG generation — per-verse failures return "" internally
+    # 5. Confidence threshold — normalize scores to [0,1], drop outliers
+    confidence_filtered = 0
+    low_confidence = False
+
+    if top_verses:
+        scores = [v.get("cross_score", v.get("rrf_score", 0.0)) for v in top_verses]
+        min_s, max_s = min(scores), max(scores)
+        gap = max_s - min_s
+
+        if gap > 0:
+            for verse, s in zip(top_verses, scores):
+                verse["normalized_score"] = round((s - min_s) / gap, 4)
+        else:
+            for verse in top_verses:
+                verse["normalized_score"] = 1.0  # all equal scores, keep all
+
+        # Flag tight clusters where no verse stands out clearly
+        if gap < LOW_CONFIDENCE_GAP:
+            low_confidence = True
+
+        # Drop outliers below threshold
+        before = len(top_verses)
+        top_verses = [v for v in top_verses if v["normalized_score"] >= MIN_CONFIDENCE]
+        confidence_filtered = before - len(top_verses)
+
+        if confidence_filtered:
+            logger.info("confidence_filtered", dropped=confidence_filtered,
+                        gap=round(gap, 3))
+
+    # 6. RAG generation — per-verse failures return "" internally
     t_gen = time.time()
     guidances = await loop.run_in_executor(
         None, rag.generate_batch, query, top_verses
@@ -164,14 +199,14 @@ async def search(request: Request, payload: SearchRequest):
     generation_ms = int((time.time() - t_gen) * 1000)
     total_ms = int((time.time() - t_start) * 1000)
 
-    # 6. Feedback logging — swallow failures, never block response
+    # 7. Feedback logging — swallow failures, never block response
     verse_ids = [v["verse_id"] for v in top_verses]
     response_id = _safe_log_response(
         query, hyde_text, verse_ids,
         verse_ids[0] if verse_ids else None, total_ms,
     )
 
-    # 7. Async judge — already daemon thread, already safe
+    # 8. Async judge — already daemon thread, already safe
     if top_verses and guidances and guidances[0] and response_id:
         threading.Thread(
             target=_run_judge,
@@ -179,7 +214,7 @@ async def search(request: Request, payload: SearchRequest):
             daemon=True,
         ).start()
 
-    # 8. Build response
+    # 9. Build response
     results = []
     for verse, guidance in zip(top_verses, guidances):
         results.append(VerseResult(
@@ -189,12 +224,13 @@ async def search(request: Request, payload: SearchRequest):
             devanagari=verse.get("devanagari", ""),
             sanskrit=verse.get("sanskrit", ""),
             translation=verse["translation"],
-            score=round(verse.get("cross_score", verse.get("rrf_score", 0.0)), 4),
+            score=verse.get("normalized_score", 0.0),
             ai_guidance=guidance,
         ))
 
     logger.info("search_complete", query=query, results=len(results),
-                total_ms=total_ms, degraded=degraded)
+                total_ms=total_ms, degraded=degraded,
+                confidence_filtered=confidence_filtered)
 
     return SearchResponse(
         results=results,
@@ -206,6 +242,8 @@ async def search(request: Request, payload: SearchRequest):
             total_ms=total_ms,
             response_id=response_id,
             degraded_stages=degraded,
+            confidence_filtered=confidence_filtered,
+            low_confidence=low_confidence,
         ),
     )
 
