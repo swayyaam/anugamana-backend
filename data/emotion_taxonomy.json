@@ -1,0 +1,372 @@
+{
+  "version": 2,
+  "tags_per_verse": 5,
+  "redundancy_threshold": 0.9,
+  "max_pairwise_similarity": 0.794921875,
+  "labels": [
+    {
+      "key": "anxiety",
+      "gita_term": "cintā",
+      "family": "distress",
+      "gloss": "anticipatory dread about an outcome that has not arrived yet",
+      "probe": "restless worry about how something will turn out, obsessing over consequences you cannot control, dread about a decision still ahead",
+      "terms": [
+        "anxiety",
+        "anxious",
+        "worry",
+        "worried",
+        "nervous",
+        "apprehension"
+      ]
+    },
+    {
+      "key": "fear",
+      "gita_term": "bhaya",
+      "family": "distress",
+      "gloss": "dread of a specific threat, including death and loss",
+      "probe": "fear of what is coming, terror of dying, dread of losing what you have or the people you love",
+      "terms": [
+        "fear",
+        "afraid",
+        "terror",
+        "terrified",
+        "dread",
+        "scared",
+        "frightened"
+      ]
+    },
+    {
+      "key": "insecurity",
+      "gita_term": "asthairya",
+      "family": "distress",
+      "gloss": "doubt about one's own adequacy or standing",
+      "probe": "feeling not good enough, comparing yourself with others and coming up short, fear that you will be found out",
+      "terms": [
+        "insecurity",
+        "insecure",
+        "inadequate",
+        "unworthy",
+        "comparison"
+      ]
+    },
+    {
+      "key": "grief",
+      "gita_term": "śoka",
+      "family": "distress",
+      "gloss": "sorrow at loss, especially of people",
+      "probe": "mourning someone who has died, the ache of absence, sorrow over things that cannot be undone",
+      "terms": [
+        "grief",
+        "grieving",
+        "mourning",
+        "sorrow",
+        "loss",
+        "bereavement",
+        "sad"
+      ]
+    },
+    {
+      "key": "despair",
+      "gita_term": "viṣāda",
+      "family": "distress",
+      "gloss": "collapse of the will to act; Arjuna's state in chapter one",
+      "probe": "feeling that nothing you do matters, wanting to put down your responsibilities and withdraw from everything",
+      "terms": [
+        "despair",
+        "hopeless",
+        "hopelessness",
+        "desperation",
+        "pointless",
+        "giving up",
+        "meaningless"
+      ]
+    },
+    {
+      "key": "helplessness",
+      "gita_term": "avaśatva",
+      "family": "distress",
+      "gloss": "having no agency over one's own situation",
+      "probe": "being unable to change what is happening to you, watching events you cannot influence, powerlessness over your circumstances",
+      "terms": [
+        "helpless",
+        "helplessness",
+        "powerless",
+        "stuck",
+        "no control"
+      ]
+    },
+    {
+      "key": "exhaustion",
+      "gita_term": "glāni",
+      "family": "distress",
+      "gloss": "depletion; the weariness that precedes giving up",
+      "probe": "burnout from carrying something too long, having nothing left to give, being tired in a way that sleep does not fix",
+      "terms": [
+        "exhaustion",
+        "exhausted",
+        "burnout",
+        "drained",
+        "weary",
+        "tired",
+        "depleted"
+      ]
+    },
+    {
+      "key": "loneliness",
+      "gita_term": "eka-bhāva",
+      "family": "distress",
+      "gloss": "isolation; being unaccompanied in one's situation",
+      "probe": "feeling that nobody understands what you are going through, being surrounded by people and still alone",
+      "terms": [
+        "loneliness",
+        "lonely",
+        "alone",
+        "isolated",
+        "isolation"
+      ]
+    },
+    {
+      "key": "shame",
+      "gita_term": "lajjā",
+      "family": "distress",
+      "gloss": "judgment about the kind of person one is",
+      "probe": "feeling fundamentally unworthy, wanting to hide who you are, believing something is wrong with you rather than with what you did",
+      "terms": [
+        "shame",
+        "ashamed",
+        "humiliation",
+        "worthless",
+        "disgrace"
+      ]
+    },
+    {
+      "key": "guilt",
+      "gita_term": "pāpa-bodha",
+      "family": "distress",
+      "gloss": "remorse about a specific act or failure to act",
+      "probe": "regret over something you did or failed to do, wishing you had chosen differently, the weight of having let someone down",
+      "terms": [
+        "guilt",
+        "guilty",
+        "remorse",
+        "regret",
+        "blame",
+        "fault"
+      ]
+    },
+    {
+      "key": "anger",
+      "gita_term": "krodha",
+      "family": "distress",
+      "gloss": "hostility arising from thwarted desire",
+      "probe": "anger at someone who wronged you, resentment that keeps returning, irritation you cannot put down",
+      "terms": [
+        "anger",
+        "angry",
+        "rage",
+        "resentment",
+        "irritation",
+        "furious",
+        "bitter",
+        "bitterness"
+      ]
+    },
+    {
+      "key": "frustration",
+      "gita_term": "aśānti",
+      "family": "distress",
+      "gloss": "agitation from repeated blocked effort",
+      "probe": "trying again and again and getting the same result, effort that goes nowhere, being blocked by things outside your control",
+      "terms": [
+        "frustration",
+        "frustrated",
+        "stuck",
+        "blocked",
+        "futile"
+      ]
+    },
+    {
+      "key": "restlessness",
+      "gita_term": "cañcalatva",
+      "family": "distress",
+      "gloss": "inability to settle the mind",
+      "probe": "a mind that will not be still, jumping between thoughts, unable to concentrate or sit with yourself",
+      "terms": [
+        "restlessness",
+        "restless",
+        "agitated",
+        "distracted",
+        "scattered",
+        "overthinking",
+        "racing"
+      ]
+    },
+    {
+      "key": "entrapment",
+      "gita_term": "bandha",
+      "family": "distress",
+      "gloss": "being bound by obligation or circumstance",
+      "probe": "feeling trapped in a role you cannot leave, obligations that hold you in place, a life shaped by duties you did not choose",
+      "terms": [
+        "trapped",
+        "bound",
+        "obligation",
+        "duty-bound",
+        "caged",
+        "tied"
+      ]
+    },
+    {
+      "key": "confusion",
+      "gita_term": "moha",
+      "family": "distress",
+      "gloss": "delusion; not seeing the situation as it is",
+      "probe": "not being able to tell what is actually happening, feeling lost, unable to separate what is real from what you told yourself",
+      "terms": [
+        "confusion",
+        "confused",
+        "lost",
+        "delusion",
+        "bewildered",
+        "unclear"
+      ]
+    },
+    {
+      "key": "doubt",
+      "gita_term": "saṁśaya",
+      "family": "distress",
+      "gloss": "inability to settle on what is true or right",
+      "probe": "second-guessing your path, unable to commit to a decision, wondering whether any of this is true",
+      "terms": [
+        "doubt",
+        "doubtful",
+        "uncertain",
+        "unsure",
+        "second-guessing",
+        "questioning"
+      ]
+    },
+    {
+      "key": "craving",
+      "gita_term": "kāma",
+      "family": "desire",
+      "gloss": "attachment to obtaining a particular outcome",
+      "probe": "wanting something badly, craving recognition or possession or success, unable to let go of an outcome you have fixed on",
+      "terms": [
+        "craving",
+        "desire",
+        "wanting",
+        "attachment",
+        "greed",
+        "hunger",
+        "ambition"
+      ]
+    },
+    {
+      "key": "longing",
+      "gita_term": "utkaṇṭhā",
+      "family": "desire",
+      "gloss": "yearning toward something absent or higher",
+      "probe": "missing something you cannot name, yearning for meaning or for God, homesickness for a place you have not been",
+      "terms": [
+        "longing",
+        "yearning",
+        "missing",
+        "ache",
+        "seeking meaning"
+      ]
+    },
+    {
+      "key": "envy",
+      "gita_term": "mātsarya",
+      "family": "desire",
+      "gloss": "resentment at another's good fortune",
+      "probe": "watching someone else get what you wanted, comparing your life against theirs, bitterness at another's success",
+      "terms": [
+        "envy",
+        "envious",
+        "jealous",
+        "jealousy",
+        "begrudge"
+      ]
+    },
+    {
+      "key": "pride",
+      "gita_term": "mada",
+      "family": "desire",
+      "gloss": "inflated self-regard; identification with one's own status",
+      "probe": "needing to be seen as the one who did it, taking things personally because your standing is at stake, superiority",
+      "terms": [
+        "pride",
+        "ego",
+        "arrogance",
+        "superiority",
+        "self-importance",
+        "recognition"
+      ]
+    },
+    {
+      "key": "equanimity",
+      "gita_term": "samatva",
+      "family": "settled",
+      "gloss": "the steady state the text points toward",
+      "probe": "steadiness that does not depend on outcomes, acceptance, the relief of having finally let something go, peace",
+      "terms": [
+        "equanimity",
+        "peace",
+        "peaceful",
+        "calm",
+        "acceptance",
+        "relief",
+        "steady",
+        "satisfaction",
+        "contentment"
+      ]
+    },
+    {
+      "key": "devotion",
+      "gita_term": "bhakti",
+      "family": "settled",
+      "gloss": "love and surrender directed toward the divine",
+      "probe": "loving devotion, giving yourself over to something greater, trust that does not require you to understand everything",
+      "terms": [
+        "devotion",
+        "love",
+        "surrender",
+        "faith",
+        "trust",
+        "worship"
+      ]
+    },
+    {
+      "key": "resolve",
+      "gita_term": "dhṛti",
+      "family": "settled",
+      "gloss": "determination to act despite difficulty",
+      "probe": "steadiness of purpose, the decision to keep going, commitment that survives discouragement",
+      "terms": [
+        "resolve",
+        "determination",
+        "commitment",
+        "perseverance",
+        "discipline",
+        "confidence"
+      ]
+    },
+    {
+      "key": "seeking",
+      "gita_term": "jijñāsā",
+      "family": "inquiry",
+      "gloss": "intellectual longing rather than distress",
+      "probe": "wanting to understand how things actually are, philosophical curiosity, asking what the self or the world really is",
+      "terms": [
+        "curiosity",
+        "understanding",
+        "knowledge",
+        "inquiry",
+        "wondering",
+        "philosophical"
+      ]
+    }
+  ]
+}
