@@ -134,8 +134,37 @@ def stub_llms(monkeypatch):
     monkeypatch.setattr(judge, "_client", client_for("judge"))
     monkeypatch.setattr(emotion, "_claude", client_for("emotion"))
 
-    # Sarvam: no key in CI, and no test may reach the network.
+    # Sarvam: no test may reach the network, whether or not a key happens to be
+    # configured on the machine running the suite. Without this, the emotion
+    # classifier silently made live calls as soon as SARVAM_API_KEY was set.
     from app.services import sarvam
+    from app.services.sarvam.client import SarvamUnavailable
+
+    monkeypatch.setattr(emotion, "SARVAM_ENABLED", False)
+
+    class OfflineSarvam:
+        available = False
+
+        async def post(self, path, payload):
+            raise SarvamUnavailable("SARVAM_API_KEY is not set")
+
+        async def aclose(self):
+            return None
+
+    # Patch the module objects, not dotted strings: the sarvam package
+    # re-exports `client`, so "app.services.sarvam.client.client" resolves to
+    # the client instance rather than the module.
+    import sys as _sys
+
+    sarvam_client_module = _sys.modules["app.services.sarvam.client"]
+    sarvam_text_module = _sys.modules["app.services.sarvam.text"]
+    sarvam_tts_module = _sys.modules["app.services.sarvam.tts"]
+
+    offline = OfflineSarvam()
+    monkeypatch.setattr(emotion, "sarvam_client", offline)
+    monkeypatch.setattr(sarvam_client_module, "client", offline)
+    monkeypatch.setattr(sarvam_text_module, "client", offline)
+    monkeypatch.setattr(sarvam_tts_module, "client", offline)
 
     async def fake_identify(text):
         return controls["language"]

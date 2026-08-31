@@ -10,11 +10,15 @@ Everything here is optional. With no SARVAM_API_KEY configured every entry point
 degrades to a defined fallback and the English pipeline is unaffected.
 """
 
+# NB: the singleton in client.py is deliberately NOT re-exported here. Naming it
+# `client` at package level shadows the `client` submodule, so
+# `import app.services.sarvam.client` would bind the instance rather than the
+# module — which breaks any attempt to patch or reload it. Import it explicitly:
+#     from app.services.sarvam.client import client
 from app.services.sarvam.client import (
     SarvamClient,
     SarvamError,
     SarvamUnavailable,
-    client,
 )
 from app.services.sarvam.text import (
     detect_script,
@@ -30,7 +34,6 @@ __all__ = [
     "SarvamClient",
     "SarvamError",
     "SarvamUnavailable",
-    "client",
     "detect_script",
     "identify_language",
     "looks_romanised_indic",

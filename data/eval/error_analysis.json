@@ -1,0 +1,153 @@
+{
+  "condition": "C10",
+  "metric": "ndcg@10",
+  "taxonomy": {
+    "acceptable": 69,
+    "ranked_away": 284,
+    "never_retrieved": 35,
+    "total": 388
+  },
+  "by_register": {
+    "first_person_distress": {
+      "n": 78,
+      "mean": 0.3675048405758523
+    },
+    "terse": {
+      "n": 77,
+      "mean": 0.28770013182004606
+    },
+    "rambling": {
+      "n": 78,
+      "mean": 0.3758125429039837
+    },
+    "third_person": {
+      "n": 77,
+      "mean": 0.2219470034003709
+    },
+    "abstract": {
+      "n": 78,
+      "mean": 0.36032176913720315
+    }
+  },
+  "concentration": {
+    "C0": {
+      "top5_share": 0.15424164524421594,
+      "distinct_top1": 169
+    },
+    "C1": {
+      "top5_share": 0.11053984575835475,
+      "distinct_top1": 197
+    },
+    "C10": {
+      "top5_share": 0.2853470437017995,
+      "distinct_top1": 92
+    },
+    "C12": {
+      "top5_share": 0.27249357326478146,
+      "distinct_top1": 86
+    },
+    "C2": {
+      "top5_share": 0.4138817480719794,
+      "distinct_top1": 76
+    },
+    "C3": {
+      "top5_share": 0.41645244215938304,
+      "distinct_top1": 77
+    },
+    "C3b": {
+      "top5_share": 0.13110539845758354,
+      "distinct_top1": 190
+    },
+    "C5": {
+      "top5_share": 0.21079691516709512,
+      "distinct_top1": 168
+    },
+    "C5b": {
+      "top5_share": 0.21079691516709512,
+      "distinct_top1": 168
+    },
+    "C6": {
+      "top5_share": 0.2365038560411311,
+      "distinct_top1": 139
+    },
+    "C7": {
+      "top5_share": 0.17480719794344474,
+      "distinct_top1": 174
+    },
+    "C8": {
+      "top5_share": 0.16452442159383032,
+      "distinct_top1": 171
+    },
+    "C9": {
+      "top5_share": 0.2982005141388175,
+      "distinct_top1": 92
+    },
+    "P0": {
+      "top5_share": 0.7275064267352185,
+      "distinct_top1": 41
+    }
+  },
+  "worst_queries": [
+    {
+      "query_id": "q0003",
+      "query": "how to handle parent care costs",
+      "score": 0.0,
+      "register": "terse",
+      "returned": [
+        "1.17",
+        "1.18",
+        "12.7"
+      ],
+      "relevant": [
+        "17.14",
+        "17.20"
+      ]
+    },
+    {
+      "query_id": "q0159",
+      "query": "my sister keeps saying her husband is supportive but he never does anything around the house and criticizes her constantly, how do i help her see what's really happening?",
+      "score": 0.0,
+      "register": "third_person",
+      "returned": [
+        "16.2",
+        "16.3",
+        "1.17"
+      ],
+      "relevant": [
+        "2.63",
+        "3.37"
+      ]
+    },
+    {
+      "query_id": "q0204",
+      "query": "My dad seems really angry lately because his church community rejected some of his ideas, what should I do?",
+      "score": 0.0,
+      "register": "third_person",
+      "returned": [
+        "1.33",
+        "16.3",
+        "16.2"
+      ],
+      "relevant": [
+        "2.63",
+        "12.13"
+      ]
+    }
+  ],
+  "unique_wins": {
+    "C0": 83,
+    "C1": 71,
+    "C10": 25,
+    "C12": 40,
+    "C2": 26,
+    "C3": 6,
+    "C3b": 88,
+    "C5": 93,
+    "C5b": 0,
+    "C6": 56,
+    "C7": 126,
+    "C8": 86,
+    "C9": 29,
+    "P0": 329
+  }
+}

@@ -17,6 +17,7 @@ rather than a convenience feature — condition C11 in the ablation grid.
 
 from __future__ import annotations
 
+import asyncio
 import re
 
 import structlog
@@ -96,6 +97,28 @@ async def identify_language(text: str) -> tuple[str, str]:
     return PIVOT_LANGUAGE, "default"
 
 
+#: Mayura rejects input beyond this. Generated guidance routinely exceeds it,
+#: and the failure is silent from the user's side — they simply receive English.
+MAX_TRANSLATE_CHARS = 900
+
+
+def _split_for_translation(text: str, limit: int = MAX_TRANSLATE_CHARS) -> list[str]:
+    """Split on sentence boundaries so no clause is translated out of context."""
+    if len(text) <= limit:
+        return [text]
+    parts, current = [], ""
+    for sentence in re.split(r"(?<=[.!?])\s+", text):
+        candidate = f"{current} {sentence}".strip() if current else sentence
+        if len(candidate) > limit and current:
+            parts.append(current)
+            current = sentence
+        else:
+            current = candidate
+    if current:
+        parts.append(current)
+    return parts
+
+
 async def translate(
     text: str,
     source: str,
@@ -109,6 +132,13 @@ async def translate(
     """
     if not text.strip() or source == target:
         return text
+
+    if len(text) > MAX_TRANSLATE_CHARS:
+        pieces = await asyncio.gather(*(
+            translate(piece, source, target, mode=mode)
+            for piece in _split_for_translation(text)
+        ))
+        return " ".join(pieces)
 
     try:
         response = await client.post(

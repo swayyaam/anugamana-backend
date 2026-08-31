@@ -42,6 +42,7 @@ from app.config import (
     ANTHROPIC_API_KEY,
     LLM_MODEL,
     SARVAM_CHAT_MODEL,
+    SARVAM_CHAT_PATH,
     SARVAM_ENABLED,
 )
 from app.services.sarvam.client import SarvamError, SarvamUnavailable
@@ -234,18 +235,21 @@ def _build(payload: dict, backend: str) -> EmotionResult:
 
 async def _classify_sarvam(query: str) -> EmotionResult:
     response = await sarvam_client.post(
-        "/chat/completions",
+        SARVAM_CHAT_PATH,
         {
             "model": SARVAM_CHAT_MODEL,
             "messages": [
                 {"role": "system", "content": _SYSTEM},
                 {"role": "user", "content": query},
             ],
-            "temperature": 0.0,
-            "max_tokens": 120,
+            # Generous budget: the sarvam-105b variants are reasoning models and
+            # will spend the whole allowance thinking, returning content=None,
+            # if the ceiling is low.
+            "max_tokens": 1000,
         },
     )
-    content = response["choices"][0]["message"]["content"]
+    message = response["choices"][0]["message"]
+    content = message.get("content") or message.get("reasoning_content") or ""
     return _build(_parse(content), "sarvam")
 
 

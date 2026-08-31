@@ -181,9 +181,19 @@ async def run(query: str, config: PipelineConfig = SERVED) -> PipelineResult:
     # --- 4. routing --------------------------------------------------------
     route_meta: dict = {}
     if config.use_routing:
-        # Route on the original: a verse reference survives any script, and a
-        # Devanagari query must be recognised before translation erases it.
-        result.route, route_meta = routing.classify_query(query)
+        # Route on the *working* query, i.e. after any pivot translation.
+        # Routing on the original made every Hindi query take the "sanskrit"
+        # fast path simply because it contained Devanagari — skipping HyDE and
+        # the emotion arm for exactly the users Indic support exists to serve.
+        # The sanskrit path is for Sanskrit verse text, not for any Indic script.
+        result.route, route_meta = routing.classify_query(working_query)
+
+        # A citation in the original still counts: translation can mangle
+        # "verse 2.47" into prose, so fall back to the untranslated form.
+        if result.route != "direct_lookup" and working_query != query:
+            original_route, original_meta = routing.classify_query(query)
+            if original_route == "direct_lookup":
+                result.route, route_meta = original_route, original_meta
 
     # --- 4. direct lookup fast path ---------------------------------------
     if result.route == "direct_lookup":

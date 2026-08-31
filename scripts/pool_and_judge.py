@@ -138,13 +138,19 @@ async def judge_pool(
     message = f"Query: {query}\n\nCandidate verses:\n\n{listing}"
 
     try:
-        response = await client.messages.create(
-            model=model,
-            max_tokens=2000,
-            temperature=0.0,
-            system=JUDGE_SYSTEM,
-            messages=[{"role": "user", "content": message}],
-        )
+        request = {
+            "model": model,
+            "max_tokens": 2000,
+            "system": JUDGE_SYSTEM,
+            "messages": [{"role": "user", "content": message}],
+        }
+        # Newer models reject `temperature` outright. Sending it unconditionally
+        # made every claude-sonnet-5 call fail with HTTP 400, so the third
+        # annotator silently contributed nothing to a completed run — the exact
+        # class of quiet failure that corrupts a result without failing loudly.
+        if not model.endswith("-5"):
+            request["temperature"] = 0.0
+        response = await client.messages.create(**request)
         # Some models emit a thinking block before the answer, so take the
         # first block that actually carries text rather than assuming index 0.
         text = next(
@@ -191,13 +197,27 @@ async def main() -> int:
     print(f"  total judgments: {sum(sizes) * len(ANNOTATORS)} "
           f"({len(ANNOTATORS)} annotators)")
 
-    judgments: dict[str, dict[str, int]] = {name: {} for name, _ in ANNOTATORS}
+    # Per-annotator caches: judging is the most expensive stage, and a failed
+    # annotator must be repairable without paying for the others again.
+    cache_dir = BENCHMARK_DIR / "judgments"
+    cache_dir.mkdir(parents=True, exist_ok=True)
+    judgments: dict[str, dict[str, int]] = {}
+    for name, _ in ANNOTATORS:
+        path = cache_dir / f"{name}.json"
+        judgments[name] = (
+            json.loads(path.read_text(encoding="utf-8")) if path.exists() else {}
+        )
+        if judgments[name]:
+            print(f"  {name}: {len(judgments[name])} cached judgments reused")
     semaphore = asyncio.Semaphore(args.concurrency)
     done = 0
     total = len(pools) * len(ANNOTATORS)
 
     async def one(name: str, model: str, query_id: str, seed: int) -> None:
         nonlocal done
+        if all(f"{query_id}|{vid}" in judgments[name] for vid in pools[query_id]):
+            done += 1
+            return
         async with semaphore:
             graded = await judge_pool(
                 model, query_text[query_id], pools[query_id], verses, seed
@@ -215,6 +235,17 @@ async def main() -> int:
     ]
     await asyncio.gather(*tasks)
     print()
+
+    for name, _ in ANNOTATORS:
+        (cache_dir / f"{name}.json").write_text(
+            json.dumps(judgments[name], indent=2), encoding="utf-8"
+        )
+
+    empty = [name for name, _ in ANNOTATORS if not judgments[name]]
+    if empty:
+        print(f"\n  WARNING: annotators produced no judgments at all: {empty}")
+        print("  Agreement below is computed WITHOUT them.")
+    judgments = {k: v for k, v in judgments.items() if v}
 
     report = analyse(judgments)
     print("\n" + report.format())

@@ -28,6 +28,7 @@ sys.path.insert(0, str(Path(__file__).parent.parent))
 
 from app.config import (  # noqa: E402
     SARVAM_CHAT_MODEL,
+    SARVAM_CHAT_PATH,
     SARVAM_ENABLED,
     SARVAM_TRANSLATE_MODEL,
     SARVAM_TTS_MODEL,
@@ -120,12 +121,11 @@ async def main(skip_tts: bool) -> int:
     ))
 
     results.append(await check(
-        "chat completions (emotion backend)", "/chat/completions",
+        "chat completions (emotion backend)", SARVAM_CHAT_PATH,
         {
             "model": SARVAM_CHAT_MODEL,
             "messages": [{"role": "user", "content": "Reply with the word: ok"}],
-            "max_tokens": 10,
-            "temperature": 0.0,
+            "max_tokens": 500,
         },
         ("choices",),
     ))

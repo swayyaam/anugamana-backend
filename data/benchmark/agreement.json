@@ -1,21 +1,22 @@
 {
-  "krippendorff_alpha_ordinal": 0.751018445023479,
+  "krippendorff_alpha_ordinal": 0.7236863946062273,
   "interpretation": "tentative conclusions only",
-  "n_units": 419,
+  "n_units": 25544,
   "annotators": [
     "haiku",
-    "sonnet"
+    "sonnet45",
+    "sonnet5"
   ],
   "pairwise_weighted_kappa": {
-    "haiku vs sonnet": 0.7290110019415191
+    "haiku vs sonnet45": 0.7346889250661062
   },
   "grade_distribution": {
-    "0": 522,
-    "1": 164,
-    "2": 106,
-    "3": 19
+    "0": 30152,
+    "1": 11017,
+    "2": 6428,
+    "3": 1672
   },
-  "hard_disagreements": 15,
-  "queries_with_no_relevant_verse": 0,
+  "hard_disagreements": 718,
+  "queries_with_no_relevant_verse": 1,
   "standard": "SILVER \u2014 model-generated judgments. A human-judged subset is required before publication. See DATASET_CARD.md."
 }

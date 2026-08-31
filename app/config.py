@@ -77,9 +77,11 @@ SARVAM_AUTH_HEADER = "api-subscription-key"
 SARVAM_TIMEOUT_S = float(os.getenv("SARVAM_TIMEOUT_S", "20"))
 
 SARVAM_TRANSLATE_MODEL = os.getenv("SARVAM_TRANSLATE_MODEL", "mayura:v1")
-SARVAM_TTS_MODEL = os.getenv("SARVAM_TTS_MODEL", "bulbul:v2")
-SARVAM_TTS_SPEAKER = os.getenv("SARVAM_TTS_SPEAKER", "meera")
-SARVAM_CHAT_MODEL = os.getenv("SARVAM_CHAT_MODEL", "sarvam-m")
+SARVAM_TTS_MODEL = os.getenv("SARVAM_TTS_MODEL", "bulbul:v3")
+SARVAM_TTS_SPEAKER = os.getenv("SARVAM_TTS_SPEAKER", "ritu")
+SARVAM_CHAT_MODEL = os.getenv("SARVAM_CHAT_MODEL", "sarvam-105b-conversations")
+#: Chat lives under /v1; the other endpoints do not. Verified 2026-08-31.
+SARVAM_CHAT_PATH = "/v1/chat/completions"
 
 #: BCP-47 codes Sarvam accepts. English is the pivot language: the corpus,
 #: the enrichment and the purports are all English, so retrieval happens there.
