@@ -173,7 +173,14 @@ async def run(query: str, config: PipelineConfig = SERVED) -> PipelineResult:
     # fusing both.
     working_query = query
     t0 = time.perf_counter()
-    result.language, result.language_method = await sarvam.identify_language(query)
+    if config.multilingual_strategy == "direct":
+        # No pivot is possible under this strategy, so the language is not
+        # needed and the detection call would be pure cost. Ablation conditions
+        # use "direct", which is why the grid was making one Sarvam request per
+        # query for no purpose.
+        result.language, result.language_method = PIVOT_LANGUAGE, "skipped"
+    else:
+        result.language, result.language_method = await sarvam.identify_language(query)
 
     needs_pivot = (
         result.language != PIVOT_LANGUAGE

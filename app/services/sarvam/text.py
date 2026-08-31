@@ -65,6 +65,24 @@ def detect_script(text: str) -> str | None:
     return None
 
 
+#: Very common English function words. Their presence in pure-ASCII text is
+#: strong evidence the query is English, which lets us skip the /text-lid call
+#: entirely — that call was being made for every English query, burning quota
+#: and hitting rate limits during evaluation runs for no information gain.
+_ENGLISH_MARKERS = frozenset("""
+the and for you your that with this have from what when they are was but not
+how why can cant dont doesnt keep feel feeling about like just get got know
+i'm i've don't can't it's my me is it to of in on at do
+""".split())
+
+
+def looks_like_english(text: str) -> bool:
+    if not text.isascii():
+        return False
+    words = set(re.findall(r"[a-z']+", text.lower()))
+    return len(words & _ENGLISH_MARKERS) >= 2
+
+
 def looks_romanised_indic(text: str) -> bool:
     """True when a Latin-script query contains recognisable Sanskrit vocabulary."""
     words = set(re.findall(r"[a-z]+", text.lower()))
@@ -81,6 +99,11 @@ async def identify_language(text: str) -> tuple[str, str]:
     script_lang = detect_script(text)
     if script_lang:
         return script_lang, "script"
+
+    # Obvious English needs no API call. Romanised Indic still reaches Sarvam,
+    # because that is the case offline detection genuinely cannot settle.
+    if looks_like_english(text) and not looks_romanised_indic(text):
+        return PIVOT_LANGUAGE, "heuristic"
 
     try:
         response = await client.post("/text-lid", {"input": text})

@@ -32,7 +32,12 @@ sys.path.insert(0, str(Path(__file__).parent.parent))
 from app.config import DATA_DIR, SARVAM_ENABLED  # noqa: E402
 from app.services.pipeline import run as run_pipeline  # noqa: E402
 from app.services.retrieval import RAW_CHROMA_DIR  # noqa: E402
-from eval.conditions import GRID, MULTILINGUAL_GRID, Condition  # noqa: E402
+from eval.conditions import (  # noqa: E402
+    GENERALISATION_GRID,
+    GRID,
+    MULTILINGUAL_GRID,
+    Condition,
+)
 from eval.lexical import BM25Retriever, load_corpus, parametric_retrieve_many  # noqa: E402
 
 BENCHMARK_FILE = DATA_DIR / "benchmark" / "queries.json"
@@ -47,8 +52,11 @@ GREEN, RED, YELLOW, DIM, RESET = (
 def availability() -> dict[str, bool]:
     """What the machine can actually run right now."""
     from app.config import ANTHROPIC_API_KEY, CHROMA_DIR, ENRICHED_FILE
+    from app.services.retrieval import MEDITATIONS_DIR
 
     return {
+        "meditations_corpus": (MEDITATIONS_DIR / "enriched.json").exists(),
+        "meditations_index": (MEDITATIONS_DIR / "chroma").exists(),
         "corpus": ENRICHED_FILE.exists(),
         "enriched_index": CHROMA_DIR.exists(),
         "raw_index": RAW_CHROMA_DIR.exists(),
@@ -115,6 +123,16 @@ async def run_parametric_condition(queries: list[dict]) -> dict[str, list[str]]:
 async def execute(condition: Condition, queries: list[dict]) -> dict[str, list[str]]:
     if condition.kind == "bm25":
         return run_bm25_condition(condition, queries)
+    if condition.kind == "bm25_meditations":
+        from app.services.retrieval import MEDITATIONS_DIR
+
+        retriever = BM25Retriever(
+            load_corpus(MEDITATIONS_DIR / "enriched.json"), include_purport=False
+        )
+        return {
+            item["query_id"]: retriever.retrieve(item["query"], DEPTH)
+            for item in queries
+        }
     if condition.kind == "parametric":
         return await run_parametric_condition(queries)
     return await run_pipeline_condition(condition, queries)
@@ -131,6 +149,8 @@ async def main() -> int:
     parser.add_argument("--force", action="store_true", help="ignore cached runs")
     parser.add_argument("--list", action="store_true")
     parser.add_argument("--include-multilingual", action="store_true")
+    parser.add_argument("--include-generalisation", action="store_true",
+                        help="run the Meditations replication conditions")
     parser.add_argument("--benchmark", help="alternate benchmark file "
                         "(e.g. the translated Indic query set)")
     parser.add_argument("--suffix", default="", help="suffix for cached run files, "
@@ -142,7 +162,11 @@ async def main() -> int:
         BENCHMARK_FILE = Path(args.benchmark)
 
     have = availability()
-    grid = GRID + (MULTILINGUAL_GRID if args.include_multilingual else [])
+    grid = (
+        GRID
+        + (MULTILINGUAL_GRID if args.include_multilingual else [])
+        + (GENERALISATION_GRID if args.include_generalisation else [])
+    )
 
     if args.list:
         print(f"\n{'key':<6} {'runnable':<10} {'requires':<16} isolates")

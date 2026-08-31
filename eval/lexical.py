@@ -58,13 +58,13 @@ class BM25Retriever:
         return [self.verse_ids[i] for i in ranked]
 
 
-def load_corpus() -> list[dict]:
+def load_corpus(path=None) -> list[dict]:
     """
     Raw corpus fields only. `text_for_embedding` and `meaning_fields` are
     deliberately not read here — a baseline that touches the enrichment is not
     a baseline.
     """
-    verses = json.loads(ENRICHED_FILE.read_text(encoding="utf-8"))
+    verses = json.loads((path or ENRICHED_FILE).read_text(encoding="utf-8"))
     return [
         {
             "verse_id": v["verse_id"],

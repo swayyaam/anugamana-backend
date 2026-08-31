@@ -80,6 +80,26 @@ RAW_INDEX = IndexSpec(
 )
 
 
+#: Second corpus — Marcus Aurelius, Meditations. Public domain, a different
+#: tradition and source language, and built with the identical enriched/raw pair
+#: so the C2-vs-C5 contrast can be replicated rather than merely asserted.
+MEDITATIONS_DIR = DATA_DIR / "corpora" / "meditations"
+MEDITATIONS_INDEX = IndexSpec(
+    name="meditations",
+    chroma_dir=MEDITATIONS_DIR / "chroma",
+    verses_collection="meditations_enriched",
+    purport_collection="meditations_enriched",   # no separate commentary layer
+    sparse_file=MEDITATIONS_DIR / "sparse_index.pkl",
+)
+MEDITATIONS_RAW_INDEX = IndexSpec(
+    name="meditations_raw",
+    chroma_dir=MEDITATIONS_DIR / "chroma_raw",
+    verses_collection="meditations_raw",
+    purport_collection="meditations_raw",
+    sparse_file=MEDITATIONS_DIR / "sparse_index_raw.pkl",
+)
+
+
 @dataclass(frozen=True)
 class RetrievalConfig:
     """Which retrieval arms are active. One ablation condition = one instance."""

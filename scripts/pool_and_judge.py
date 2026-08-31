@@ -96,16 +96,19 @@ Respond with valid JSON only, mapping every verse id you were given to its grade
 _JSON_RE = re.compile(r"\{.*\}", re.DOTALL)
 
 
-def load_verses() -> dict[str, dict]:
-    verses = json.loads(ENRICHED_FILE.read_text(encoding="utf-8"))
+def load_verses(path=None) -> dict[str, dict]:
+    verses = json.loads((path or ENRICHED_FILE).read_text(encoding="utf-8"))
     return {v["verse_id"]: v for v in verses}
 
 
-def load_runs() -> dict[str, dict[str, list[str]]]:
+def load_runs(only: set[str] | None = None) -> dict[str, dict[str, list[str]]]:
     runs = {}
     for path in sorted(RUNS_DIR.glob("*.json")):
         payload = json.loads(path.read_text(encoding="utf-8"))
-        runs[payload["condition"]] = payload["results"]
+        key = payload["condition"]
+        if only and key not in only:
+            continue
+        runs[key] = payload["results"]
     return runs
 
 
@@ -175,21 +178,35 @@ async def main() -> int:
     parser.add_argument("--pool-depth", type=int, default=10)
     parser.add_argument("--limit", type=int)
     parser.add_argument("--concurrency", type=int, default=6)
+    parser.add_argument("--corpus", help="corpus JSON (default: the Gita)")
+    parser.add_argument("--conditions", help="only pool these run keys")
+    parser.add_argument("--tag", default="", help="suffix for qrels/agreement/"
+                        "judgment-cache filenames, so a second corpus does not "
+                        "overwrite the first")
     args = parser.parse_args()
+
+    corpus_path = Path(args.corpus) if args.corpus else ENRICHED_FILE
+    tag = args.tag
+    qrels_file = BENCHMARK_DIR / f"qrels{tag}.json"
+    agreement_file = BENCHMARK_DIR / f"agreement{tag}.json"
 
     queries = json.loads((BENCHMARK_DIR / "queries.json").read_text(encoding="utf-8"))
     if args.limit:
         queries = queries[: args.limit]
     query_text = {q["query_id"]: q["query"] for q in queries}
 
-    runs = load_runs()
+    runs = load_runs(set(args.conditions.split(',')) if args.conditions else None)
     if not runs:
         print(f"No cached runs in {RUNS_DIR}. Run: python -m eval.run")
         return 2
 
-    verses = load_verses()
+    verses = load_verses(corpus_path)
     pools = build_pools(runs, args.pool_depth)
-    pools = {qid: pool for qid, pool in pools.items() if qid in query_text}
+    pools = {
+        qid: [v for v in pool if v in verses]
+        for qid, pool in pools.items() if qid in query_text
+    }
+    pools = {qid: pool for qid, pool in pools.items() if pool}
 
     sizes = sorted(len(p) for p in pools.values())
     print(f"Pooled {len(runs)} conditions over {len(pools)} queries")
@@ -199,7 +216,7 @@ async def main() -> int:
 
     # Per-annotator caches: judging is the most expensive stage, and a failed
     # annotator must be repairable without paying for the others again.
-    cache_dir = BENCHMARK_DIR / "judgments"
+    cache_dir = BENCHMARK_DIR / f"judgments{tag}"
     cache_dir.mkdir(parents=True, exist_ok=True)
     judgments: dict[str, dict[str, int]] = {}
     for name, _ in ANNOTATORS:
@@ -274,8 +291,8 @@ async def main() -> int:
     no_relevant = sum(1 for c in relevant_counts if c == 0)
 
     BENCHMARK_DIR.mkdir(parents=True, exist_ok=True)
-    QRELS_FILE.write_text(json.dumps(qrels, indent=2), encoding="utf-8")
-    AGREEMENT_FILE.write_text(json.dumps({
+    qrels_file.write_text(json.dumps(qrels, indent=2), encoding="utf-8")
+    agreement_file.write_text(json.dumps({
         "krippendorff_alpha_ordinal": report.krippendorff_alpha,
         "interpretation": report.interpretation,
         "n_units": report.n_units,
@@ -292,8 +309,8 @@ async def main() -> int:
     print(f"  mean relevant per query: "
           f"{sum(relevant_counts) / max(1, len(relevant_counts)):.2f}")
     print(f"  hard disagreements (>=2 grades apart): {disagreements}")
-    print(f"\n  qrels     -> {QRELS_FILE}")
-    print(f"  agreement -> {AGREEMENT_FILE}")
+    print(f"\n  qrels     -> {qrels_file}")
+    print(f"  agreement -> {agreement_file}")
     return 0
 
 

@@ -29,6 +29,8 @@ from dataclasses import dataclass, replace
 from app.services.pipeline import PipelineConfig
 from app.services.retrieval import (
     ENRICHED_INDEX,
+    MEDITATIONS_INDEX,
+    MEDITATIONS_RAW_INDEX,
     RAW_INDEX,
     RetrievalConfig,
 )
@@ -208,7 +210,36 @@ MULTILINGUAL_GRID: list[Condition] = [
               multilingual_strategy="both", requires="sarvam"),
 ]
 
-BY_KEY = {c.key: c for c in GRID + MULTILINGUAL_GRID}
+#: Replication on a second corpus. A result on one corpus is a case study; the
+#: same result on Meditations — different tradition, different source language,
+#: public domain — is a method. M2 vs M5 is the identical single-factor contrast
+#: as C2 vs C5, so the two are directly comparable.
+MEDITATIONS_RAW = RetrievalConfig(
+    index=MEDITATIONS_RAW_INDEX, dense=True, sparse=False,
+    doc_types=("translation",), use_purport=False,
+)
+MEDITATIONS_ENRICHED = RetrievalConfig(
+    index=MEDITATIONS_INDEX, dense=True, sparse=False,
+    doc_types=("meaning",), use_purport=False,
+)
+
+GENERALISATION_GRID: list[Condition] = [
+    Condition(
+        key="M0",
+        label="BM25 over raw Meditations passages",
+        isolates="lexical floor on the second corpus",
+        kind="bm25_meditations",
+        requires="meditations_corpus",
+    ),
+    _pipeline("M2", "Dense over raw Meditations passages",
+              "semantic floor without enrichment (second corpus)",
+              MEDITATIONS_RAW, requires="meditations_index"),
+    _pipeline("M5", "Dense over enriched Meditations passages",
+              "THE ENRICHMENT, REPLICATED (vs M2)",
+              MEDITATIONS_ENRICHED, requires="meditations_index"),
+]
+
+BY_KEY = {c.key: c for c in GRID + MULTILINGUAL_GRID + GENERALISATION_GRID}
 
 #: The comparison each contrast is meant to license, stated before the numbers
 #: exist so the analysis cannot be reverse-engineered from whatever came out.
@@ -223,4 +254,6 @@ PLANNED_CONTRASTS = [
     ("C10", "C12", "Does an explicit emotion arm beat semantic similarity alone?"),
     ("C10", "C13", "Does dropping the out-of-domain reranker improve the served system?"),
     ("L2", "L1", "Is translate-then-retrieve better than direct multilingual?"),
+    ("M2", "M5", "Does the enrichment effect replicate on a second corpus?"),
+    ("M0", "M5", "Does enrichment beat lexical search on the second corpus?"),
 ]
