@@ -88,11 +88,15 @@ def stub_llms(monkeypatch):
     Returns a dict of controls so a test can change one verdict without
     rebuilding the whole stack.
     """
-    from app.services import guardrail, hyde, judge, rag, safety
+    from app.services import emotion, guardrail, hyde, judge, rag, safety
 
     controls = {
         "safety_verdict": "safe",
         "guardrail_verdict": "relevant",
+        "emotion_json": '{"primary": "despair", "secondary": ["exhaustion"], '
+                        '"intensity": 4}',
+        "language": ("en-IN", "default"),
+        "translation": None,   # None => identity
         "hyde_text": "The conditioned soul must perform prescribed duty without "
                      "attachment to results, for such action purifies the heart.",
         "expansions": "how do I stop caring about outcomes\nwhy do results torment me\n"
@@ -113,6 +117,8 @@ def stub_llms(monkeypatch):
                 return _text_response(controls["judge_json"])
             if kind == "rag":
                 return _text_response(controls["guidance"])
+            if kind == "emotion":
+                return _text_response(controls["emotion_json"])
             system = kwargs.get("system", "")
             if "alternative phrasings" in system:
                 return _text_response(controls["expansions"])
@@ -126,6 +132,23 @@ def stub_llms(monkeypatch):
     monkeypatch.setattr(hyde, "_client", client_for("hyde"))
     monkeypatch.setattr(rag, "_client", client_for("rag"))
     monkeypatch.setattr(judge, "_client", client_for("judge"))
+    monkeypatch.setattr(emotion, "_claude", client_for("emotion"))
+
+    # Sarvam: no key in CI, and no test may reach the network.
+    from app.services import sarvam
+
+    async def fake_identify(text):
+        return controls["language"]
+
+    async def fake_translate(text, source, target, **kwargs):
+        return controls["translation"] or text
+
+    async def fake_to_devanagari(text):
+        return text
+
+    monkeypatch.setattr(sarvam, "identify_language", fake_identify)
+    monkeypatch.setattr(sarvam, "translate", fake_translate)
+    monkeypatch.setattr(sarvam, "to_devanagari", fake_to_devanagari)
 
     # Never touch the on-disk HyDE cache from a test run.
     monkeypatch.setattr(hyde, "_cache_read", lambda key: None)

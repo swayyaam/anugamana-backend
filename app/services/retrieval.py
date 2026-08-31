@@ -246,9 +246,17 @@ def retrieve(
     hyde_text: str,
     all_queries: list[str],
     config: RetrievalConfig = DEFAULT_CONFIG,
+    extra_probes: list[str] | None = None,
 ) -> list[dict]:
     """
     Hybrid retrieval over one index.
+
+    `extra_probes` are additional texts embedded and searched as further ranked
+    lists before RRF fusion. The emotion arm (app/services/emotion.py) supplies
+    one; a transliterated Devanagari form of a romanised query supplies another.
+    Adding an arm here rather than post-hoc reweighting keeps every signal on the
+    same rank-fusion footing, so a condition that switches one on differs from
+    its baseline by exactly one ranked list.
 
     Returns up to `config.top_verses` verse dicts carrying verse metadata,
     `rrf_score`, and — when a purport chunk was the source of evidence —
@@ -256,7 +264,8 @@ def retrieve(
     """
     verses_col, purport_col = _load_collections(config.index)
 
-    texts_to_embed = [hyde_text] + list(all_queries)
+    probes = [p for p in (extra_probes or []) if p and p.strip()]
+    texts_to_embed = [hyde_text] + list(all_queries) + probes
     dense_vecs, sparse_weights = _embed(texts_to_embed)
 
     ranked_lists: list[list[str]] = []
