@@ -21,6 +21,7 @@ to RRF ordering and report `score_type="rrf"` so downstream code knows the value
 is ordinal, not calibrated, and must not be thresholded.
 """
 
+import threading
 from functools import lru_cache
 
 import numpy as np
@@ -32,9 +33,19 @@ from app.config import MMR_LAMBDA, RERANK_MODEL, TOP_RESULTS
 logger = structlog.get_logger(__name__)
 
 
-@lru_cache(maxsize=1)
+_CE_LOCK = threading.Lock()
+_PREDICT_LOCK = threading.Lock()
+_cross_encoder: CrossEncoder | None = None
+
+
 def _load_cross_encoder() -> CrossEncoder:
-    return CrossEncoder(RERANK_MODEL)
+    """Serialised construction — see the note in retrieval._load_model."""
+    global _cross_encoder
+    if _cross_encoder is None:
+        with _CE_LOCK:
+            if _cross_encoder is None:
+                _cross_encoder = CrossEncoder(RERANK_MODEL)
+    return _cross_encoder
 
 
 @lru_cache(maxsize=1)

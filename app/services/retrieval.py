@@ -19,6 +19,7 @@ back to paragraphs 0-2 and the documented parent-child retrieval never ran.
 from __future__ import annotations
 
 import pickle
+import threading
 from dataclasses import dataclass, field
 from functools import lru_cache
 from pathlib import Path
@@ -109,21 +110,55 @@ DEFAULT_CONFIG = RetrievalConfig()
 # Lazily-loaded shared resources
 # ---------------------------------------------------------------------------
 
-@lru_cache(maxsize=1)
+# BGEM3FlagModel construction is not thread-safe, and lru_cache does not
+# serialise concurrent misses: several worker threads entering _load_model() at
+# once each begin building the model and end up sharing partially-initialised
+# state, which surfaces as "Cannot copy out of meta tensor". The evaluation
+# harness runs queries concurrently, so this is reachable in practice.
+_MODEL_LOCK = threading.Lock()
+_EMBED_LOCK = threading.Lock()
+_model_instance: BGEM3FlagModel | None = None
+
+
 def _load_model() -> BGEM3FlagModel:
-    return BGEM3FlagModel(EMBEDDING_MODEL, use_fp16=True)
+    global _model_instance
+    if _model_instance is None:
+        with _MODEL_LOCK:
+            if _model_instance is None:
+                _model_instance = BGEM3FlagModel(EMBEDDING_MODEL, use_fp16=True)
+    return _model_instance
 
 
-@lru_cache(maxsize=4)
+_COLLECTIONS_LOCK = threading.Lock()
+_collections_cache: dict[str, tuple] = {}
+
+
 def _load_collections(spec: IndexSpec):
-    client = chromadb.PersistentClient(path=str(spec.chroma_dir))
-    verses_col = client.get_collection(spec.verses_collection)
-    try:
-        purport_col = client.get_collection(spec.purport_collection)
-    except Exception:
-        purport_col = None
-        logger.warning("purport_collection_missing", index=spec.name)
-    return verses_col, purport_col
+    """
+    Serialised, like the model loaders. Constructing two PersistentClients
+    concurrently races inside Chroma's tenant setup and surfaces as
+    "Could not connect to tenant default_tenant" — intermittent, and it silently
+    empties a condition's results for the affected queries.
+    """
+    cached = _collections_cache.get(spec.name)
+    if cached is not None:
+        return cached
+
+    with _COLLECTIONS_LOCK:
+        cached = _collections_cache.get(spec.name)
+        if cached is not None:
+            return cached
+
+        client = chromadb.PersistentClient(path=str(spec.chroma_dir))
+        verses_col = client.get_collection(spec.verses_collection)
+        try:
+            purport_col = client.get_collection(spec.purport_collection)
+        except Exception:
+            purport_col = None
+            logger.warning("purport_collection_missing", index=spec.name)
+
+        _collections_cache[spec.name] = (verses_col, purport_col)
+        return _collections_cache[spec.name]
 
 
 @lru_cache(maxsize=4)
@@ -143,13 +178,17 @@ def _load_sparse_default():
 
 def _embed(texts: list[str]) -> tuple[np.ndarray, list[dict]]:
     model = _load_model()
-    out = model.encode(
-        texts,
-        batch_size=max(1, len(texts)),
-        max_length=512,
-        return_dense=True,
-        return_sparse=True,
-    )
+    # A single FlagModel instance is not safe for concurrent encode() calls.
+    # Torch already parallelises internally, so serialising here costs little and
+    # still lets ChromaDB queries and API calls overlap across worker threads.
+    with _EMBED_LOCK:
+        out = model.encode(
+            texts,
+            batch_size=max(1, len(texts)),
+            max_length=512,
+            return_dense=True,
+            return_sparse=True,
+        )
     return out["dense_vecs"], out["lexical_weights"]
 
 

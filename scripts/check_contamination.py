@@ -25,7 +25,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
 from app.config import DATA_DIR, ENRICHED_FILE  # noqa: E402
-from eval.overlap import check_query  # noqa: E402
+from eval.overlap import check_query, check_query_against_corpus  # noqa: E402
 
 GREEN, RED, YELLOW, DIM, RESET = (
     "\033[32m", "\033[31m", "\033[33m", "\033[2m", "\033[0m"
@@ -56,7 +56,16 @@ def indexed_texts() -> dict[str, str]:
 
 def run(pairs: list[dict], label: str) -> int:
     texts = indexed_texts()
-    reports = [check_query(p["query"], texts, p["verse_id"]) for p in pairs]
+
+    # Verse-blind benchmarks carry no nominated gold verse, so each query is
+    # checked against the entire corpus — a strictly stronger test, since a
+    # query lifted from the text is contaminated whichever verse it came from.
+    if pairs and "verse_id" not in pairs[0]:
+        print(f"{DIM}no gold verses declared — checking every query against all "
+              f"{len(texts)} verses{RESET}")
+        reports = [check_query_against_corpus(p["query"], texts) for p in pairs]
+    else:
+        reports = [check_query(p["query"], texts, p["verse_id"]) for p in pairs]
 
     contaminated = [r for r in reports if r.contaminated]
     verbatim = [r for r in reports if r.verbatim]

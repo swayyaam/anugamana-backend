@@ -1,0 +1,3503 @@
+[
+  {
+    "query": "how do I stop feeling sick to my stomach waiting to hear if I got the promotion",
+    "emotion_cell": "anxiety",
+    "domain_cell": "work and career",
+    "register": "first_person_distress",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0000"
+  },
+  {
+    "query": "I'm dreading this meeting with my boss tomorrow and I can't focus on anything else",
+    "emotion_cell": "anxiety",
+    "domain_cell": "work and career",
+    "register": "first_person_distress",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0001"
+  },
+  {
+    "query": "why am I so anxious about the job interview next week I keep catastrophizing",
+    "emotion_cell": "anxiety",
+    "domain_cell": "work and career",
+    "register": "first_person_distress",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0002"
+  },
+  {
+    "query": "how to handle parent care costs",
+    "emotion_cell": "anxiety",
+    "domain_cell": "family duty and obligation",
+    "register": "terse",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0003"
+  },
+  {
+    "query": "scared about telling family bad news",
+    "emotion_cell": "anxiety",
+    "domain_cell": "family duty and obligation",
+    "register": "terse",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0004"
+  },
+  {
+    "query": "what if I can't support them",
+    "emotion_cell": "anxiety",
+    "domain_cell": "family duty and obligation",
+    "register": "terse",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0005"
+  },
+  {
+    "query": "my mom's been in the hospital for three weeks now and the doctors keep saying they need to run more tests and i keep refreshing my email waiting for the results but i'm terrified of what they're going to find i can't stop thinking about worst case scenarios",
+    "emotion_cell": "anxiety",
+    "domain_cell": "grief and bereavement",
+    "register": "rambling",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0006"
+  },
+  {
+    "query": "i lost my dad two years ago and my sister just got diagnosed with the same thing he had and i know i shouldn't catastrophize but i can't help it like i'm just sitting here imagining everything falling apart again and i don't know how to make it stop",
+    "emotion_cell": "anxiety",
+    "domain_cell": "grief and bereavement",
+    "register": "rambling",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0007"
+  },
+  {
+    "query": "my best friend's been sick for months and they keep postponing the surgery date and i'm going crazy just waiting and wondering if it's even going to help or if i'm about to lose them and everyone keeps saying stay positive but how am i supposed to do that",
+    "emotion_cell": "anxiety",
+    "domain_cell": "grief and bereavement",
+    "register": "rambling",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0008"
+  },
+  {
+    "query": "my sister keeps refreshing dating apps obsessively, seems really anxious about finding someone, how can i help her calm down",
+    "emotion_cell": "anxiety",
+    "domain_cell": "romantic relationships",
+    "register": "third_person",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0009"
+  },
+  {
+    "query": "my friend's been dating this guy for three months and won't stop catastrophizing about him leaving, what should i tell him",
+    "emotion_cell": "anxiety",
+    "domain_cell": "romantic relationships",
+    "register": "third_person",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0010"
+  },
+  {
+    "query": "my mom's been single for two years and constantly worries she'll never meet anyone, how do i ease her mind about this",
+    "emotion_cell": "anxiety",
+    "domain_cell": "romantic relationships",
+    "register": "third_person",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0011"
+  },
+  {
+    "query": "what does it mean to build a stable financial foundation when everything feels uncertain?",
+    "emotion_cell": "anxiety",
+    "domain_cell": "money and material security",
+    "register": "abstract",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0012"
+  },
+  {
+    "query": "how can someone find peace with money decisions when the future is unpredictable?",
+    "emotion_cell": "anxiety",
+    "domain_cell": "money and material security",
+    "register": "abstract",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0013"
+  },
+  {
+    "query": "why do we fear losing what we haven't yet secured?",
+    "emotion_cell": "anxiety",
+    "domain_cell": "money and material security",
+    "register": "abstract",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0014"
+  },
+  {
+    "query": "I'm terrified my best friend is going to find out what I did and never trust me again.",
+    "emotion_cell": "anxiety",
+    "domain_cell": "friendship and betrayal",
+    "register": "first_person_distress",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0015"
+  },
+  {
+    "query": "My stomach's been in knots all week waiting to see if my friend discovers I lied about where I was.",
+    "emotion_cell": "anxiety",
+    "domain_cell": "friendship and betrayal",
+    "register": "first_person_distress",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0016"
+  },
+  {
+    "query": "I keep dreading the moment my friend finds out I talked about them behind their back and loses it.",
+    "emotion_cell": "anxiety",
+    "domain_cell": "friendship and betrayal",
+    "register": "first_person_distress",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0017"
+  },
+  {
+    "query": "what if I'm not good enough",
+    "emotion_cell": "anxiety",
+    "domain_cell": "identity and self-worth",
+    "register": "terse",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0018"
+  },
+  {
+    "query": "scared I'll mess up my future",
+    "emotion_cell": "anxiety",
+    "domain_cell": "identity and self-worth",
+    "register": "terse",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0019"
+  },
+  {
+    "query": "worried I won't become who I want",
+    "emotion_cell": "anxiety",
+    "domain_cell": "identity and self-worth",
+    "register": "terse",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0020"
+  },
+  {
+    "query": "how do i even know if im making the right choice about my parents and their finances, like my brother thinks we should just let them figure it out but what if they lose everything, im so anxious about this",
+    "emotion_cell": "anxiety",
+    "domain_cell": "moral dilemmas with no clean answer",
+    "register": "rambling",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0021"
+  },
+  {
+    "query": "stuck between telling my friend her husband is being inappropriate with me or just keeping quiet because it'll destroy their marriage and i dont sleep anymore thinking about what happens either way",
+    "emotion_cell": "anxiety",
+    "domain_cell": "moral dilemmas with no clean answer",
+    "register": "rambling",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0022"
+  },
+  {
+    "query": "my job wants me to fire someone i trained and i keep going back and forth because she has kids but also the company is struggling and maybe it has to be me, what do i even do here",
+    "emotion_cell": "anxiety",
+    "domain_cell": "moral dilemmas with no clean answer",
+    "register": "rambling",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0023"
+  },
+  {
+    "query": "my friend keeps saying she doesn't know what to believe anymore and seems really anxious about whether life has any point",
+    "emotion_cell": "anxiety",
+    "domain_cell": "faith, doubt and meaning",
+    "register": "third_person",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0024"
+  },
+  {
+    "query": "my dad lost his job and now he's questioning if anything he worked for even mattered how do i help him",
+    "emotion_cell": "anxiety",
+    "domain_cell": "faith, doubt and meaning",
+    "register": "third_person",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0025"
+  },
+  {
+    "query": "my teenager just stopped going to church and seems scared about what happens now that he doesn't believe what we taught him",
+    "emotion_cell": "anxiety",
+    "domain_cell": "faith, doubt and meaning",
+    "register": "third_person",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0026"
+  },
+  {
+    "query": "How do we develop resilience when facing uncertainty about whether our efforts will pay off?",
+    "emotion_cell": "anxiety",
+    "domain_cell": "study, practice and self-discipline",
+    "register": "abstract",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0027"
+  },
+  {
+    "query": "What does it mean to commit fully to something when the outcome remains beyond our control?",
+    "emotion_cell": "anxiety",
+    "domain_cell": "study, practice and self-discipline",
+    "register": "abstract",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0028"
+  },
+  {
+    "query": "Can discipline itself become a source of peace rather than anxiety about what lies ahead?",
+    "emotion_cell": "anxiety",
+    "domain_cell": "study, practice and self-discipline",
+    "register": "abstract",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0029"
+  },
+  {
+    "query": "I can't seem to start anything at work anymore, like I've hit a wall and don't know what to do next.",
+    "emotion_cell": "despair",
+    "domain_cell": "work and career",
+    "register": "first_person_distress",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0030"
+  },
+  {
+    "query": "Everything feels pointless right now, I'm paralyzed at my desk and can't push myself to do my job.",
+    "emotion_cell": "despair",
+    "domain_cell": "work and career",
+    "register": "first_person_distress",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0031"
+  },
+  {
+    "query": "I've completely lost my drive to work, nothing feels worth doing and I'm stuck in this awful state of inaction.",
+    "emotion_cell": "despair",
+    "domain_cell": "work and career",
+    "register": "first_person_distress",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0032"
+  },
+  {
+    "query": "don't want to visit mom anymore",
+    "emotion_cell": "despair",
+    "domain_cell": "family duty and obligation",
+    "register": "terse",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0033"
+  },
+  {
+    "query": "frozen about taking care of aging parents",
+    "emotion_cell": "despair",
+    "domain_cell": "family duty and obligation",
+    "register": "terse",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0034"
+  },
+  {
+    "query": "paralyzed by what family expects from me",
+    "emotion_cell": "despair",
+    "domain_cell": "family duty and obligation",
+    "register": "terse",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0035"
+  },
+  {
+    "query": "my dad passed last month and i just can't seem to do anything anymore like i'll wake up and think about calling someone but then i just sit there for hours staring at nothing and i don't even know how to start planning the memorial service because everything feels impossible",
+    "emotion_cell": "despair",
+    "domain_cell": "grief and bereavement",
+    "register": "rambling",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0036"
+  },
+  {
+    "query": "my mom died and now i'm supposed to go back to work next week but honestly i can't imagine getting out of bed let alone sitting in meetings and i just feel so empty and paralyzed like what's even the point of doing anything when she's gone",
+    "emotion_cell": "despair",
+    "domain_cell": "grief and bereavement",
+    "register": "rambling",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0037"
+  },
+  {
+    "query": "lost my sister three weeks ago and my family keeps asking me to help with the will and the estate stuff but i literally cannot make myself do it like i know it needs to happen but my brain just shuts down whenever i try to think about decisions and paperwork",
+    "emotion_cell": "despair",
+    "domain_cell": "grief and bereavement",
+    "register": "rambling",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0038"
+  },
+  {
+    "query": "my best friend just stopped trying in her marriage and won't talk about what's wrong",
+    "emotion_cell": "despair",
+    "domain_cell": "romantic relationships",
+    "register": "third_person",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0039"
+  },
+  {
+    "query": "my mom seems completely unmotivated to fix things with my dad and I don't know how to help her",
+    "emotion_cell": "despair",
+    "domain_cell": "romantic relationships",
+    "register": "third_person",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0040"
+  },
+  {
+    "query": "my brother won't even attempt to work on his relationship anymore like he's given up entirely",
+    "emotion_cell": "despair",
+    "domain_cell": "romantic relationships",
+    "register": "third_person",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0041"
+  },
+  {
+    "query": "what should i do when i've lost all motivation to work toward financial goals",
+    "emotion_cell": "despair",
+    "domain_cell": "money and material security",
+    "register": "abstract",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0042"
+  },
+  {
+    "query": "how can someone rebuild the drive to take action on their money problems",
+    "emotion_cell": "despair",
+    "domain_cell": "money and material security",
+    "register": "abstract",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0043"
+  },
+  {
+    "query": "why do we sometimes feel paralyzed when facing difficult decisions about our future",
+    "emotion_cell": "despair",
+    "domain_cell": "money and material security",
+    "register": "abstract",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0044"
+  },
+  {
+    "query": "I can't move forward with my best friend after they lied to me about something that mattered, I'm just stuck and don't know what to do.",
+    "emotion_cell": "despair",
+    "domain_cell": "friendship and betrayal",
+    "register": "first_person_distress",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0045"
+  },
+  {
+    "query": "My closest friend stabbed me in the back and now I can't bring myself to care about anything, even things I used to love.",
+    "emotion_cell": "despair",
+    "domain_cell": "friendship and betrayal",
+    "register": "first_person_distress",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0046"
+  },
+  {
+    "query": "I found out my friend betrayed my trust and now I feel completely paralyzed, like I don't have the energy to deal with any of it.",
+    "emotion_cell": "despair",
+    "domain_cell": "friendship and betrayal",
+    "register": "first_person_distress",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0047"
+  },
+  {
+    "query": "why can't i do anything anymore",
+    "emotion_cell": "despair",
+    "domain_cell": "identity and self-worth",
+    "register": "terse",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0048"
+  },
+  {
+    "query": "lost all motivation who am i",
+    "emotion_cell": "despair",
+    "domain_cell": "identity and self-worth",
+    "register": "terse",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0049"
+  },
+  {
+    "query": "feeling paralyzed don't know my purpose",
+    "emotion_cell": "despair",
+    "domain_cell": "identity and self-worth",
+    "register": "terse",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0050"
+  },
+  {
+    "query": "I don't know what to do anymore, my boss asked me to lie about the budget numbers and I just froze, couldn't say yes or no, and now it's been three days and I'm paralyzed, every option feels wrong and I can't even think straight about what the right move is",
+    "emotion_cell": "despair",
+    "domain_cell": "moral dilemmas with no clean answer",
+    "register": "rambling",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0051"
+  },
+  {
+    "query": "my friend stole from the store where we both work and wants me to stay quiet but if I report it I'll destroy our friendship and lose a ally at a terrible job, so I just sit here feeling numb and unable to make any decision at all",
+    "emotion_cell": "despair",
+    "domain_cell": "moral dilemmas with no clean answer",
+    "register": "rambling",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0052"
+  },
+  {
+    "query": "I found out my partner was texting their ex and they said it's nothing but I don't know if I should confront them or let it go or what, I've been staring at my phone for days completely stuck and unmotivated to do anything about it",
+    "emotion_cell": "despair",
+    "domain_cell": "moral dilemmas with no clean answer",
+    "register": "rambling",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0053"
+  },
+  {
+    "query": "my friend stopped going to church and now she just sits at home, what should i do to help her find meaning again",
+    "emotion_cell": "despair",
+    "domain_cell": "faith, doubt and meaning",
+    "register": "third_person",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0054"
+  },
+  {
+    "query": "my dad lost his job and now he won't even try applying anywhere, how do i get him motivated again",
+    "emotion_cell": "despair",
+    "domain_cell": "faith, doubt and meaning",
+    "register": "third_person",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0055"
+  },
+  {
+    "query": "my sister used to volunteer at the shelter but now she says nothing matters, how can i help her see purpose in life",
+    "emotion_cell": "despair",
+    "domain_cell": "faith, doubt and meaning",
+    "register": "third_person",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0056"
+  },
+  {
+    "query": "how do you find motivation when everything feels pointless and you can't bring yourself to try",
+    "emotion_cell": "despair",
+    "domain_cell": "study, practice and self-discipline",
+    "register": "abstract",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0057"
+  },
+  {
+    "query": "what does it mean to keep going when you've lost faith in your own abilities",
+    "emotion_cell": "despair",
+    "domain_cell": "study, practice and self-discipline",
+    "register": "abstract",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0058"
+  },
+  {
+    "query": "why do some people freeze up instead of acting even when they know what needs to be done",
+    "emotion_cell": "despair",
+    "domain_cell": "study, practice and self-discipline",
+    "register": "abstract",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0059"
+  },
+  {
+    "query": "how do I move forward at work after losing my mentor who believed in me",
+    "emotion_cell": "grief",
+    "domain_cell": "work and career",
+    "register": "first_person_distress",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0060"
+  },
+  {
+    "query": "I'm grieving my coworker and former best friend and don't know how to face the office",
+    "emotion_cell": "grief",
+    "domain_cell": "work and career",
+    "register": "first_person_distress",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0061"
+  },
+  {
+    "query": "my boss just passed away and I feel lost about my career direction without their guidance",
+    "emotion_cell": "grief",
+    "domain_cell": "work and career",
+    "register": "first_person_distress",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0062"
+  },
+  {
+    "query": "my dad died how do i help mom",
+    "emotion_cell": "grief",
+    "domain_cell": "family duty and obligation",
+    "register": "terse",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0063"
+  },
+  {
+    "query": "lost my sister now i'm supposed to take care of everyone",
+    "emotion_cell": "grief",
+    "domain_cell": "family duty and obligation",
+    "register": "terse",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0064"
+  },
+  {
+    "query": "parent passed away and i'm the oldest now what",
+    "emotion_cell": "grief",
+    "domain_cell": "family duty and obligation",
+    "register": "terse",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0065"
+  },
+  {
+    "query": "my mom passed away last month and i still can't believe shes gone like i keep expecting her to call me on sunday mornings the way she always did and now theres just this silence and i dont know how to keep going without her",
+    "emotion_cell": "grief",
+    "domain_cell": "grief and bereavement",
+    "register": "rambling",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0066"
+  },
+  {
+    "query": "my best friend of 20 years just moved away forever and we had this big fight before he left so we never got to say goodbye properly and now im stuck with all these regrets and the feeling that i wasted our time together",
+    "emotion_cell": "grief",
+    "domain_cell": "grief and bereavement",
+    "register": "rambling",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0067"
+  },
+  {
+    "query": "my dad died when i was young and i never really dealt with it back then but now im having all these feelings come up again like grief just hits me out of nowhere when i see other people with their fathers",
+    "emotion_cell": "grief",
+    "domain_cell": "grief and bereavement",
+    "register": "rambling",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0068"
+  },
+  {
+    "query": "how do I help my sister cope after her boyfriend broke up with her",
+    "emotion_cell": "grief",
+    "domain_cell": "romantic relationships",
+    "register": "third_person",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0069"
+  },
+  {
+    "query": "what should I say to my friend who just found out her husband is leaving",
+    "emotion_cell": "grief",
+    "domain_cell": "romantic relationships",
+    "register": "third_person",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0070"
+  },
+  {
+    "query": "my daughter lost her long-term partner should I say something or just be there",
+    "emotion_cell": "grief",
+    "domain_cell": "romantic relationships",
+    "register": "third_person",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0071"
+  },
+  {
+    "query": "How do we find meaning when financial security feels tied to relationships we've lost?",
+    "emotion_cell": "grief",
+    "domain_cell": "money and material security",
+    "register": "abstract",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0072"
+  },
+  {
+    "query": "What does it mean to rebuild material stability after losing someone important to us?",
+    "emotion_cell": "grief",
+    "domain_cell": "money and material security",
+    "register": "abstract",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0073"
+  },
+  {
+    "query": "Can money ever fill the void left by the absence of people we needed?",
+    "emotion_cell": "grief",
+    "domain_cell": "money and material security",
+    "register": "abstract",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0074"
+  },
+  {
+    "query": "my best friend stabbed me in the back and i don't know how to cope with this betrayal and grief",
+    "emotion_cell": "grief",
+    "domain_cell": "friendship and betrayal",
+    "register": "first_person_distress",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0075"
+  },
+  {
+    "query": "i trusted her completely and she broke that trust and now i'm devastated and lost without our friendship",
+    "emotion_cell": "grief",
+    "domain_cell": "friendship and betrayal",
+    "register": "first_person_distress",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0076"
+  },
+  {
+    "query": "my closest friend betrayed me and i'm heartbroken and angry and don't know how to move forward",
+    "emotion_cell": "grief",
+    "domain_cell": "friendship and betrayal",
+    "register": "first_person_distress",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0077"
+  },
+  {
+    "query": "lost my dad how do i move on",
+    "emotion_cell": "grief",
+    "domain_cell": "identity and self-worth",
+    "register": "terse",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0078"
+  },
+  {
+    "query": "identity without my best friend",
+    "emotion_cell": "grief",
+    "domain_cell": "identity and self-worth",
+    "register": "terse",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0079"
+  },
+  {
+    "query": "grieving ex partner struggling with who i am now",
+    "emotion_cell": "grief",
+    "domain_cell": "identity and self-worth",
+    "register": "terse",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0080"
+  },
+  {
+    "query": "my sister hasn't talked to me in three years and now mom's sick and i don't know if i should reach out to her or just let it go because maybe she's moved on and doesn't want me back anyway but what if something happens and i never get the chance",
+    "emotion_cell": "grief",
+    "domain_cell": "moral dilemmas with no clean answer",
+    "register": "rambling",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0081"
+  },
+  {
+    "query": "i lost my best friend because i had to choose between him and my marriage and now i'm wondering if i made the right call because he was there first you know and sometimes i feel like i betrayed him even though my therapist says i did what i had to do",
+    "emotion_cell": "grief",
+    "domain_cell": "moral dilemmas with no clean answer",
+    "register": "rambling",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0082"
+  },
+  {
+    "query": "my dad passed six months ago and he left me the family business but my brother thinks he should have gotten it and now we're fighting over it and i hate that grief turned into this legal mess and i don't even want the stupid company",
+    "emotion_cell": "grief",
+    "domain_cell": "moral dilemmas with no clean answer",
+    "register": "rambling",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0083"
+  },
+  {
+    "query": "my friend lost her mom last year and she keeps saying life feels pointless now, how can I help her find meaning again?",
+    "emotion_cell": "grief",
+    "domain_cell": "faith, doubt and meaning",
+    "register": "third_person",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0084"
+  },
+  {
+    "query": "my dad won't talk about my brother's death and just seems empty, is there any way to help him through this grief?",
+    "emotion_cell": "grief",
+    "domain_cell": "faith, doubt and meaning",
+    "register": "third_person",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0085"
+  },
+  {
+    "query": "my coworker's husband passed away six months ago and she's struggling with why this happened, how do I support someone in that kind of pain?",
+    "emotion_cell": "grief",
+    "domain_cell": "faith, doubt and meaning",
+    "register": "third_person",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0086"
+  },
+  {
+    "query": "How do we find meaning when grief makes discipline feel pointless?",
+    "emotion_cell": "grief",
+    "domain_cell": "study, practice and self-discipline",
+    "register": "abstract",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0087"
+  },
+  {
+    "query": "Can studying and practice help us process deep loss and move forward?",
+    "emotion_cell": "grief",
+    "domain_cell": "study, practice and self-discipline",
+    "register": "abstract",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0088"
+  },
+  {
+    "query": "What's the purpose of dedicating ourselves to growth after losing someone close?",
+    "emotion_cell": "grief",
+    "domain_cell": "study, practice and self-discipline",
+    "register": "abstract",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0089"
+  },
+  {
+    "query": "I'm terrified my company is going under and I'll lose everything, my job, my health insurance, I don't know what I'll do",
+    "emotion_cell": "fear",
+    "domain_cell": "work and career",
+    "register": "first_person_distress",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0090"
+  },
+  {
+    "query": "I can't stop thinking about the accident at work today, what if I'd been standing there instead, I feel sick",
+    "emotion_cell": "fear",
+    "domain_cell": "work and career",
+    "register": "first_person_distress",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0091"
+  },
+  {
+    "query": "My boss just told me they're laying off my department next month and I'm panicking about how I'll pay my mortgage",
+    "emotion_cell": "fear",
+    "domain_cell": "work and career",
+    "register": "first_person_distress",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0092"
+  },
+  {
+    "query": "my dad needs surgery im terrified",
+    "emotion_cell": "fear",
+    "domain_cell": "family duty and obligation",
+    "register": "terse",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0093"
+  },
+  {
+    "query": "mom wants me to quit my job",
+    "emotion_cell": "fear",
+    "domain_cell": "family duty and obligation",
+    "register": "terse",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0094"
+  },
+  {
+    "query": "sister depends on me what if i fail",
+    "emotion_cell": "fear",
+    "domain_cell": "family duty and obligation",
+    "register": "terse",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0095"
+  },
+  {
+    "query": "my dad's been sick for like 2 years now and the doctors keep saying different things and i just keep thinking about what happens when he's actually gone like how do i even function and what if i'm not there when it happens i can't stop imagining the worst",
+    "emotion_cell": "fear",
+    "domain_cell": "grief and bereavement",
+    "register": "rambling",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0096"
+  },
+  {
+    "query": "my mom keeps getting these chest pains and she won't go to the doctor and i'm terrified something's really wrong and she'll die and i'll never forgive myself for not pushing harder you know like what if this is the last year we have together",
+    "emotion_cell": "fear",
+    "domain_cell": "grief and bereavement",
+    "register": "rambling",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0097"
+  },
+  {
+    "query": "lost my sister last year and now my nephew is sick and i just feel like death is following our family around and i can't stop panicking that we're going to lose him too and it's happening all over again",
+    "emotion_cell": "fear",
+    "domain_cell": "grief and bereavement",
+    "register": "rambling",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0098"
+  },
+  {
+    "query": "my girlfriend has been having chest pains and won't go to the doctor, i'm terrified something serious is wrong with her",
+    "emotion_cell": "fear",
+    "domain_cell": "romantic relationships",
+    "register": "third_person",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0099"
+  },
+  {
+    "query": "my mom keeps saying her new boyfriend seems sketchy and she's worried he might hurt her, should i be concerned",
+    "emotion_cell": "fear",
+    "domain_cell": "romantic relationships",
+    "register": "third_person",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0100"
+  },
+  {
+    "query": "my best friend's husband has been drinking more and driving recklessly, and i'm scared he's going to get himself or my friend killed",
+    "emotion_cell": "fear",
+    "domain_cell": "romantic relationships",
+    "register": "third_person",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0101"
+  },
+  {
+    "query": "What happens to your family's financial security when the primary earner dies?",
+    "emotion_cell": "fear",
+    "domain_cell": "money and material security",
+    "register": "abstract",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0102"
+  },
+  {
+    "query": "How do people find peace when facing potential bankruptcy and loss of everything?",
+    "emotion_cell": "fear",
+    "domain_cell": "money and material security",
+    "register": "abstract",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0103"
+  },
+  {
+    "query": "Can you recover financially after a catastrophic economic collapse or market crash?",
+    "emotion_cell": "fear",
+    "domain_cell": "money and material security",
+    "register": "abstract",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0104"
+  },
+  {
+    "query": "my best friend is ghosting me and I'm terrified I've lost them forever and don't know how to live with that",
+    "emotion_cell": "fear",
+    "domain_cell": "friendship and betrayal",
+    "register": "first_person_distress",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0105"
+  },
+  {
+    "query": "I'm freaking out that my closest friend found out something about me and will never speak to me again",
+    "emotion_cell": "fear",
+    "domain_cell": "friendship and betrayal",
+    "register": "first_person_distress",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0106"
+  },
+  {
+    "query": "my friend said something that made me realize they might betray me and I can't stop thinking about losing them",
+    "emotion_cell": "fear",
+    "domain_cell": "friendship and betrayal",
+    "register": "first_person_distress",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0107"
+  },
+  {
+    "query": "how do i face my biggest fear",
+    "emotion_cell": "fear",
+    "domain_cell": "identity and self-worth",
+    "register": "terse",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0108"
+  },
+  {
+    "query": "scared of dying before i matter",
+    "emotion_cell": "fear",
+    "domain_cell": "identity and self-worth",
+    "register": "terse",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0109"
+  },
+  {
+    "query": "what do i do if my elderly parent is suffering and keeps asking me to help them die, i mean i love them but i can't live with myself either way and i don't know what's legal or moral or anything anymore",
+    "emotion_cell": "fear",
+    "domain_cell": "moral dilemmas with no clean answer",
+    "register": "rambling",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0110"
+  },
+  {
+    "query": "my son got in with a bad crowd and i found drugs in his room and if i turn him in he goes to prison but if i don't maybe he dies and i'm responsible either way, how do i even decide this",
+    "emotion_cell": "fear",
+    "domain_cell": "moral dilemmas with no clean answer",
+    "register": "rambling",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0111"
+  },
+  {
+    "query": "i found out my business partner has been stealing from us and we have employees depending on us and if i report him the whole company might collapse and everyone loses their job including me, so what do i actually do here",
+    "emotion_cell": "fear",
+    "domain_cell": "moral dilemmas with no clean answer",
+    "register": "rambling",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0112"
+  },
+  {
+    "query": "my dad keeps saying he's afraid he's running out of time and won't find purpose before it's too late, how can I help him?",
+    "emotion_cell": "fear",
+    "domain_cell": "faith, doubt and meaning",
+    "register": "third_person",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0113"
+  },
+  {
+    "query": "my friend is terrified she'll die without ever understanding what her life was supposed to mean, what do I say?",
+    "emotion_cell": "fear",
+    "domain_cell": "faith, doubt and meaning",
+    "register": "third_person",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0114"
+  },
+  {
+    "query": "my sister is paralyzed by fear that she's wasted her years and will never discover what gives her life real significance before something happens?",
+    "emotion_cell": "fear",
+    "domain_cell": "faith, doubt and meaning",
+    "register": "third_person",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0115"
+  },
+  {
+    "query": "How do we maintain focus when confronting the finite nature of our time?",
+    "emotion_cell": "fear",
+    "domain_cell": "study, practice and self-discipline",
+    "register": "abstract",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0116"
+  },
+  {
+    "query": "What practices help us face inevitable loss while staying committed to growth?",
+    "emotion_cell": "fear",
+    "domain_cell": "study, practice and self-discipline",
+    "register": "abstract",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0117"
+  },
+  {
+    "query": "Does disciplined study matter if everything we build eventually crumbles?",
+    "emotion_cell": "fear",
+    "domain_cell": "study, practice and self-discipline",
+    "register": "abstract",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0118"
+  },
+  {
+    "query": "i can't figure out if i should stay in my job or leave and it's making me anxious and paralyzed",
+    "emotion_cell": "doubt",
+    "domain_cell": "work and career",
+    "register": "first_person_distress",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0119"
+  },
+  {
+    "query": "torn between what my boss wants me to do and what i think is actually right for the project",
+    "emotion_cell": "doubt",
+    "domain_cell": "work and career",
+    "register": "first_person_distress",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0120"
+  },
+  {
+    "query": "stuck in analysis paralysis about whether to take the promotion or stay in my current role where im comfortable",
+    "emotion_cell": "doubt",
+    "domain_cell": "work and career",
+    "register": "first_person_distress",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0121"
+  },
+  {
+    "query": "how do I know what's right for my family",
+    "emotion_cell": "doubt",
+    "domain_cell": "family duty and obligation",
+    "register": "terse",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0122"
+  },
+  {
+    "query": "stuck between what I want and family expectations",
+    "emotion_cell": "doubt",
+    "domain_cell": "family duty and obligation",
+    "register": "terse",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0123"
+  },
+  {
+    "query": "can't figure out what I actually owe my parents",
+    "emotion_cell": "doubt",
+    "domain_cell": "family duty and obligation",
+    "register": "terse",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0124"
+  },
+  {
+    "query": "I don't know what to believe anymore after my mom died last month, like everyone keeps saying different things about how to handle it and whether I should scatter her ashes or keep them and I just can't figure out what feels right to me anymore",
+    "emotion_cell": "doubt",
+    "domain_cell": "grief and bereavement",
+    "register": "rambling",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0125"
+  },
+  {
+    "query": "My husband keeps telling me I should move on but my sister says I'm not grieving right and honestly I don't even know what the correct way is supposed to be, everything feels wrong and confusing right now after losing my dad",
+    "emotion_cell": "doubt",
+    "domain_cell": "grief and bereavement",
+    "register": "rambling",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0126"
+  },
+  {
+    "query": "Lost my best friend six months ago and people keep giving me conflicting advice about whether I should visit his grave or try to forget or talk about him constantly and I genuinely don't know what's the right thing to do with all this pain",
+    "emotion_cell": "doubt",
+    "domain_cell": "grief and bereavement",
+    "register": "rambling",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0127"
+  },
+  {
+    "query": "my girlfriend keeps changing her mind about what she wants from us and i don't know if she's being honest anymore",
+    "emotion_cell": "doubt",
+    "domain_cell": "romantic relationships",
+    "register": "third_person",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0128"
+  },
+  {
+    "query": "my brother's fiancée seems confused about whether she actually wants to get married and he's not sure how to handle it",
+    "emotion_cell": "doubt",
+    "domain_cell": "romantic relationships",
+    "register": "third_person",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0129"
+  },
+  {
+    "query": "my daughter says she loves her boyfriend but also complains constantly about him and i can't tell what she really feels",
+    "emotion_cell": "doubt",
+    "domain_cell": "romantic relationships",
+    "register": "third_person",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0130"
+  },
+  {
+    "query": "Is it wrong to prioritize financial security over helping others in need?",
+    "emotion_cell": "doubt",
+    "domain_cell": "money and material security",
+    "register": "abstract",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0131"
+  },
+  {
+    "query": "How do you know when enough money is truly enough?",
+    "emotion_cell": "doubt",
+    "domain_cell": "money and material security",
+    "register": "abstract",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0132"
+  },
+  {
+    "query": "What makes a financially responsible life choice versus just playing it safe?",
+    "emotion_cell": "doubt",
+    "domain_cell": "money and material security",
+    "register": "abstract",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0133"
+  },
+  {
+    "query": "my best friend lied to me and now I don't know what to believe about our whole friendship anymore",
+    "emotion_cell": "doubt",
+    "domain_cell": "friendship and betrayal",
+    "register": "first_person_distress",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0134"
+  },
+  {
+    "query": "I feel like I can't tell what's real in this friendship anymore after finding out they've been dishonest with me",
+    "emotion_cell": "doubt",
+    "domain_cell": "friendship and betrayal",
+    "register": "first_person_distress",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0135"
+  },
+  {
+    "query": "I'm completely torn about whether to trust my friend again after discovering they betrayed me and I don't know what's true anymore",
+    "emotion_cell": "doubt",
+    "domain_cell": "friendship and betrayal",
+    "register": "first_person_distress",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0136"
+  },
+  {
+    "query": "am i doing the right thing",
+    "emotion_cell": "doubt",
+    "domain_cell": "identity and self-worth",
+    "register": "terse",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0137"
+  },
+  {
+    "query": "how do i know what to believe",
+    "emotion_cell": "doubt",
+    "domain_cell": "identity and self-worth",
+    "register": "terse",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0138"
+  },
+  {
+    "query": "who am i really supposed to be",
+    "emotion_cell": "doubt",
+    "domain_cell": "identity and self-worth",
+    "register": "terse",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0139"
+  },
+  {
+    "query": "how do i know if im making the right choice when both options seem equally bad like my brother wants me to help cover up something at work but if i dont hes going to lose his job and i dont know which is worse honestly",
+    "emotion_cell": "doubt",
+    "domain_cell": "moral dilemmas with no clean answer",
+    "register": "rambling",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0140"
+  },
+  {
+    "query": "my husband wants to lie to his parents about where hes going but i hate lying and we need their help with our daughter's tuition so like what do i even do here i feel stuck between two wrongs",
+    "emotion_cell": "doubt",
+    "domain_cell": "moral dilemmas with no clean answer",
+    "register": "rambling",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0141"
+  },
+  {
+    "query": "ive been at this company for 12 years and they asked me to do something technically legal but feels wrong in my gut and if i refuse theyre replacing me with someone younger and ill lose my pension so how do you even choose",
+    "emotion_cell": "doubt",
+    "domain_cell": "moral dilemmas with no clean answer",
+    "register": "rambling",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0142"
+  },
+  {
+    "query": "My friend keeps changing his mind about what he believes in and I don't know how to help him find some solid ground.",
+    "emotion_cell": "doubt",
+    "domain_cell": "faith, doubt and meaning",
+    "register": "third_person",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0143"
+  },
+  {
+    "query": "My mom seems lost about what matters most in life and I'm worried she'll never figure it out.",
+    "emotion_cell": "doubt",
+    "domain_cell": "faith, doubt and meaning",
+    "register": "third_person",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0144"
+  },
+  {
+    "query": "How do I support my teenage daughter when she's constantly questioning everything and can't decide what's actually worth believing in?",
+    "emotion_cell": "doubt",
+    "domain_cell": "faith, doubt and meaning",
+    "register": "third_person",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0145"
+  },
+  {
+    "query": "How do you know when you're practicing something worth the time and effort?",
+    "emotion_cell": "doubt",
+    "domain_cell": "study, practice and self-discipline",
+    "register": "abstract",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0146"
+  },
+  {
+    "query": "What makes a discipline worth committing to when you're unsure of the path?",
+    "emotion_cell": "doubt",
+    "domain_cell": "study, practice and self-discipline",
+    "register": "abstract",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0147"
+  },
+  {
+    "query": "Can you build real skill if you keep questioning whether you're doing it right?",
+    "emotion_cell": "doubt",
+    "domain_cell": "study, practice and self-discipline",
+    "register": "abstract",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0148"
+  },
+  {
+    "query": "i'm convinced my boss secretly wants me to fail but everyone keeps telling me i'm being paranoid and i don't know what's real anymore",
+    "emotion_cell": "confusion",
+    "domain_cell": "work and career",
+    "register": "first_person_distress",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0149"
+  },
+  {
+    "query": "i think my coworkers are plotting against me and i can't tell if i'm losing it or if they actually are",
+    "emotion_cell": "confusion",
+    "domain_cell": "work and career",
+    "register": "first_person_distress",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0150"
+  },
+  {
+    "query": "my manager praised my work but i'm sure it was sarcastic and now i can't stop seeing hidden meanings in everything she says",
+    "emotion_cell": "confusion",
+    "domain_cell": "work and career",
+    "register": "first_person_distress",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0151"
+  },
+  {
+    "query": "my parents say i'm wrong about everything",
+    "emotion_cell": "confusion",
+    "domain_cell": "family duty and obligation",
+    "register": "terse",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0152"
+  },
+  {
+    "query": "can't tell if my sister actually needs me",
+    "emotion_cell": "confusion",
+    "domain_cell": "family duty and obligation",
+    "register": "terse",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0153"
+  },
+  {
+    "query": "am i responsible for my brother's choices",
+    "emotion_cell": "confusion",
+    "domain_cell": "family duty and obligation",
+    "register": "terse",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0154"
+  },
+  {
+    "query": "my mom passed 8 months ago and i keep thinking i see her in crowds or hear her voice calling me from the kitchen even though i know shes gone but it feels so real sometimes and my sister says im not dealing with it right and maybe shes right but what if im actually going crazy",
+    "emotion_cell": "confusion",
+    "domain_cell": "grief and bereavement",
+    "register": "rambling",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0155"
+  },
+  {
+    "query": "my husband died last year and i still set his place at dinner sometimes without thinking about it and then i get confused about whether hes actually gone or if maybe hes just at work and will come home later and my kids are getting worried about me but i swear sometimes i can smell his cologne",
+    "emotion_cell": "confusion",
+    "domain_cell": "grief and bereavement",
+    "register": "rambling",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0156"
+  },
+  {
+    "query": "lost my dad suddenly 6 months back and ive been having these moments where i genuinely cant remember if certain conversations actually happened or if i imagined them because i wanted them to happen so badly and im losing track of what was real versus what i just desperately wanted to say to him before he went",
+    "emotion_cell": "confusion",
+    "domain_cell": "grief and bereavement",
+    "register": "rambling",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0157"
+  },
+  {
+    "query": "my boyfriend says his ex is just a friend but they text every day and he gets defensive when i bring it up, is he lying to himself?",
+    "emotion_cell": "confusion",
+    "domain_cell": "romantic relationships",
+    "register": "third_person",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0158"
+  },
+  {
+    "query": "my sister keeps saying her husband is supportive but he never does anything around the house and criticizes her constantly, how do i help her see what's really happening?",
+    "emotion_cell": "confusion",
+    "domain_cell": "romantic relationships",
+    "register": "third_person",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0159"
+  },
+  {
+    "query": "my mom thinks my stepdad treats her well but he controls her money and isolates her from friends, should i tell her what i'm noticing?",
+    "emotion_cell": "confusion",
+    "domain_cell": "romantic relationships",
+    "register": "third_person",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0160"
+  },
+  {
+    "query": "how do we recognize when we're avoiding financial truths about ourselves",
+    "emotion_cell": "confusion",
+    "domain_cell": "money and material security",
+    "register": "abstract",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0161"
+  },
+  {
+    "query": "what makes people ignore warning signs about their money and spending",
+    "emotion_cell": "confusion",
+    "domain_cell": "money and material security",
+    "register": "abstract",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0162"
+  },
+  {
+    "query": "can someone be blind to their own economic reality and still recover",
+    "emotion_cell": "confusion",
+    "domain_cell": "money and material security",
+    "register": "abstract",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0163"
+  },
+  {
+    "query": "my best friend has been lying to me and I keep making excuses for them even though I know what they did was wrong",
+    "emotion_cell": "confusion",
+    "domain_cell": "friendship and betrayal",
+    "register": "first_person_distress",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0164"
+  },
+  {
+    "query": "I'm refusing to accept that my friend stabbed me in the back because I can't face that our friendship was never real",
+    "emotion_cell": "confusion",
+    "domain_cell": "friendship and betrayal",
+    "register": "first_person_distress",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0165"
+  },
+  {
+    "query": "I keep telling myself my friend didn't mean to betray me but deep down I know they did it on purpose and I'm just in denial",
+    "emotion_cell": "confusion",
+    "domain_cell": "friendship and betrayal",
+    "register": "first_person_distress",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0166"
+  },
+  {
+    "query": "why do i think im special",
+    "emotion_cell": "confusion",
+    "domain_cell": "identity and self-worth",
+    "register": "terse",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0167"
+  },
+  {
+    "query": "convincing myself im better than i am",
+    "emotion_cell": "confusion",
+    "domain_cell": "identity and self-worth",
+    "register": "terse",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0168"
+  },
+  {
+    "query": "how to stop lying to myself",
+    "emotion_cell": "confusion",
+    "domain_cell": "identity and self-worth",
+    "register": "terse",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0169"
+  },
+  {
+    "query": "should I tell my best friend her husband is cheating or would that ruin everything but also like am I a bad person if I don't say anything and just let her keep being fooled and also what if I'm wrong about what I saw that one time does that make me crazy for obsessing over this",
+    "emotion_cell": "confusion",
+    "domain_cell": "moral dilemmas with no clean answer",
+    "register": "rambling",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0170"
+  },
+  {
+    "query": "my dad keeps saying my brother stole from his business but I wasn't there and nobody has proof and my brother denies it completely so like how do I know who to believe and should I take sides or just stay out of it because honestly I have no idea what actually happened",
+    "emotion_cell": "confusion",
+    "domain_cell": "moral dilemmas with no clean answer",
+    "register": "rambling",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0171"
+  },
+  {
+    "query": "I think my coworker sabotaged my project but honestly I can't actually prove it and maybe I'm just paranoid and looking for reasons why things went wrong but also what if I say something and I'm wrong and I destroy her career and like am I responsible for that",
+    "emotion_cell": "confusion",
+    "domain_cell": "moral dilemmas with no clean answer",
+    "register": "rambling",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0172"
+  },
+  {
+    "query": "My sister thinks her new boyfriend is perfect but everyone can see he's manipulating her, how do I help her see the truth?",
+    "emotion_cell": "confusion",
+    "domain_cell": "faith, doubt and meaning",
+    "register": "third_person",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0173"
+  },
+  {
+    "query": "My dad refuses to accept that his business is failing and keeps spending money like nothing's wrong, what can I do?",
+    "emotion_cell": "confusion",
+    "domain_cell": "faith, doubt and meaning",
+    "register": "third_person",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0174"
+  },
+  {
+    "query": "My friend is convinced she'll get the promotion even though her boss told her directly she's not qualified, should I say something?",
+    "emotion_cell": "confusion",
+    "domain_cell": "faith, doubt and meaning",
+    "register": "third_person",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0175"
+  },
+  {
+    "query": "How can I recognize when I'm deceiving myself about my abilities and progress?",
+    "emotion_cell": "confusion",
+    "domain_cell": "study, practice and self-discipline",
+    "register": "abstract",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0176"
+  },
+  {
+    "query": "What does it mean to see reality clearly versus what we want to believe about ourselves?",
+    "emotion_cell": "confusion",
+    "domain_cell": "study, practice and self-discipline",
+    "register": "abstract",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0177"
+  },
+  {
+    "query": "Is self-honesty in practice more important than the goals we set for ourselves?",
+    "emotion_cell": "confusion",
+    "domain_cell": "study, practice and self-discipline",
+    "register": "abstract",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0178"
+  },
+  {
+    "query": "I'm so angry I didn't get the promotion I deserved and I can't stop thinking about how unfair this is",
+    "emotion_cell": "anger",
+    "domain_cell": "work and career",
+    "register": "first_person_distress",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0179"
+  },
+  {
+    "query": "I'm furious that my boss gave the lead role to someone less qualified and I don't know how to handle this rage at work",
+    "emotion_cell": "anger",
+    "domain_cell": "work and career",
+    "register": "first_person_distress",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0180"
+  },
+  {
+    "query": "I'm seething because I was passed over for the project I've been waiting months for and I feel completely disrespected",
+    "emotion_cell": "anger",
+    "domain_cell": "work and career",
+    "register": "first_person_distress",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0181"
+  },
+  {
+    "query": "my mom guilt trips me over money",
+    "emotion_cell": "anger",
+    "domain_cell": "family duty and obligation",
+    "register": "terse",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0182"
+  },
+  {
+    "query": "why do I resent helping my parents",
+    "emotion_cell": "anger",
+    "domain_cell": "family duty and obligation",
+    "register": "terse",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0183"
+  },
+  {
+    "query": "stuck between what I want and family expects",
+    "emotion_cell": "anger",
+    "domain_cell": "family duty and obligation",
+    "register": "terse",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0184"
+  },
+  {
+    "query": "my sister got the house in dad's will and i'm so angry about it because i spent years caring for him while she was off doing her own thing and now she gets everything and i feel like his death meant nothing to me like i sacrificed everything",
+    "emotion_cell": "anger",
+    "domain_cell": "grief and bereavement",
+    "register": "rambling",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0185"
+  },
+  {
+    "query": "why am i so furious that my best friend moved on after my mom died like she's supposed to just grieve forever with me instead of living her life and finding new friends and it feels like a betrayal even though i know it's not",
+    "emotion_cell": "anger",
+    "domain_cell": "grief and bereavement",
+    "register": "rambling",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0186"
+  },
+  {
+    "query": "my brother claimed all of dad's tools and antiques before we even had the funeral and keeps saying finders keepers like dad is barely cold and he's already acting like he won everything and i want to scream at him for being so callous about this whole thing",
+    "emotion_cell": "anger",
+    "domain_cell": "grief and bereavement",
+    "register": "rambling",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0187"
+  },
+  {
+    "query": "my friend keeps trying to get back with her ex but he's ghosting her and she's getting really bitter about it",
+    "emotion_cell": "anger",
+    "domain_cell": "romantic relationships",
+    "register": "third_person",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0188"
+  },
+  {
+    "query": "my mom is angry because dad won't commit to moving closer to her family after she gave up her career",
+    "emotion_cell": "anger",
+    "domain_cell": "romantic relationships",
+    "register": "third_person",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0189"
+  },
+  {
+    "query": "my brother is furious that his girlfriend won't have kids even though they agreed on it when they started dating",
+    "emotion_cell": "anger",
+    "domain_cell": "romantic relationships",
+    "register": "third_person",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0190"
+  },
+  {
+    "query": "Why do we become bitter when financial goals slip through our fingers?",
+    "emotion_cell": "anger",
+    "domain_cell": "money and material security",
+    "register": "abstract",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0191"
+  },
+  {
+    "query": "How does unfulfilled ambition for wealth shape our ability to trust others?",
+    "emotion_cell": "anger",
+    "domain_cell": "money and material security",
+    "register": "abstract",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0192"
+  },
+  {
+    "query": "What makes us resent people who achieve the financial success we've been denied?",
+    "emotion_cell": "anger",
+    "domain_cell": "money and material security",
+    "register": "abstract",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0193"
+  },
+  {
+    "query": "I'm so angry at my best friend for choosing their new partner over our plans, I feel completely abandoned and betrayed.",
+    "emotion_cell": "anger",
+    "domain_cell": "friendship and betrayal",
+    "register": "first_person_distress",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0194"
+  },
+  {
+    "query": "My friend totally stabbed me in the back and I can't stop seething about how they lied to my face about what they were doing.",
+    "emotion_cell": "anger",
+    "domain_cell": "friendship and betrayal",
+    "register": "first_person_distress",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0195"
+  },
+  {
+    "query": "I'm furious with my friend right now because they promised to be there and instead picked someone else, and I feel so rejected and used.",
+    "emotion_cell": "anger",
+    "domain_cell": "friendship and betrayal",
+    "register": "first_person_distress",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0196"
+  },
+  {
+    "query": "why do i rage when i fail",
+    "emotion_cell": "anger",
+    "domain_cell": "identity and self-worth",
+    "register": "terse",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0197"
+  },
+  {
+    "query": "angry at myself for not being good enough",
+    "emotion_cell": "anger",
+    "domain_cell": "identity and self-worth",
+    "register": "terse",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0198"
+  },
+  {
+    "query": "bitter about who i've become instead",
+    "emotion_cell": "anger",
+    "domain_cell": "identity and self-worth",
+    "register": "terse",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0199"
+  },
+  {
+    "query": "my boss passed me over for promotion again and now they want me to mentor the guy who got it instead but if i refuse everyone thinks im petty and vindictive but also why should i help him succeed when he doesnt deserve it more than me",
+    "emotion_cell": "anger",
+    "domain_cell": "moral dilemmas with no clean answer",
+    "register": "rambling",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0200"
+  },
+  {
+    "query": "im so angry about my ex getting full custody because the judge didnt see what i saw but now my kids want me to be nice to their stepmom and im supposed to just swallow it and be civil for their sake even though it feels like betrayal",
+    "emotion_cell": "anger",
+    "domain_cell": "moral dilemmas with no clean answer",
+    "register": "rambling",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0201"
+  },
+  {
+    "query": "they want me to keep quiet about my coworker stealing credit for my projects because reporting it would \"create drama\" but if i stay silent im enabling them and ruining my own career trajectory and i hate that im supposed to just take it",
+    "emotion_cell": "anger",
+    "domain_cell": "moral dilemmas with no clean answer",
+    "register": "rambling",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0202"
+  },
+  {
+    "query": "My brother keeps pushing his beliefs on me even though I've told him to stop, how do I handle his stubbornness?",
+    "emotion_cell": "anger",
+    "domain_cell": "faith, doubt and meaning",
+    "register": "third_person",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0203"
+  },
+  {
+    "query": "My dad seems really angry lately because his church community rejected some of his ideas, what should I do?",
+    "emotion_cell": "anger",
+    "domain_cell": "faith, doubt and meaning",
+    "register": "third_person",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0204"
+  },
+  {
+    "query": "My coworker gets hostile whenever anyone questions their spiritual beliefs, how can I talk to them about this?",
+    "emotion_cell": "anger",
+    "domain_cell": "faith, doubt and meaning",
+    "register": "third_person",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0205"
+  },
+  {
+    "query": "Why do we resist the very discipline that would free us from frustration?",
+    "emotion_cell": "anger",
+    "domain_cell": "study, practice and self-discipline",
+    "register": "abstract",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0206"
+  },
+  {
+    "query": "How can I transform anger about my limitations into motivation for growth?",
+    "emotion_cell": "anger",
+    "domain_cell": "study, practice and self-discipline",
+    "register": "abstract",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0207"
+  },
+  {
+    "query": "What makes us hostile when our efforts don't produce the results we demand?",
+    "emotion_cell": "anger",
+    "domain_cell": "study, practice and self-discipline",
+    "register": "abstract",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0208"
+  },
+  {
+    "query": "I'm obsessed with getting this promotion and I can't stop thinking about it, it's consuming me",
+    "emotion_cell": "craving",
+    "domain_cell": "work and career",
+    "register": "first_person_distress",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0209"
+  },
+  {
+    "query": "I really want this job offer and I'm so attached to it working out, I can't focus on anything else",
+    "emotion_cell": "craving",
+    "domain_cell": "work and career",
+    "register": "first_person_distress",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0210"
+  },
+  {
+    "query": "I'm fixated on landing this client deal and I'm realizing how much my happiness depends on it happening",
+    "emotion_cell": "craving",
+    "domain_cell": "work and career",
+    "register": "first_person_distress",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0211"
+  },
+  {
+    "query": "how do i get my kid to listen",
+    "emotion_cell": "craving",
+    "domain_cell": "family duty and obligation",
+    "register": "terse",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0212"
+  },
+  {
+    "query": "forcing my adult son to take over business",
+    "emotion_cell": "craving",
+    "domain_cell": "family duty and obligation",
+    "register": "terse",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0213"
+  },
+  {
+    "query": "making my parents proud with my career choices",
+    "emotion_cell": "craving",
+    "domain_cell": "family duty and obligation",
+    "register": "terse",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0214"
+  },
+  {
+    "query": "my sister passed away six months ago and I keep thinking about how we were supposed to go to italy together next spring and I can't let go of that trip like I'm obsessed with making it happen even though she won't be there and I don't know how to stop wanting something that can never happen now",
+    "emotion_cell": "craving",
+    "domain_cell": "grief and bereavement",
+    "register": "rambling",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0215"
+  },
+  {
+    "query": "I lost my dad and keep checking his old email account hoping maybe he'll respond to something or left a message somewhere I missed and I know it's irrational but I can't stop looking because letting go feels like abandoning him all over again and I'm stuck in this loop",
+    "emotion_cell": "craving",
+    "domain_cell": "grief and bereavement",
+    "register": "rambling",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0216"
+  },
+  {
+    "query": "my best friend died in an accident and I keep researching alternative therapies or medical breakthroughs like maybe there was something that could have saved her if we'd only known and I'm obsessed with this fantasy version where she's still here and I don't know how to accept reality",
+    "emotion_cell": "craving",
+    "domain_cell": "grief and bereavement",
+    "register": "rambling",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0217"
+  },
+  {
+    "query": "my friend is obsessed with this guy and keeps checking his social media constantly, how do i help her let go",
+    "emotion_cell": "craving",
+    "domain_cell": "romantic relationships",
+    "register": "third_person",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0218"
+  },
+  {
+    "query": "my mom won't stop talking about wanting to marry her boyfriend even though they just started dating, is this normal",
+    "emotion_cell": "craving",
+    "domain_cell": "romantic relationships",
+    "register": "third_person",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0219"
+  },
+  {
+    "query": "my brother is so attached to getting back together with his ex that he's ignoring everyone else, what should i do",
+    "emotion_cell": "craving",
+    "domain_cell": "romantic relationships",
+    "register": "third_person",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0220"
+  },
+  {
+    "query": "Is it healthy to want financial security or does wanting it cause suffering?",
+    "emotion_cell": "craving",
+    "domain_cell": "money and material security",
+    "register": "abstract",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0221"
+  },
+  {
+    "query": "Can you ever be happy if you're always chasing more money and possessions?",
+    "emotion_cell": "craving",
+    "domain_cell": "money and material security",
+    "register": "abstract",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0222"
+  },
+  {
+    "query": "How much material success is enough, and why do we keep wanting more?",
+    "emotion_cell": "craving",
+    "domain_cell": "money and material security",
+    "register": "abstract",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0223"
+  },
+  {
+    "query": "I really need my best friend to apologize and make things right, but I'm scared they never will and I can't let it go.",
+    "emotion_cell": "craving",
+    "domain_cell": "friendship and betrayal",
+    "register": "first_person_distress",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0224"
+  },
+  {
+    "query": "My oldest friend betrayed me and I can't stop obsessing over getting them back in my life even though they don't seem to care.",
+    "emotion_cell": "craving",
+    "domain_cell": "friendship and betrayal",
+    "register": "first_person_distress",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0225"
+  },
+  {
+    "query": "I'm so attached to fixing this friendship that I can't move forward, and it's consuming all my thoughts and energy right now.",
+    "emotion_cell": "craving",
+    "domain_cell": "friendship and betrayal",
+    "register": "first_person_distress",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0226"
+  },
+  {
+    "query": "why do i need validation so much",
+    "emotion_cell": "craving",
+    "domain_cell": "identity and self-worth",
+    "register": "terse",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0227"
+  },
+  {
+    "query": "how to stop obsessing over being the best",
+    "emotion_cell": "craving",
+    "domain_cell": "identity and self-worth",
+    "register": "terse",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0228"
+  },
+  {
+    "query": "stuck on proving myself to everyone",
+    "emotion_cell": "craving",
+    "domain_cell": "identity and self-worth",
+    "register": "terse",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0229"
+  },
+  {
+    "query": "how do i know if im making the right choice about whether to report my coworker for stealing supplies when he has a sick kid and i really need this job to stay and honestly i'm terrified of what happens if i say anything",
+    "emotion_cell": "craving",
+    "domain_cell": "moral dilemmas with no clean answer",
+    "register": "rambling",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0230"
+  },
+  {
+    "query": "my sister wants me to help her hide money from her ex for custody stuff and part of me wants to help her but also i'm scared about lying under oath and i keep going back and forth like maybe if i just dont say anything it'll be fine but then i think about what could happen",
+    "emotion_cell": "craving",
+    "domain_cell": "moral dilemmas with no clean answer",
+    "register": "rambling",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0231"
+  },
+  {
+    "query": "should i tell my best friend that their partner is cheating or just stay out of it because honestly i've been obsessed with fixing this and i'm terrified of losing the friendship either way no matter what i do someone gets hurt",
+    "emotion_cell": "craving",
+    "domain_cell": "moral dilemmas with no clean answer",
+    "register": "rambling",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0232"
+  },
+  {
+    "query": "my friend is obsessed with getting into this specific grad school and i'm worried she's putting all her eggs in one basket",
+    "emotion_cell": "craving",
+    "domain_cell": "faith, doubt and meaning",
+    "register": "third_person",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0233"
+  },
+  {
+    "query": "my dad seems to have built his whole identity around becoming partner at his law firm and i don't know how to help him if it doesn't happen",
+    "emotion_cell": "craving",
+    "domain_cell": "faith, doubt and meaning",
+    "register": "third_person",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0234"
+  },
+  {
+    "query": "my sister keeps saying she needs this one job to feel like her life has meaning and i'm concerned about how fixated she's become on it",
+    "emotion_cell": "craving",
+    "domain_cell": "faith, doubt and meaning",
+    "register": "third_person",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0235"
+  },
+  {
+    "query": "How do we maintain focus on growth without becoming trapped by our need to succeed?",
+    "emotion_cell": "craving",
+    "domain_cell": "study, practice and self-discipline",
+    "register": "abstract",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0236"
+  },
+  {
+    "query": "What's the difference between healthy ambition and unhealthy obsession with results?",
+    "emotion_cell": "craving",
+    "domain_cell": "study, practice and self-discipline",
+    "register": "abstract",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0237"
+  },
+  {
+    "query": "Can we pursue excellence without letting attachment to outcomes undermine our progress?",
+    "emotion_cell": "craving",
+    "domain_cell": "study, practice and self-discipline",
+    "register": "abstract",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0238"
+  },
+  {
+    "query": "I keep hitting the same wall at work and I'm getting so frustrated I can barely focus anymore",
+    "emotion_cell": "frustration",
+    "domain_cell": "work and career",
+    "register": "first_person_distress",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0239"
+  },
+  {
+    "query": "My boss keeps rejecting my ideas the same way and I'm honestly losing it trying to push through",
+    "emotion_cell": "frustration",
+    "domain_cell": "work and career",
+    "register": "first_person_distress",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0240"
+  },
+  {
+    "query": "I've been blocked on this project for weeks and the constant setbacks are making me angry and exhausted",
+    "emotion_cell": "frustration",
+    "domain_cell": "work and career",
+    "register": "first_person_distress",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0241"
+  },
+  {
+    "query": "my mom won't listen to my advice",
+    "emotion_cell": "frustration",
+    "domain_cell": "family duty and obligation",
+    "register": "terse",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0242"
+  },
+  {
+    "query": "sister keeps ignoring what i ask her",
+    "emotion_cell": "frustration",
+    "domain_cell": "family duty and obligation",
+    "register": "terse",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0243"
+  },
+  {
+    "query": "parents reject my help every time",
+    "emotion_cell": "frustration",
+    "domain_cell": "family duty and obligation",
+    "register": "terse",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0244"
+  },
+  {
+    "query": "why does it feel like every time i try to talk about my dad it's like nobody wants to hear it and i have to just keep it bottled up inside and i'm so tired of pretending i'm fine when really i'm falling apart",
+    "emotion_cell": "frustration",
+    "domain_cell": "grief and bereavement",
+    "register": "rambling",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0245"
+  },
+  {
+    "query": "keep trying to organize his things to donate them but then i just freeze up and can't do it and then i feel guilty for not being able to handle it and it's been months now why can't i just get through this",
+    "emotion_cell": "frustration",
+    "domain_cell": "grief and bereavement",
+    "register": "rambling",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0246"
+  },
+  {
+    "query": "my sister keeps changing the subject whenever i bring up mom and it makes me feel so alone in this grief like nobody cares that i'm struggling and it's exhausting constantly hitting this wall",
+    "emotion_cell": "frustration",
+    "domain_cell": "grief and bereavement",
+    "register": "rambling",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0247"
+  },
+  {
+    "query": "My friend keeps trying to talk to her ex about getting back together but he keeps shutting her down. How do I help her move on?",
+    "emotion_cell": "frustration",
+    "domain_cell": "romantic relationships",
+    "register": "third_person",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0248"
+  },
+  {
+    "query": "My sister is frustrated because her boyfriend won't commit after five years of dating. What should I tell her?",
+    "emotion_cell": "frustration",
+    "domain_cell": "romantic relationships",
+    "register": "third_person",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0249"
+  },
+  {
+    "query": "My coworker is upset that his girlfriend keeps rejecting his marriage proposals. How can I support him through this?",
+    "emotion_cell": "frustration",
+    "domain_cell": "romantic relationships",
+    "register": "third_person",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0250"
+  },
+  {
+    "query": "Why do some people keep hitting financial roadblocks no matter how hard they try?",
+    "emotion_cell": "frustration",
+    "domain_cell": "money and material security",
+    "register": "abstract",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0251"
+  },
+  {
+    "query": "What does it mean when effort and planning don't lead to the security you need?",
+    "emotion_cell": "frustration",
+    "domain_cell": "money and material security",
+    "register": "abstract",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0252"
+  },
+  {
+    "query": "How do you stay motivated when every step toward financial stability feels blocked?",
+    "emotion_cell": "frustration",
+    "domain_cell": "money and material security",
+    "register": "abstract",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0253"
+  },
+  {
+    "query": "my best friend keeps canceling plans on me and I'm so frustrated I don't know how to talk to them about it anymore",
+    "emotion_cell": "frustration",
+    "domain_cell": "friendship and betrayal",
+    "register": "first_person_distress",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0254"
+  },
+  {
+    "query": "I've tried reaching out multiple times but my friend keeps ghosting me and I'm getting really angry at this point",
+    "emotion_cell": "frustration",
+    "domain_cell": "friendship and betrayal",
+    "register": "first_person_distress",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0255"
+  },
+  {
+    "query": "my friend said they'd be there for me but keeps letting me down and I'm exhausted from trying to make this work",
+    "emotion_cell": "frustration",
+    "domain_cell": "friendship and betrayal",
+    "register": "first_person_distress",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0256"
+  },
+  {
+    "query": "why do i keep failing at everything",
+    "emotion_cell": "frustration",
+    "domain_cell": "identity and self-worth",
+    "register": "terse",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0257"
+  },
+  {
+    "query": "frustrated with myself constantly messing up",
+    "emotion_cell": "frustration",
+    "domain_cell": "identity and self-worth",
+    "register": "terse",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0258"
+  },
+  {
+    "query": "how to stop being a disappointment",
+    "emotion_cell": "frustration",
+    "domain_cell": "identity and self-worth",
+    "register": "terse",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0259"
+  },
+  {
+    "query": "how do i know what's right when every choice seems wrong like im stuck between hurting my sister or losing my job and ive tried everything to find a middle ground but nothing works and im going crazy",
+    "emotion_cell": "frustration",
+    "domain_cell": "moral dilemmas with no clean answer",
+    "register": "rambling",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0260"
+  },
+  {
+    "query": "my boss wants me to lie about the project timeline to keep clients happy but if i do it affects the whole team and if i don't i look bad and ive gone back and forth on this so many times im exhausted what do i even do",
+    "emotion_cell": "frustration",
+    "domain_cell": "moral dilemmas with no clean answer",
+    "register": "rambling",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0261"
+  },
+  {
+    "query": "i keep trying to be honest with my parents about my relationship but they refuse to listen and if i push harder they cut me off and if i stay quiet im being fake and ive tried so hard to make them understand but im just stuck in this loop",
+    "emotion_cell": "frustration",
+    "domain_cell": "moral dilemmas with no clean answer",
+    "register": "rambling",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0262"
+  },
+  {
+    "query": "my friend keeps trying to start her own business but keeps hitting roadblocks, is she losing faith in herself",
+    "emotion_cell": "frustration",
+    "domain_cell": "faith, doubt and meaning",
+    "register": "third_person",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0263"
+  },
+  {
+    "query": "my dad has been rejected from jobs for months and seems more discouraged each time, how do I help him see it's worth continuing",
+    "emotion_cell": "frustration",
+    "domain_cell": "faith, doubt and meaning",
+    "register": "third_person",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0264"
+  },
+  {
+    "query": "my son keeps failing his driving test and now he's giving up, how do I convince him to keep trying",
+    "emotion_cell": "frustration",
+    "domain_cell": "faith, doubt and meaning",
+    "register": "third_person",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0265"
+  },
+  {
+    "query": "How do you maintain discipline when repeated attempts keep failing?",
+    "emotion_cell": "frustration",
+    "domain_cell": "study, practice and self-discipline",
+    "register": "abstract",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0266"
+  },
+  {
+    "query": "What does it mean to persist through constant obstacles and setbacks?",
+    "emotion_cell": "frustration",
+    "domain_cell": "study, practice and self-discipline",
+    "register": "abstract",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0267"
+  },
+  {
+    "query": "Why is sustained effort so difficult when progress remains blocked?",
+    "emotion_cell": "frustration",
+    "domain_cell": "study, practice and self-discipline",
+    "register": "abstract",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0268"
+  },
+  {
+    "query": "I feel completely drained at work and I don't know how much longer I can keep going like this every day.",
+    "emotion_cell": "exhaustion",
+    "domain_cell": "work and career",
+    "register": "first_person_distress",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0269"
+  },
+  {
+    "query": "My job has exhausted me so much that I'm starting to wonder if I should just walk away from it all.",
+    "emotion_cell": "exhaustion",
+    "domain_cell": "work and career",
+    "register": "first_person_distress",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0270"
+  },
+  {
+    "query": "I'm so burned out from work that I can barely get myself to show up anymore and I'm losing hope.",
+    "emotion_cell": "exhaustion",
+    "domain_cell": "work and career",
+    "register": "first_person_distress",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0271"
+  },
+  {
+    "query": "tired of being the family caregiver",
+    "emotion_cell": "exhaustion",
+    "domain_cell": "family duty and obligation",
+    "register": "terse",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0272"
+  },
+  {
+    "query": "when do i stop sacrificing for everyone",
+    "emotion_cell": "exhaustion",
+    "domain_cell": "family duty and obligation",
+    "register": "terse",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0273"
+  },
+  {
+    "query": "exhausted from taking care of aging parents",
+    "emotion_cell": "exhaustion",
+    "domain_cell": "family duty and obligation",
+    "register": "terse",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0274"
+  },
+  {
+    "query": "how do I keep going when everything just feels empty and pointless, my mom's been gone for 8 months and I thought I'd be better by now but I just can't seem to care about anything anymore, even my kids notice I'm checked out",
+    "emotion_cell": "exhaustion",
+    "domain_cell": "grief and bereavement",
+    "register": "rambling",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0275"
+  },
+  {
+    "query": "I don't know what's wrong with me, my husband died last year and I'm so tired all the time, like bone deep exhausted, and people keep saying it gets better but honestly I'm running on empty and can't imagine feeling anything again",
+    "emotion_cell": "exhaustion",
+    "domain_cell": "grief and bereavement",
+    "register": "rambling",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0276"
+  },
+  {
+    "query": "my sister passed away two years ago and I thought the worst was over but lately I just feel so drained by living, like I'm going through the motions with no energy left, does grief ever stop crushing you this way or am I just broken",
+    "emotion_cell": "exhaustion",
+    "domain_cell": "grief and bereavement",
+    "register": "rambling",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0277"
+  },
+  {
+    "query": "my girlfriend hasn't laughed in weeks and keeps saying she doesn't know if she can do this anymore what should I tell her",
+    "emotion_cell": "exhaustion",
+    "domain_cell": "romantic relationships",
+    "register": "third_person",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0278"
+  },
+  {
+    "query": "my son and his husband have been fighting nonstop for months and my son looks completely exhausted should I say something",
+    "emotion_cell": "exhaustion",
+    "domain_cell": "romantic relationships",
+    "register": "third_person",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0279"
+  },
+  {
+    "query": "my friend is talking about breaking up with her partner of eight years because she's just too tired to keep trying anymore what do I do",
+    "emotion_cell": "exhaustion",
+    "domain_cell": "romantic relationships",
+    "register": "third_person",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0280"
+  },
+  {
+    "query": "What does it mean to keep struggling when the effort feels pointless?",
+    "emotion_cell": "exhaustion",
+    "domain_cell": "money and material security",
+    "register": "abstract",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0281"
+  },
+  {
+    "query": "How do you find motivation to improve your financial situation when exhausted?",
+    "emotion_cell": "exhaustion",
+    "domain_cell": "money and material security",
+    "register": "abstract",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0282"
+  },
+  {
+    "query": "Is there value in continuing to work toward security when you're completely worn out?",
+    "emotion_cell": "exhaustion",
+    "domain_cell": "money and material security",
+    "register": "abstract",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0283"
+  },
+  {
+    "query": "my best friend took credit for my work and i'm too tired to even be angry anymore just done with this",
+    "emotion_cell": "exhaustion",
+    "domain_cell": "friendship and betrayal",
+    "register": "first_person_distress",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0284"
+  },
+  {
+    "query": "i've given everything to this friendship and they still stabbed me in the back i can't do this anymore",
+    "emotion_cell": "exhaustion",
+    "domain_cell": "friendship and betrayal",
+    "register": "first_person_distress",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0285"
+  },
+  {
+    "query": "my closest friend betrayed me and i'm so exhausted i don't even have the energy to care what happens next",
+    "emotion_cell": "exhaustion",
+    "domain_cell": "friendship and betrayal",
+    "register": "first_person_distress",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0286"
+  },
+  {
+    "query": "why do i feel so worthless anymore",
+    "emotion_cell": "exhaustion",
+    "domain_cell": "identity and self-worth",
+    "register": "terse",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0287"
+  },
+  {
+    "query": "how do i stop hating myself so much",
+    "emotion_cell": "exhaustion",
+    "domain_cell": "identity and self-worth",
+    "register": "terse",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0288"
+  },
+  {
+    "query": "losing sense of who i even am",
+    "emotion_cell": "exhaustion",
+    "domain_cell": "identity and self-worth",
+    "register": "terse",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0289"
+  },
+  {
+    "query": "i don't even know anymore man like my boss keeps asking me to cover for people who mess up and i'm exhausted but if i say no someone gets fired and i hate myself either way this is impossible",
+    "emotion_cell": "exhaustion",
+    "domain_cell": "moral dilemmas with no clean answer",
+    "register": "rambling",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0290"
+  },
+  {
+    "query": "so my friend stole from the store but she's broke and has kids and if i report it she loses custody but everyone blames me anyway for knowing so tired of this",
+    "emotion_cell": "exhaustion",
+    "domain_cell": "moral dilemmas with no clean answer",
+    "register": "rambling",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0291"
+  },
+  {
+    "query": "my family wants me to help them hide money from taxes and i know it's wrong but they'll disown me and i literally can't afford that right now i'm so worn down i don't even care anymore",
+    "emotion_cell": "exhaustion",
+    "domain_cell": "moral dilemmas with no clean answer",
+    "register": "rambling",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0292"
+  },
+  {
+    "query": "my mom stopped going to church and seems really burnt out, like she's questioning everything she believed in, how do I help her?",
+    "emotion_cell": "exhaustion",
+    "domain_cell": "faith, doubt and meaning",
+    "register": "third_person",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0293"
+  },
+  {
+    "query": "my best friend used to volunteer constantly but now won't even talk about it, seems exhausted and doubting if any of it matters anymore",
+    "emotion_cell": "exhaustion",
+    "domain_cell": "faith, doubt and meaning",
+    "register": "third_person",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0294"
+  },
+  {
+    "query": "my dad keeps saying he's tired of trying to be good, that nothing he does makes a difference spiritually, should I be worried about him?",
+    "emotion_cell": "exhaustion",
+    "domain_cell": "faith, doubt and meaning",
+    "register": "third_person",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0295"
+  },
+  {
+    "query": "How do you maintain motivation when effort stops feeling meaningful?",
+    "emotion_cell": "exhaustion",
+    "domain_cell": "study, practice and self-discipline",
+    "register": "abstract",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0296"
+  },
+  {
+    "query": "What's the point of pushing forward when progress feels invisible?",
+    "emotion_cell": "exhaustion",
+    "domain_cell": "study, practice and self-discipline",
+    "register": "abstract",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0297"
+  },
+  {
+    "query": "Can discipline survive when you've lost faith in the outcome?",
+    "emotion_cell": "exhaustion",
+    "domain_cell": "study, practice and self-discipline",
+    "register": "abstract",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0298"
+  },
+  {
+    "query": "I feel like I'm not good enough at my job and everyone can see it, how do I stop being so hard on myself at work",
+    "emotion_cell": "shame",
+    "domain_cell": "work and career",
+    "register": "first_person_distress",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0299"
+  },
+  {
+    "query": "I keep criticizing myself for every mistake I make at the office and I can't shake this feeling that I'm not cut out for this career",
+    "emotion_cell": "shame",
+    "domain_cell": "work and career",
+    "register": "first_person_distress",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0300"
+  },
+  {
+    "query": "Why do I judge myself so harshly when I mess up at work, and how can I be kinder to myself about my performance",
+    "emotion_cell": "shame",
+    "domain_cell": "work and career",
+    "register": "first_person_distress",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0301"
+  },
+  {
+    "query": "am i bad parent for wanting break",
+    "emotion_cell": "shame",
+    "domain_cell": "family duty and obligation",
+    "register": "terse",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0302"
+  },
+  {
+    "query": "feel guilty about not helping aging mom enough",
+    "emotion_cell": "shame",
+    "domain_cell": "family duty and obligation",
+    "register": "terse",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0303"
+  },
+  {
+    "query": "should i feel ashamed skipping family dinner",
+    "emotion_cell": "shame",
+    "domain_cell": "family duty and obligation",
+    "register": "terse",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0304"
+  },
+  {
+    "query": "how do i stop feeling like i'm a bad person for not crying enough at my dad's funeral like everyone expected me to be more emotional and now i'm wondering if something's wrong with me",
+    "emotion_cell": "shame",
+    "domain_cell": "grief and bereavement",
+    "register": "rambling",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0305"
+  },
+  {
+    "query": "i feel guilty that i'm already thinking about selling my mom's house when she just died three months ago like am i being selfish and heartless for wanting to move forward this fast",
+    "emotion_cell": "shame",
+    "domain_cell": "grief and bereavement",
+    "register": "rambling",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0306"
+  },
+  {
+    "query": "why do i keep blaming myself for not visiting my brother more before he passed away like i should have known something was wrong and now i can't forgive myself no matter what",
+    "emotion_cell": "shame",
+    "domain_cell": "grief and bereavement",
+    "register": "rambling",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0307"
+  },
+  {
+    "query": "my friend keeps saying she's not good enough for her boyfriend even though he clearly loves her what can i do",
+    "emotion_cell": "shame",
+    "domain_cell": "romantic relationships",
+    "register": "third_person",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0308"
+  },
+  {
+    "query": "my mom won't stop criticizing herself about how she handled things with my stepdad should i say something",
+    "emotion_cell": "shame",
+    "domain_cell": "romantic relationships",
+    "register": "third_person",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0309"
+  },
+  {
+    "query": "my brother's always putting himself down in front of his partner and it's affecting their relationship how do i help",
+    "emotion_cell": "shame",
+    "domain_cell": "romantic relationships",
+    "register": "third_person",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0310"
+  },
+  {
+    "query": "what does it mean to live with integrity when financial circumstances constrain your choices?",
+    "emotion_cell": "shame",
+    "domain_cell": "money and material security",
+    "register": "abstract",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0311"
+  },
+  {
+    "query": "how should one judge their own character based on economic success or failure?",
+    "emotion_cell": "shame",
+    "domain_cell": "money and material security",
+    "register": "abstract",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0312"
+  },
+  {
+    "query": "is personal worth determined by wealth accumulation or can it exist independently?",
+    "emotion_cell": "shame",
+    "domain_cell": "money and material security",
+    "register": "abstract",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0313"
+  },
+  {
+    "query": "I feel like a terrible friend for what I just did to someone I care about and I can't stop judging myself for it",
+    "emotion_cell": "shame",
+    "domain_cell": "friendship and betrayal",
+    "register": "first_person_distress",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0314"
+  },
+  {
+    "query": "I'm being so hard on myself after betraying my best friend's trust and I hate the person I'm becoming",
+    "emotion_cell": "shame",
+    "domain_cell": "friendship and betrayal",
+    "register": "first_person_distress",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0315"
+  },
+  {
+    "query": "Why do I keep sabotaging my friendships with people I love and what's wrong with me for doing this",
+    "emotion_cell": "shame",
+    "domain_cell": "friendship and betrayal",
+    "register": "first_person_distress",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0316"
+  },
+  {
+    "query": "am i a bad person for lying",
+    "emotion_cell": "shame",
+    "domain_cell": "identity and self-worth",
+    "register": "terse",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0317"
+  },
+  {
+    "query": "why do i feel like a failure always",
+    "emotion_cell": "shame",
+    "domain_cell": "identity and self-worth",
+    "register": "terse",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0318"
+  },
+  {
+    "query": "do i deserve to be happy",
+    "emotion_cell": "shame",
+    "domain_cell": "identity and self-worth",
+    "register": "terse",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0319"
+  },
+  {
+    "query": "i keep thinking about how i told my boss i was sick last tuesday but i actually just needed a mental health day and now i feel like a terrible person and a liar even though i needed the break so badly, am i a bad employee or is self-care okay sometimes",
+    "emotion_cell": "shame",
+    "domain_cell": "moral dilemmas with no clean answer",
+    "register": "rambling",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0320"
+  },
+  {
+    "query": "my roommate asked to borrow money and i said no because i'm tight financially but then found out she couldn't pay her electric bill and now i feel guilty like maybe i should have helped her out even though i can barely cover my own expenses, was i selfish or just realistic",
+    "emotion_cell": "shame",
+    "domain_cell": "moral dilemmas with no clean answer",
+    "register": "rambling",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0321"
+  },
+  {
+    "query": "i've been ghosting this guy who keeps texting me because i'm not interested but i feel awful about it like maybe i should just tell him directly instead of ignoring him but that feels awkward and cruel so what does the right thing actually look like here",
+    "emotion_cell": "shame",
+    "domain_cell": "moral dilemmas with no clean answer",
+    "register": "rambling",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0322"
+  },
+  {
+    "query": "my friend keeps saying she's not good enough for her church community even though everyone loves her there",
+    "emotion_cell": "shame",
+    "domain_cell": "faith, doubt and meaning",
+    "register": "third_person",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0323"
+  },
+  {
+    "query": "my dad seems really hard on himself about whether his beliefs are strong enough anymore",
+    "emotion_cell": "shame",
+    "domain_cell": "faith, doubt and meaning",
+    "register": "third_person",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0324"
+  },
+  {
+    "query": "how do I help my son stop feeling like he's failing god when he misses prayer",
+    "emotion_cell": "shame",
+    "domain_cell": "faith, doubt and meaning",
+    "register": "third_person",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0325"
+  },
+  {
+    "query": "how do we measure personal growth when we feel like we're failing at our own standards",
+    "emotion_cell": "shame",
+    "domain_cell": "study, practice and self-discipline",
+    "register": "abstract",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0326"
+  },
+  {
+    "query": "what does it mean to hold yourself accountable without becoming self-destructive",
+    "emotion_cell": "shame",
+    "domain_cell": "study, practice and self-discipline",
+    "register": "abstract",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0327"
+  },
+  {
+    "query": "can discipline coexist with self-compassion or are they fundamentally opposed",
+    "emotion_cell": "shame",
+    "domain_cell": "study, practice and self-discipline",
+    "register": "abstract",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0328"
+  },
+  {
+    "query": "I feel completely alone in this new role and no one seems to understand what I'm dealing with every day at work",
+    "emotion_cell": "loneliness",
+    "domain_cell": "work and career",
+    "register": "first_person_distress",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0329"
+  },
+  {
+    "query": "My team is remote and I'm struggling with how isolated I feel doing this job by myself without anyone to talk to",
+    "emotion_cell": "loneliness",
+    "domain_cell": "work and career",
+    "register": "first_person_distress",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0330"
+  },
+  {
+    "query": "I'm the only person in my department handling this project and it's making me feel so lonely and disconnected from everyone",
+    "emotion_cell": "loneliness",
+    "domain_cell": "work and career",
+    "register": "first_person_distress",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0331"
+  },
+  {
+    "query": "how do i handle family expectations alone",
+    "emotion_cell": "loneliness",
+    "domain_cell": "family duty and obligation",
+    "register": "terse",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0332"
+  },
+  {
+    "query": "stuck doing parent care by myself",
+    "emotion_cell": "loneliness",
+    "domain_cell": "family duty and obligation",
+    "register": "terse",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0333"
+  },
+  {
+    "query": "only child dealing with all the obligations",
+    "emotion_cell": "loneliness",
+    "domain_cell": "family duty and obligation",
+    "register": "terse",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0334"
+  },
+  {
+    "query": "my mom passed away last month and i feel like nobody really gets it you know everyone moved on and i'm just here alone in the house and my siblings are busy with their own families and i don't know how to even talk to people about this anymore",
+    "emotion_cell": "loneliness",
+    "domain_cell": "grief and bereavement",
+    "register": "rambling",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0335"
+  },
+  {
+    "query": "lost my dad two years ago and i thought i'd be over it by now but i'm sitting here on a random tuesday and nobody knows how bad today is for me like i can't even explain it to my boyfriend he tries but he just doesn't understand and i feel so completely alone",
+    "emotion_cell": "loneliness",
+    "domain_cell": "grief and bereavement",
+    "register": "rambling",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0336"
+  },
+  {
+    "query": "my best friend died in a car accident and everyone was sad for like a week but now nobody mentions it and i can't bring it up because it makes things awkward and i'm just carrying this by myself all the time feeling like the only person in the world dealing with this",
+    "emotion_cell": "loneliness",
+    "domain_cell": "grief and bereavement",
+    "register": "rambling",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0337"
+  },
+  {
+    "query": "my friend just moved to a new city for work and hasn't met anyone yet, how can i help them feel less alone in dating",
+    "emotion_cell": "loneliness",
+    "domain_cell": "romantic relationships",
+    "register": "third_person",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0338"
+  },
+  {
+    "query": "my sister broke up with her boyfriend and now she's spending all her time alone, is this normal after a breakup",
+    "emotion_cell": "loneliness",
+    "domain_cell": "romantic relationships",
+    "register": "third_person",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0339"
+  },
+  {
+    "query": "my mom has been single for years and seems really isolated, should i be worried about her loneliness",
+    "emotion_cell": "loneliness",
+    "domain_cell": "romantic relationships",
+    "register": "third_person",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0340"
+  },
+  {
+    "query": "How do people find meaning and purpose when facing financial hardship alone?",
+    "emotion_cell": "loneliness",
+    "domain_cell": "money and material security",
+    "register": "abstract",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0341"
+  },
+  {
+    "query": "What does it mean to build security when you have no one to depend on?",
+    "emotion_cell": "loneliness",
+    "domain_cell": "money and material security",
+    "register": "abstract",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0342"
+  },
+  {
+    "query": "Can you create stability for yourself without family support or inherited wealth?",
+    "emotion_cell": "loneliness",
+    "domain_cell": "money and material security",
+    "register": "abstract",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0343"
+  },
+  {
+    "query": "my best friend has been excluding me from group hangs and i feel completely alone in this",
+    "emotion_cell": "loneliness",
+    "domain_cell": "friendship and betrayal",
+    "register": "first_person_distress",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0344"
+  },
+  {
+    "query": "i trusted my closest friend with something personal and they told everyone im devastated and isolated",
+    "emotion_cell": "loneliness",
+    "domain_cell": "friendship and betrayal",
+    "register": "first_person_distress",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0345"
+  },
+  {
+    "query": "my friend group has basically abandoned me and i dont know how to process feeling this betrayed and lonely",
+    "emotion_cell": "loneliness",
+    "domain_cell": "friendship and betrayal",
+    "register": "first_person_distress",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0346"
+  },
+  {
+    "query": "feeling alone like nobody gets me",
+    "emotion_cell": "loneliness",
+    "domain_cell": "identity and self-worth",
+    "register": "terse",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0347"
+  },
+  {
+    "query": "why do i feel so different from everyone",
+    "emotion_cell": "loneliness",
+    "domain_cell": "identity and self-worth",
+    "register": "terse",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0348"
+  },
+  {
+    "query": "isolated and questioning who i really am",
+    "emotion_cell": "loneliness",
+    "domain_cell": "identity and self-worth",
+    "register": "terse",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0349"
+  },
+  {
+    "query": "I'm stuck dealing with something really messed up at work where nobody else seems to care and I don't know what to do, like should I report it or just keep my head down because honestly I feel so alone in this and maybe I'm overreacting but it doesn't feel right",
+    "emotion_cell": "loneliness",
+    "domain_cell": "moral dilemmas with no clean answer",
+    "register": "rambling",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0350"
+  },
+  {
+    "query": "my family wants me to do something I think is wrong but they don't get it, like they're all pressuring me and I can't talk to anyone about it because they'd all take sides, what do I do when you're the only one who sees the problem",
+    "emotion_cell": "loneliness",
+    "domain_cell": "moral dilemmas with no clean answer",
+    "register": "rambling",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0351"
+  },
+  {
+    "query": "I found out something about a friend that I probably shouldn't know and now I'm the only one carrying this and it's eating me up, do I tell them, tell someone else, or just pretend I never found out because either way feels wrong",
+    "emotion_cell": "loneliness",
+    "domain_cell": "moral dilemmas with no clean answer",
+    "register": "rambling",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0352"
+  },
+  {
+    "query": "my friend stopped going to church and won't talk about why, how do I help him find his way back?",
+    "emotion_cell": "loneliness",
+    "domain_cell": "faith, doubt and meaning",
+    "register": "third_person",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0353"
+  },
+  {
+    "query": "my mom keeps saying life feels pointless since dad died, should I be worried about her mental health?",
+    "emotion_cell": "loneliness",
+    "domain_cell": "faith, doubt and meaning",
+    "register": "third_person",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0354"
+  },
+  {
+    "query": "my teenage daughter doesn't believe in anything anymore and pushes away everyone who tries to talk to her, what can I do?",
+    "emotion_cell": "loneliness",
+    "domain_cell": "faith, doubt and meaning",
+    "register": "third_person",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0355"
+  },
+  {
+    "query": "How do you maintain focus and discipline when pursuing mastery alone without community support?",
+    "emotion_cell": "loneliness",
+    "domain_cell": "study, practice and self-discipline",
+    "register": "abstract",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0356"
+  },
+  {
+    "query": "What does it mean to develop yourself through practice when you lack mentors or peers?",
+    "emotion_cell": "loneliness",
+    "domain_cell": "study, practice and self-discipline",
+    "register": "abstract",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0357"
+  },
+  {
+    "query": "Can solitary study and self-improvement lead to genuine growth without external validation or companionship?",
+    "emotion_cell": "loneliness",
+    "domain_cell": "study, practice and self-discipline",
+    "register": "abstract",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0358"
+  },
+  {
+    "query": "how do i push myself to learn more at work when i feel like i'm coasting in my current role",
+    "emotion_cell": "seeking",
+    "domain_cell": "work and career",
+    "register": "first_person_distress",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0359"
+  },
+  {
+    "query": "i'm craving more depth and challenge in what i do but don't know how to ask for it from my manager",
+    "emotion_cell": "seeking",
+    "domain_cell": "work and career",
+    "register": "first_person_distress",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0360"
+  },
+  {
+    "query": "feeling intellectually restless in my job and wondering if i should pursue something more demanding",
+    "emotion_cell": "seeking",
+    "domain_cell": "work and career",
+    "register": "first_person_distress",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0361"
+  },
+  {
+    "query": "how do I balance curiosity with family responsibility",
+    "emotion_cell": "seeking",
+    "domain_cell": "family duty and obligation",
+    "register": "terse",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0362"
+  },
+  {
+    "query": "torn between personal growth and parental expectations",
+    "emotion_cell": "seeking",
+    "domain_cell": "family duty and obligation",
+    "register": "terse",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0363"
+  },
+  {
+    "query": "should I pursue my interests despite family needs",
+    "emotion_cell": "seeking",
+    "domain_cell": "family duty and obligation",
+    "register": "terse",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0364"
+  },
+  {
+    "query": "when my dad passed last year I keep thinking about like what he would've wanted for me and I wonder if there's ways to like honor his memory by living differently you know like he had all these dreams he didn't finish",
+    "emotion_cell": "seeking",
+    "domain_cell": "grief and bereavement",
+    "register": "rambling",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0365"
+  },
+  {
+    "query": "lost my best friend two years ago and I'm starting to wonder about meaning again like what was the point of our friendship and how do I carry forward what mattered most about knowing them",
+    "emotion_cell": "seeking",
+    "domain_cell": "grief and bereavement",
+    "register": "rambling",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0366"
+  },
+  {
+    "query": "my mom died and I've been reading a lot lately trying to understand like what makes a life meaningful and I keep asking myself what would she think about how I'm spending my time now",
+    "emotion_cell": "seeking",
+    "domain_cell": "grief and bereavement",
+    "register": "rambling",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0367"
+  },
+  {
+    "query": "my friend keeps saying she wants more depth in her relationship but i don't think she knows what that means, how can i help her figure it out",
+    "emotion_cell": "seeking",
+    "domain_cell": "romantic relationships",
+    "register": "third_person",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0368"
+  },
+  {
+    "query": "my dad seems intellectually bored with his wife lately, they don't really talk about ideas anymore, should i say something",
+    "emotion_cell": "seeking",
+    "domain_cell": "romantic relationships",
+    "register": "third_person",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0369"
+  },
+  {
+    "query": "my brother's girlfriend is really smart but he never asks her opinion on anything, how do i bring this up with him",
+    "emotion_cell": "seeking",
+    "domain_cell": "romantic relationships",
+    "register": "third_person",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0370"
+  },
+  {
+    "query": "What does it mean to have enough money and why is wanting more never satisfied?",
+    "emotion_cell": "seeking",
+    "domain_cell": "money and material security",
+    "register": "abstract",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0371"
+  },
+  {
+    "query": "How can someone find peace with material uncertainty in a world built on consumption?",
+    "emotion_cell": "seeking",
+    "domain_cell": "money and material security",
+    "register": "abstract",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0372"
+  },
+  {
+    "query": "Is financial security actually achievable or just a story we tell ourselves?",
+    "emotion_cell": "seeking",
+    "domain_cell": "money and material security",
+    "register": "abstract",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0373"
+  },
+  {
+    "query": "I'm trying to understand why my best friend lied to me and what that means about who they really are.",
+    "emotion_cell": "seeking",
+    "domain_cell": "friendship and betrayal",
+    "register": "first_person_distress",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0374"
+  },
+  {
+    "query": "I need to figure out if friendship can survive betrayal or if trust once broken is just gone forever.",
+    "emotion_cell": "seeking",
+    "domain_cell": "friendship and betrayal",
+    "register": "first_person_distress",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0375"
+  },
+  {
+    "query": "I'm grappling with how someone I thought I knew completely could deceive me like this.",
+    "emotion_cell": "seeking",
+    "domain_cell": "friendship and betrayal",
+    "register": "first_person_distress",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0376"
+  },
+  {
+    "query": "what defines me beyond my job",
+    "emotion_cell": "seeking",
+    "domain_cell": "identity and self-worth",
+    "register": "terse",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0377"
+  },
+  {
+    "query": "how do i know who i really am",
+    "emotion_cell": "seeking",
+    "domain_cell": "identity and self-worth",
+    "register": "terse",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0378"
+  },
+  {
+    "query": "why do i feel like i'm missing something",
+    "emotion_cell": "seeking",
+    "domain_cell": "identity and self-worth",
+    "register": "terse",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0379"
+  },
+  {
+    "query": "how do i know if i'm making the right call about my parents' nursing home like they want to stay home but can't afford care and my sister thinks we should sell their house but that feels wrong somehow and i just don't know what the ethical thing is here",
+    "emotion_cell": "seeking",
+    "domain_cell": "moral dilemmas with no clean answer",
+    "register": "rambling",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0380"
+  },
+  {
+    "query": "i've been thinking about whether it's okay to report my coworker for something i overheard because we're friends but also the company could get in real trouble and people might lose jobs and i don't want to be a snitch but also is that morally cowardly of me",
+    "emotion_cell": "seeking",
+    "domain_cell": "moral dilemmas with no clean answer",
+    "register": "rambling",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0381"
+  },
+  {
+    "query": "what's the right thing to do when your best friend asks you to lie to their spouse about where they were and you know the marriage is already rocky and you feel stuck between loyalty and honesty and like there's no good answer",
+    "emotion_cell": "seeking",
+    "domain_cell": "moral dilemmas with no clean answer",
+    "register": "rambling",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0382"
+  },
+  {
+    "query": "my friend keeps saying she doesn't believe in anything anymore, how can I help her find meaning again",
+    "emotion_cell": "seeking",
+    "domain_cell": "faith, doubt and meaning",
+    "register": "third_person",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0383"
+  },
+  {
+    "query": "my dad seems lost since he retired and doesn't know what to believe in anymore, what should I do",
+    "emotion_cell": "seeking",
+    "domain_cell": "faith, doubt and meaning",
+    "register": "third_person",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0384"
+  },
+  {
+    "query": "my teenager is questioning everything about what I taught him to believe, how do I support his search for meaning",
+    "emotion_cell": "seeking",
+    "domain_cell": "faith, doubt and meaning",
+    "register": "third_person",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0385"
+  },
+  {
+    "query": "How do we know when we're genuinely learning versus just going through the motions?",
+    "emotion_cell": "seeking",
+    "domain_cell": "study, practice and self-discipline",
+    "register": "abstract",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0386"
+  },
+  {
+    "query": "What makes practice meaningful rather than just repetition of the same mistakes?",
+    "emotion_cell": "seeking",
+    "domain_cell": "study, practice and self-discipline",
+    "register": "abstract",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0387"
+  },
+  {
+    "query": "Can discipline ever come from within, or does it always require external pressure?",
+    "emotion_cell": "seeking",
+    "domain_cell": "study, practice and self-discipline",
+    "register": "abstract",
+    "source": "verse_blind_generation",
+    "verified_by_human": false,
+    "query_id": "q0388"
+  }
+]

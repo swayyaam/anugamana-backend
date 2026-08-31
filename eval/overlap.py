@@ -54,6 +54,14 @@ def ngrams(tokens: list[str], n: int) -> set[tuple[str, ...]]:
 # Contamination
 # ---------------------------------------------------------------------------
 
+#: Below this many content words, a verbatim match is coincidence rather than
+#: derivation. "am i doing the right thing" reduces to three content words and
+#: appears somewhere in a 700-verse corpus by chance; treating that as leakage
+#: would reject perfectly good short queries, which are exactly the register real
+#: users type. Long shared phrases are still caught by the n-gram rule below.
+MIN_VERBATIM_TOKENS = 6
+
+
 @dataclass
 class ContaminationReport:
     query: str
@@ -61,13 +69,16 @@ class ContaminationReport:
     verbatim: bool
     max_ngram_overlap: float
     longest_shared_ngram: int
+    query_tokens: int = 0
 
     @property
     def contaminated(self) -> bool:
-        # Verbatim containment is disqualifying outright. Beyond that, sharing a
-        # long exact phrase with the indexed text is the signature of a query
-        # derived from that text rather than written independently.
-        return self.verbatim or self.longest_shared_ngram >= 8
+        # A query wholly contained in the indexed text is disqualifying, provided
+        # it is long enough for that containment to mean something. Beyond that,
+        # sharing a long exact phrase is the signature of a query derived from
+        # the text rather than written independently.
+        substantive_verbatim = self.verbatim and self.query_tokens >= MIN_VERBATIM_TOKENS
+        return substantive_verbatim or self.longest_shared_ngram >= 8
 
 
 def _normalise(text: str) -> str:
@@ -104,7 +115,33 @@ def check_query(
         verbatim=verbatim,
         max_ngram_overlap=round(overlap, 4),
         longest_shared_ngram=longest,
+        query_tokens=len(query_tokens),
     )
+
+
+def check_query_against_corpus(
+    query: str, indexed_texts: dict[str, str]
+) -> ContaminationReport:
+    """
+    Compare a query against **every** verse's indexed text and report the worst
+    match found.
+
+    This is the correct gate for verse-blind queries, which have no nominated
+    gold verse — and it is a strictly stronger check than the per-verse one,
+    because a query lifted from the corpus is contaminated no matter which verse
+    it happened to come from.
+    """
+    worst = ContaminationReport(query, "", False, 0.0, 0)
+    for verse_id in indexed_texts:
+        report = check_query(query, indexed_texts, verse_id)
+        if (report.contaminated, report.longest_shared_ngram) > (
+            worst.contaminated,
+            worst.longest_shared_ngram,
+        ):
+            worst = report
+        if report.contaminated:
+            break
+    return worst
 
 
 def assert_clean(reports: list[ContaminationReport]) -> None:
