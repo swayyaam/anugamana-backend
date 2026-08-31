@@ -104,6 +104,67 @@ The `high` stratum has n = 4 and should not be interpreted.
 
 ---
 
+## 4b. Replication on a second corpus: the effect scales with the gap
+
+410 passages of Marcus Aurelius' *Meditations*, enriched with the identical
+four-field schema and indexed as the same enriched/raw pair. M2 vs M5 is exactly
+the contrast C2 vs C5 is, on a different tradition and a different source
+language. 198 scorable queries.
+
+| condition | nDCG@10 | MRR@10 | P@1 | |
+|---|---|---|---|---|
+| M5 | 0.4534 | 0.5449 | 0.3636 | enriched |
+| M2 | 0.4300 | 0.5107 | 0.3182 | raw, unenriched |
+| M0 | 0.2780 | 0.3741 | 0.2020 | BM25 |
+
+**The enrichment effect did not replicate at anything like the same size.**
+M2→M5 is +0.0234, 95% CI [−0.0112, +0.0576], p = 0.18 — not significant.
+On the Gita the same contrast was +0.1243 and overwhelming.
+
+A naive reading is that the method does not generalise. The data says something
+more precise and more interesting.
+
+**Meditations does not have as much of the disease.** Measuring the same
+independent variable at the corpus level — IDF-weighted overlap between each
+query and its best relevant passage:
+
+| corpus | mean overlap | median | share of queries with *no* shared vocabulary |
+|---|---|---|---|
+| Bhagavad-gita | 0.0953 | 0.0806 | **28.3%** |
+| Meditations | 0.1820 | 0.1601 | 8.1% |
+
+Meditations queries share **1.91× more vocabulary** with the passages that answer
+them. Marcus Aurelius is already giving direct, secular advice about anger,
+mortality and other people; Prabhupada is explicating Vedic metaphysics. And
+retrieval without enrichment behaves exactly as that predicts: raw dense
+retrieval scores 0.4300 on Meditations against 0.1845 on the Gita — **2.3× better
+before any enrichment is applied.**
+
+So the two corpora are not a replication that failed. They are a **dose–response
+relationship**, and it is the same relationship §4 found *within* the Gita, now
+confirmed *between* corpora:
+
+| | vocabulary gap | enrichment gain |
+|---|---|---|
+| Gita, "none" overlap stratum | largest | 5.56× over BM25 |
+| Gita, overall | mean 0.0953 | +0.1243 (p < 0.001) |
+| Meditations, overall | mean 0.1820 | +0.0234 (n.s.) |
+| Gita, "medium"/"high" strata | smallest | 1.29× |
+
+The claim this supports is sharper than "enrichment helps": **the benefit of
+document expansion is proportional to the register gap it has to close, and where
+there is no gap there is nothing to gain.** That is a mechanism with a prediction
+attached, which is what makes it a method rather than a trick — and it tells a
+practitioner when *not* to spend the money.
+
+*Caveat, and it is a serious one:* the Meditations judgments have Krippendorff
+α = 0.655, below the 0.667 floor — "too noisy to carry a claim" on Krippendorff's
+own scale, against 0.709 for the Gita. The M2→M5 null result should be treated as
+suggestive, not settled. The corpus-level overlap measurement, which does not
+depend on the judgments at all, is the more robust half of this section.
+
+---
+
 ## 5. The parametric baseline, and why we do not believe it
 
 P0 — Claude Haiku asked directly to name the ten most relevant verses, with no

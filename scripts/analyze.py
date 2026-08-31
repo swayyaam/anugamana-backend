@@ -68,9 +68,11 @@ def main() -> int:
     parser.add_argument("--metric", default="ndcg@10", choices=list(M.METRICS))
     parser.add_argument("--no-strata", action="store_true")
     parser.add_argument("--iterations", type=int, default=10_000)
+    parser.add_argument("--qrels", help="alternate qrels file (e.g. a second corpus)")
+    parser.add_argument("--conditions", help="restrict to these run keys")
     args = parser.parse_args()
 
-    qrels_path = BENCHMARK_DIR / "qrels.json"
+    qrels_path = Path(args.qrels) if args.qrels else BENCHMARK_DIR / "qrels.json"
     if not qrels_path.exists():
         print(f"{RED}No qrels at {qrels_path}{RESET}")
         print("Run: python scripts/pool_and_judge.py")
@@ -79,14 +81,19 @@ def main() -> int:
     qrels = json.loads(qrels_path.read_text(encoding="utf-8"))
     queries = json.loads((BENCHMARK_DIR / "queries.json").read_text(encoding="utf-8"))
     runs = load_runs()
+    if args.conditions:
+        wanted = set(args.conditions.split(","))
+        runs = {k: v for k, v in runs.items() if k in wanted}
     if not runs:
         print(f"{RED}No runs in {RUNS_DIR}{RESET}. Run: python -m eval.run")
         return 2
 
     # Only queries with at least one relevant verse can discriminate systems.
+    covered = set.intersection(*(set(r) for r in runs.values())) if runs else set()
     query_ids = [
         q["query_id"] for q in queries
-        if any(g >= M.RELEVANT_THRESHOLD for g in qrels.get(q["query_id"], {}).values())
+        if q["query_id"] in covered
+        and any(g >= M.RELEVANT_THRESHOLD for g in qrels.get(q["query_id"], {}).values())
     ]
     query_text = {q["query_id"]: q["query"] for q in queries}
     dropped = len(queries) - len(query_ids)
@@ -95,7 +102,9 @@ def main() -> int:
     print(f"{DIM}benchmark: {len(queries)} queries, {len(query_ids)} with at least "
           f"one relevant verse ({dropped} dropped){RESET}")
 
-    agreement_path = BENCHMARK_DIR / "agreement.json"
+    agreement_path = Path(
+        str(qrels_path).replace("qrels", "agreement")
+    )
     if agreement_path.exists():
         agreement = json.loads(agreement_path.read_text())
         print(f"{DIM}judgments: {agreement['standard'].split('.')[0]}; "

@@ -1,0 +1,24 @@
+{
+  "krippendorff_alpha_ordinal": 0.6549670556821283,
+  "interpretation": "TOO NOISY \u2014 judgments cannot carry a claim",
+  "n_units": 5568,
+  "annotators": [
+    "haiku",
+    "sonnet45",
+    "sonnet5"
+  ],
+  "pairwise_weighted_kappa": {
+    "haiku vs sonnet45": 0.6725395076550714,
+    "haiku vs sonnet5": 0.6920334784769133,
+    "sonnet45 vs sonnet5": 0.6885869369855138
+  },
+  "grade_distribution": {
+    "0": 5960,
+    "1": 3678,
+    "2": 1950,
+    "3": 526
+  },
+  "hard_disagreements": 245,
+  "queries_with_no_relevant_verse": 2,
+  "standard": "SILVER \u2014 model-generated judgments. A human-judged subset is required before publication. See DATASET_CARD.md."
+}
