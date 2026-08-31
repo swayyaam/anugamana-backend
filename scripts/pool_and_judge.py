@@ -56,9 +56,20 @@ client = AsyncAnthropic(api_key=ANTHROPIC_API_KEY)
 
 #: Independent annotators. Different model families/tiers, because a model
 #: agreeing with itself is not evidence of anything.
+#: Three, not two. With two annotators a single disagreement moves alpha a long
+#: way, and the pilot run came in at 0.751 — "tentative conclusions only" on
+#: Krippendorff's scale. A third breaks ties and stabilises the consensus grade.
+#:
+#: LIMITATION, stated plainly: all three are Claude models. They are independent
+#: in the sense that each grades without seeing the others, but they share
+#: training data with each other and with the system under evaluation, so their
+#: errors are correlated and alpha overstates true reliability. This is precisely
+#: why scripts/annotate.py exists and why no faithfulness or relevance number
+#: from this pipeline may be published without human validation.
 ANNOTATORS = [
     ("haiku", "claude-haiku-4-5-20251001"),
-    ("sonnet", "claude-sonnet-4-5-20250929"),
+    ("sonnet45", "claude-sonnet-4-5-20250929"),
+    ("sonnet5", "claude-sonnet-5"),
 ]
 
 JUDGE_SYSTEM = """\
@@ -129,12 +140,17 @@ async def judge_pool(
     try:
         response = await client.messages.create(
             model=model,
-            max_tokens=1200,
+            max_tokens=2000,
             temperature=0.0,
             system=JUDGE_SYSTEM,
             messages=[{"role": "user", "content": message}],
         )
-        match = _JSON_RE.search(response.content[0].text.strip())
+        # Some models emit a thinking block before the answer, so take the
+        # first block that actually carries text rather than assuming index 0.
+        text = next(
+            (b.text for b in response.content if getattr(b, "text", None)), ""
+        )
+        match = _JSON_RE.search(text.strip())
         if not match:
             return {}
         raw = json.loads(match.group(0))
@@ -203,9 +219,9 @@ async def main() -> int:
     report = analyse(judgments)
     print("\n" + report.format())
 
-    # Consensus grade = mean of annotators, rounded. Ties round toward the
-    # lower grade: a benchmark should not credit a system for a verse the
-    # annotators could not agree was relevant.
+    # Consensus grade = median across annotators. With three graders the median
+    # is robust to a single outlier in a way the mean is not, and it keeps the
+    # consensus on the ordinal scale instead of inventing intermediate values.
     qrels: dict[str, dict[str, int]] = defaultdict(dict)
     disagreements = 0
     for query_id, pool in pools.items():
@@ -218,7 +234,8 @@ async def main() -> int:
                 continue
             if max(grades) - min(grades) >= 2:
                 disagreements += 1
-            qrels[query_id][vid] = int(sum(grades) / len(grades))
+            grades.sort()
+            qrels[query_id][vid] = grades[len(grades) // 2]
 
     relevant_counts = [
         sum(1 for g in grades.values() if g >= 2) for grades in qrels.values()

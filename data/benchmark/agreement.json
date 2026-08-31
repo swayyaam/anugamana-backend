@@ -1,0 +1,21 @@
+{
+  "krippendorff_alpha_ordinal": 0.751018445023479,
+  "interpretation": "tentative conclusions only",
+  "n_units": 419,
+  "annotators": [
+    "haiku",
+    "sonnet"
+  ],
+  "pairwise_weighted_kappa": {
+    "haiku vs sonnet": 0.7290110019415191
+  },
+  "grade_distribution": {
+    "0": 522,
+    "1": 164,
+    "2": 106,
+    "3": 19
+  },
+  "hard_disagreements": 15,
+  "queries_with_no_relevant_verse": 0,
+  "standard": "SILVER \u2014 model-generated judgments. A human-judged subset is required before publication. See DATASET_CARD.md."
+}
