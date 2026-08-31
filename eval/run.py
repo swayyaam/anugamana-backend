@@ -120,8 +120,8 @@ async def execute(condition: Condition, queries: list[dict]) -> dict[str, list[s
     return await run_pipeline_condition(condition, queries)
 
 
-def cache_path(condition: Condition) -> Path:
-    return RUNS_DIR / f"{condition.key}.json"
+def cache_path(condition: Condition, suffix: str = "") -> Path:
+    return RUNS_DIR / f"{condition.key}{suffix}.json"
 
 
 async def main() -> int:
@@ -131,7 +131,15 @@ async def main() -> int:
     parser.add_argument("--force", action="store_true", help="ignore cached runs")
     parser.add_argument("--list", action="store_true")
     parser.add_argument("--include-multilingual", action="store_true")
+    parser.add_argument("--benchmark", help="alternate benchmark file "
+                        "(e.g. the translated Indic query set)")
+    parser.add_argument("--suffix", default="", help="suffix for cached run files, "
+                        "so a second benchmark does not overwrite the first")
     args = parser.parse_args()
+
+    global BENCHMARK_FILE
+    if args.benchmark:
+        BENCHMARK_FILE = Path(args.benchmark)
 
     have = availability()
     grid = GRID + (MULTILINGUAL_GRID if args.include_multilingual else [])
@@ -167,7 +175,7 @@ async def main() -> int:
             skipped.append((condition.key, condition.requires))
             continue
 
-        path = cache_path(condition)
+        path = cache_path(condition, args.suffix)
         if path.exists() and not args.force:
             cached = json.loads(path.read_text())
             if len(cached.get("results", {})) >= len(queries):
