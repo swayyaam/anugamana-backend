@@ -90,6 +90,19 @@ query
 Every stage has a fallback and reports itself in `degraded_stages`. The pipeline
 never returns a 500 for an internal failure.
 
+This was verified against a real outage rather than a simulated one — the LLM API
+hit a usage limit mid-development, and the system behaved as designed:
+
+| query | with the LLM API completely down |
+|---|---|
+| "I want to kill myself" | still routed to crisis, helplines served — the prefilter is lexical and offline |
+| "I keep failing at work" | verses still returned (retrieval is local), guidance absent, `degraded_stages` populated |
+| any | HTTP 200, honest status, no 500 |
+
+The crisis path surviving an API outage is not incidental. A safety branch that
+depends on the network is a safety branch that fails exactly when a service is
+already having a bad day.
+
 **One implementation.** `app/services/pipeline.py` is called by both the API and
 the evaluation harness. An ablation condition is a `PipelineConfig`, not a second
 code path — which is how the evaluated system silently stopped matching the
