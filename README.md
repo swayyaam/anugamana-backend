@@ -2,146 +2,97 @@
 
 > *To be guided along the path.*
 
-An AI-powered semantic search and RAG system for the **Bhagavad Gita As It Is** by Srila Prabhupada. A person describes a life situation, an emotion, or a question in plain natural language — in English or any of 10 Indian languages — and gets the most relevant verses along with guidance grounded faithfully in Prabhupada's purports.
+Semantic search and RAG over the **Bhagavad-gita As It Is** (Srila Prabhupada).
+Someone describes a life situation in plain modern language — in English or an
+Indian language — and gets the verses that actually address it, with guidance
+grounded in the purports.
+
+**[RESULTS.md](RESULTS.md)** — measured retrieval quality, ablations, and the
+findings that did not go our way.
+**[RETRACTION.md](RETRACTION.md)** — why every number before 2026-08-31 was
+invalid.
 
 ---
 
-## The Problem This Solves
+## The problem
 
-Standard keyword search fails completely on this corpus.
+A user types *"I'm paralyzed by fear of making the wrong decision."*
+The verse that answers it says *"You have a right to perform your prescribed
+duties, but you are not entitled to the fruits of action."*
 
-A user types: *"I'm paralyzed by fear of making the wrong decision"*
-The matching verse says: *"You have a right to perform your prescribed duties, but you are not entitled to the fruits of your actions"*
+They share no vocabulary. Keyword search cannot bridge that, and this is not a
+rhetorical flourish — it is measurable. Binning our benchmark by IDF-weighted
+query–document overlap:
 
-These share zero vocabulary. Every existing Gita search tool fails this query.
+| overlap between query and the verse that answers it | BM25 nDCG@10 | with enrichment | advantage |
+|---|---|---|---|
+| **none** (n=108) | 0.0500 | 0.2779 | **5.56×** |
+| low (n=238) | 0.1623 | 0.3217 | 1.98× |
+| medium (n=31) | 0.2471 | 0.3181 | 1.29× |
 
-Anugamana solves this with **synthetic semantic enrichment**: for every verse, an LLM generates modern-language meaning fields — real-world situations, emotional states, core teaching, philosophical concepts — and those fields are what gets embedded and searched. The vocabulary gap between a 21st-century user and a 5000-year-old Sanskrit commentary is bridged before any query is made.
+BM25 collapses fivefold as shared vocabulary disappears. Enrichment barely
+moves. That gap is what this system is for.
 
----
+## The approach
 
-## Architecture
+For every verse, an LLM generates four fields in modern everyday language —
+*situations*, *teaching*, *emotions*, *concepts* — and **those** are what gets
+embedded and searched. The vocabulary gap is closed offline, once, before any
+query arrives.
 
-### Full Pipeline
+This is LLM **document expansion**, in the doc2query / docTTTTTquery lineage.
+What is new here is the setting (a cross-register, cross-temporal gap), the
+measurement (§4 of RESULTS.md), and the released benchmark — not the mechanism.
 
-```
-User query
-        ▼
-Input guardrail — on-topic classifier (Claude Haiku, max_tokens=5)
-  fails open → assume relevant if API down
-        ▼
-Query routing — detects query type, fast-paths when possible
-  ├── direct_lookup ("2.47", "BG 6.5", "verse 18.66")
-  │     → skip HyDE + retrieval + reranker (~2s saved)
-  │     → direct ChromaDB fetch by verse ID
-  ├── sanskrit (Devanagari script detected)
-  │     → skip HyDE Claude call (~200ms saved)
-  │     → embed raw query directly
-  └── semantic (everything else)
-        → full pipeline ↓
-        ▼
-HyDE + query expansion — 2 parallel Claude Haiku calls
-  HyDE: generate hypothetical Prabhupada commentary, embed that
-  Expansion: 3 semantic rephrasings for improved recall
-  fails independently: HyDE → raw query, expansion → single query
-        ▼
-Hybrid retrieval — all in parallel
-  Dense  → ChromaDB gita_verses   (BGE-M3, meaning + translation vectors)
-  Dense  → ChromaDB gita_purport  (BGE-M3, paragraph-level purport chunks)
-  Sparse → sparse_index           (BGE-M3 lexical weights)
-        ▼
-RRF fusion → group by verse_id → top 10 verses
-        ▼
-Cross-encoder reranking (ms-marco-MiniLM-L-6-v2)
-  fails → sort by RRF score
-        ▼
-MMR diversity pass → top 5 verses
-  fails → top-k by score
-        ▼
-Confidence threshold
-  normalize scores to [0–1] within result set
-  drop verses with normalized_score < 0.1 (outliers)
-  flag low_confidence if scores form a tight cluster
-        ▼
-RAG generation — Claude Haiku per verse
-  context: verse + 3-paragraph parent window from purport
-  constraint: use ONLY the provided verse and commentary
-  fails → return verse without guidance (empty string)
-        ▼
-Response: verses + normalized scores + AI guidance
-        │
-        ▼
-Async (non-blocking): LLM-as-judge faithfulness score → SQLite feedback log
-```
-
-### Why HyDE
-
-Embedding a raw user query lands it in casual-language vector space. Embedding a hypothetical Prabhupada commentary lands it in the same space as the indexed purports. The vocabulary match improves dramatically.
-
-```
-query:   "I'm terrified of making the wrong decision"
-         ↓ naive embed
-         lands in self-help / casual English space → weak match
-
-HyDE:    Claude generates a 4-sentence Prabhupada-style commentary
-         ↓ embed that instead
-         lands in Gita commentary space → strong match
-```
-
-### Why Semantic Enrichment
-
-Every verse gets 4 fields generated by Claude (chapter-aware, using the Phase 1 corpus analysis as context):
-
-```json
-{
-  "situations": "stuck in a job you hate but afraid to quit; agonizing over a decision...",
-  "teaching":   "You have full right to do your work but no claim on what it produces...",
-  "emotions":   "the anxiety of obsessing over outcomes, paralysis from attachment to results...",
-  "concepts":   "non-attachment to results (nishkama karma); prescribed duty (sva-dharma)..."
-}
-```
-
-These are concatenated into `text_for_embedding` — the primary search target. Different fields catch different query types:
-
-| Query type | Matched by |
-|---|---|
-| *"I'm anxious about failing"* | `emotions` |
-| *"what is the nature of the soul"* | `concepts` |
-| *"how do I stop overthinking"* | `situations` |
-| *"karma yoga teaching"* | `teaching` |
-| *"karmanye vadhikaraste"* | sparse index |
-| *"what does 2.47 say"* | direct_lookup route → ChromaDB fetch |
+Measured effect against an identically-built unenriched index:
+**+0.1243 nDCG@10, 95% CI [+0.1006, +0.1479]**, winning on 284 of 381 queries.
 
 ---
 
-## Data Pipeline
+## Pipeline
 
 ```
-scripts/scraper.py       →  data/gita_full.json               700 verses (Devanagari + Sanskrit + translation + purport)
-scripts/analyze_gita.py  →  data/gita_chapter_analyses.json   18 chapter analyses (thematic map, HyDE vocab, edge cases)
-scripts/enrich.py        →  data/gita_enriched.json           700 × meaning_fields + text_for_embedding
-scripts/indexer.py       →  data/chroma_db/                   2603 vectors (meaning + translation + purport chunks)
-                         →  data/sparse_index.pkl              8952 unique BGE-M3 lexical tokens
-scripts/build_dataset.py →  data/golden_dataset.json          evaluation query-verse pairs
-scripts/evaluate.py      →  data/eval_results.json             MRR@5, Recall@5, NDCG@5 per pipeline version
+query
+  │
+  ├─ crisis routing ─────────── lexical prefilter + classifier
+  │                             hard-coded response with real helplines
+  │                             never reaches retrieval or generation
+  │
+  ├─ language ──────────────── script detection (offline) → Sarvam text-lid
+  │                             non-English pivots to English via Mayura
+  │
+  ├─ topical guardrail ─────── on-topic classifier, fails open
+  │
+  ├─ routing ───────────────── direct_lookup ("BG 2.47")  → skip to fetch
+  │                             sanskrit (Devanagari)      → skip HyDE
+  │                             semantic                   → full pipeline
+  │
+  ├─ query transform ───────── HyDE + 3 expansions (disk-cached)
+  │   ‖ concurrent             emotion classification → probe vector
+  │
+  ├─ retrieval ─────────────── dense: meaning + translation + purport chunks
+  │                             sparse: BGE-M3 lexical weights
+  │                             extra arms: emotion probe, transliteration
+  │                             RRF fusion → group by verse → top 10
+  │
+  ├─ rerank ────────────────── cross-encoder → sigmoid-calibrated relevance
+  │                             MMR diversity
+  │                             (measured: this stage currently HURTS — §6)
+  │
+  ├─ generation ────────────── per verse, concurrent, grounded in the ±1
+  │                             paragraph window around the matched chunk
+  │
+  └─ response ──────────────── translated back to the user's language
+                                async: LLM judge → SQLite
 ```
 
-### Vector Index Structure
+Every stage has a fallback and reports itself in `degraded_stages`. The pipeline
+never returns a 500 for an internal failure.
 
-Every verse produces 3 vector types:
-
-```
-Verse 2.47
-├── gita_verses collection
-│   ├── 2.47_meaning      → BGE-M3(text_for_embedding)    semantic / emotional queries
-│   └── 2.47_translation  → BGE-M3(translation)           paraphrase queries
-│
-└── gita_purport collection
-    ├── 2.47_purport_0    → BGE-M3(header + paragraph_1)  commentary queries
-    ├── 2.47_purport_1    → BGE-M3(header + paragraph_2)
-    └── 2.47_purport_2    → BGE-M3(header + paragraph_3)
-```
-
-Purport chunks are **paragraph-based** (not fixed word count) — Prabhupada's paragraphs are already semantic units. Parent-child retrieval: the child paragraph is retrieved for precision, the ±1 paragraph window is sent to Claude for generation context.
+**One implementation.** `app/services/pipeline.py` is called by both the API and
+the evaluation harness. An ablation condition is a `PipelineConfig`, not a second
+code path — which is how the evaluated system silently stopped matching the
+served one last time.
 
 ---
 
@@ -150,229 +101,158 @@ Purport chunks are **paragraph-based** (not fixed word count) — Prabhupada's p
 ### `POST /search`
 
 ```json
-{
-  "query": "I keep failing and feel like giving up",
-  "top_k": 3
-}
+{ "query": "I keep failing and feel like giving up", "top_k": 3 }
 ```
 
-Response:
 ```json
 {
   "results": [
     {
-      "verse_id":    "2.47",
-      "chapter":     2,
-      "verse":       47,
-      "devanagari":  "कर्मण्येवाधिकारस्ते...",
-      "sanskrit":    "karmaṇy evādhikāras te...",
+      "verse_id": "2.47",
+      "chapter": 2, "verse": 47,
+      "devanagari": "कर्मण्येवाधिकारस्ते...",
+      "sanskrit": "karmaṇy evādhikāras te...",
       "translation": "You have a right to perform your prescribed duties...",
-      "score":       0.94,
-      "ai_guidance": "The anxiety you feel about failing comes from tying your identity..."
+      "score": 0.0959,
+      "ai_guidance": "The anxiety you feel about failing comes from..."
     }
   ],
   "query_meta": {
-    "guardrail":           "relevant",
-    "query_route":         "semantic",
-    "retrieval_ms":        120,
-    "rerank_ms":           45,
-    "generation_ms":       800,
-    "total_ms":            1200,
-    "response_id":         42,
-    "degraded_stages":     [],
-    "confidence_filtered": 0,
-    "low_confidence":      false
+    "status": "ok",
+    "score_type": "cross_encoder",
+    "query_route": "semantic",
+    "low_confidence": false,
+    "degraded_stages": [],
+    "total_ms": 4210
   }
 }
 ```
 
-**`query_route`** values:
-- `"semantic"` — full pipeline
-- `"direct_lookup"` — verse reference detected, skipped HyDE/retrieval/reranker
-- `"sanskrit"` — Devanagari detected, skipped HyDE
+`status` is `ok` / `off_topic` / `crisis` / `no_results` — all HTTP 200. Crisis
+and off-topic are expected outcomes, not errors, and previously returned 422,
+which was indistinguishable from a schema validation failure.
 
-**`score`** is normalized to `[0, 1]` within the result set. `1.0` = best match, values near `0` = marginal.
+`score` is an **absolute** relevance probability when `score_type` is
+`cross_encoder`, comparable across queries. When it is `rrf` the value is ordinal
+only and must not be thresholded. It is deliberately not a within-result-set
+rank: that bug silently deleted the last result of every search.
 
-**`degraded_stages`** lists any pipeline stages that failed and fell back (e.g. `["hyde", "expansion"]`).
-
-**`confidence_filtered`** is the count of results dropped because their score was too far below the top result.
-
-### `GET /metrics`
-
-Rolling system metrics (default: last 7 days).
-
-```json
-{
-  "window_days":     7,
-  "total_queries":   134,
-  "avg_latency_ms":  1340.0,
-  "avg_faith_score": 4.2,
-  "thumbs_up":       89,
-  "thumbs_down":     12
-}
-```
-
-### `POST /feedback`
-
-```json
-{ "response_id": 42, "rating": 1 }
-```
-
-`rating`: `+1` (helpful) or `-1` (not helpful).
+Other endpoints: `GET /health`, `GET /metrics`, `POST /feedback`.
 
 ---
 
 ## Evaluation
 
-Three retrieval conditions are measured against a golden dataset of `(query, expected_verse_id)` pairs:
-
-| Condition | Description |
-|---|---|
-| `baseline` | Sparse search only — no enrichment, no HyDE |
-| `no_hyde` | Hybrid retrieval with enrichment, raw query embedded |
-| `full` | Complete pipeline — enrichment + HyDE + hybrid retrieval |
-
-Metrics: **MRR@5**, **Recall@5**, **NDCG@5**
-
-The improvement of `full` over `baseline` on hard queries (where user vocabulary and verse vocabulary don't overlap) is the paper's core empirical claim.
-
-To add hand-curated evaluation pairs:
-
-```json
-// data/golden_manual.json
-[
-  {"query": "I keep failing at work and feel like giving up", "verse_id": "2.47"},
-  {"query": "what does the Gita say about the soul after death", "verse_id": "2.20"},
-  {"query": "how do I control my anger", "verse_id": "3.37"}
-]
-```
+The harness is the point of this repository as much as the search engine is.
 
 ```bash
-python scripts/build_dataset.py
-python scripts/evaluate.py
+python -m eval.run                        # 14 conditions over 389 queries
+python scripts/pool_and_judge.py          # pooled graded judgments
+python scripts/analyze.py                 # CIs, Holm correction, strata
+python scripts/error_analysis.py          # failure taxonomy, bias diagnostics
+python scripts/check_contamination.py --self-test
 ```
+
+Properties it enforces, each of which was violated by the retracted evaluation:
+
+- **Verse-blind queries.** No verse, translation, purport or enrichment field
+  ever enters a query-generation prompt. Queries come from the information-need
+  side — affective state × life domain × register — as a real IR benchmark
+  elicits topics. 389/389 pass the contamination gate; the retracted set was
+  80/80 verbatim.
+- **Pooled graded judgments.** No gold verse is nominated in advance; the union
+  of every condition's top-10 is graded 0–3 by three annotators.
+- **A real control.** `scripts/build_raw_index.py` builds an unenriched index
+  identically — same model, same chunking — differing in exactly one factor.
+- **Dangerous baselines first.** Real BM25, and an LLM answering from memory
+  with no retrieval. Both are run before anything else, because they are the
+  ones that can sink the project.
+- **Statistics.** Paired bootstrap CIs, randomisation tests, Holm correction,
+  per-query win/loss/tie counts.
+
+Judgments are currently **silver** (model annotators, α = 0.709). Human
+validation is required before publication — protocol in
+[docs/JUDGE_VALIDATION.md](docs/JUDGE_VALIDATION.md), collect with
+`python scripts/annotate.py --annotator <name>`.
 
 ---
 
-## Tech Stack
+## Indic support (Sarvam AI)
 
-| Component | Choice | Why |
+Optional. Without `SARVAM_API_KEY` every entry point degrades to a defined
+fallback and English search is unaffected.
+
+| capability | model | role |
 |---|---|---|
-| Embedding model | `BAAI/bge-m3` | Free, multilingual, dense+sparse in one model, 1024-dim, top MTEB |
-| Vector store | ChromaDB (local) | Zero infra, pure Python, disk-persistent |
-| Sparse index | BGE-M3 lexical weights | Same model as dense — no separate BM25 process |
-| Reranker | `ms-marco-MiniLM-L-6-v2` | Cross-encoder reads query+doc together — more accurate than cosine |
-| LLM | Claude Haiku 4.5 | Fast, cheap, structured tool use for enrichment and guardrails |
-| RAG generation | Claude Haiku 4.5 | Faithfulness constraint baked into system prompt |
-| Framework | FastAPI | Async, typed, automatic OpenAPI docs |
-| Logging | SQLite | Zero infra, sufficient for the feedback loop |
-| Sarvam (Phase 8) | Bulbul + Mayura + Saaras | Indic-native TTS/translation/STT for 10 Indian languages |
+| language ID | script detection → `text-lid` | offline first, API only for Latin script |
+| translation | Mayura | query → English pivot; guidance → user's language |
+| transliteration | — | romanised Sanskrit → Devanagari, as an extra lexical arm |
+| emotion | `sarvam-105b-conversations` | affective state → retrieval probe |
+| speech | Bulbul v3 | verse and guidance audio |
+
+Guidance is generated in English and then translated, not generated in the
+target language — generating directly would make the model translate
+Prabhupada's commentary on the fly, the step most likely to introduce
+unsupported claims into a religious text.
+
+```bash
+python scripts/verify_sarvam.py    # checks all five endpoints against the live API
+```
+
+Run this after setting the key and whenever Sarvam version anything. It found
+four wrong assumptions the first time it ran.
 
 ---
 
 ## Setup
 
-### Requirements
-
-- Python 3.11+
-- ~4GB disk (BGE-M3 model ~570MB + vector index)
-- Anthropic API key
-
-### Installation
-
 ```bash
-git clone <repo>
-cd anugamana-backend
-python -m venv venv
-source venv/bin/activate
-pip install -r requirements.txt
+python -m venv venv && source venv/bin/activate
+pip install -r requirements.txt -r requirements-dev.txt
+cp .env.example .env          # add ANTHROPIC_API_KEY
 ```
 
-### Environment
+Build the indexes (one-time; needs ~4GB for BGE-M3 plus the vector stores):
 
 ```bash
-# .env
-ANTHROPIC_API_KEY=sk-ant-...
-SARVAM_API_KEY=...          # Phase 8 only
+python scripts/scraper.py         # 700 verses
+python scripts/analyze_gita.py    # 18 chapter analyses
+python scripts/enrich.py          # meaning_fields  (~$1.50, ~20 min)
+python scripts/indexer.py         # enriched index  (~15 min)
+python scripts/build_raw_index.py # unenriched control index
 ```
 
-### Build the pipeline (one-time)
-
 ```bash
-# 1. Scrape (already done — data/gita_full.json committed)
-python scripts/scraper.py
-
-# 2. Analyze corpus
-python scripts/analyze_gita.py
-
-# 3. Enrich all 700 verses (~$1.50, ~20 min with Claude Haiku)
-python scripts/enrich.py
-
-# 4. Index into ChromaDB + sparse index (~15 min, downloads BGE-M3 ~570MB)
-python scripts/indexer.py
-```
-
-### Run the server
-
-```bash
-uvicorn app.main:app --reload
-```
-
-API docs: `http://localhost:8000/docs`
-
-### Run evaluation
-
-```bash
-python scripts/build_dataset.py
-python scripts/evaluate.py
+uvicorn app.main:app --reload     # http://localhost:8000/docs
+pytest                            # 223 tests, ~3s, no network
 ```
 
 ---
 
-## Project Status
+## Status
 
-| Phase | What | Status |
-|---|---|---|
-| 0 | Scraping | ✅ Complete |
-| 1 | Corpus analysis | ✅ Complete |
-| 2 | Enrichment | ✅ Complete |
-| 3 | Indexing | ✅ Complete |
-| 4 | Search pipeline | ✅ Complete |
-| 5 | Evaluation framework | ✅ Complete |
-| 6 | Guardrails | ✅ Complete |
-| 7 | Feedback loop | ✅ Complete |
-| 8 | Sarvam integrations (TTS, translation) | 🔲 Next |
-| 9 | Voice input, Indic embeddings, Hindi enrichment | 🔲 Planned |
-
-### Production Improvements
-
-| Improvement | Status |
+| | |
 |---|---|
-| Graceful degradation — every stage has a fallback, never returns 500 | ✅ Done |
-| Confidence threshold — normalized 0–1 scores, drops outlier results | ✅ Done |
-| Query routing — direct lookup and Sanskrit fast paths | ✅ Done |
-| Response caching (Redis) — latency improvement for repeated queries | 🔲 Planned |
-| PostgreSQL for feedback — needed before any real traffic | 🔲 Planned |
-| Domain-specific reranker — ms-marco is trained on web search, not scripture | 🔲 Planned |
-| Qdrant — replace ChromaDB for high-concurrency production load | 🔲 Planned |
-
----
-
-## Frontend Integration
-
-See [`integration.md`](integration.md) for the complete frontend integration guide — all pages, TypeScript types, Clerk auth setup, API reference, error states, and component structure.
-
----
+| Pipeline | serving, with crisis routing and graceful degradation |
+| Evaluation | 14 conditions, 389 queries, silver judgments |
+| Human validation | **not started** — blocks publication |
+| Second corpus | *Meditations* segmented (410 passages); grid not yet run |
+| Cross-lingual | Hindi query set built (133); L1–L3 in progress |
+| Reranker | measured as harmful; needs replacing or removing |
 
 ## Research
 
-This project is the basis for an academic paper on **vocabulary-gap bridging in ancient text retrieval** — using synthetic semantic enrichment to close the gap between modern casual queries and 5000-year-old Sanskrit commentary. Target venue: EMNLP 2026 / ACL workshops.
-
----
+The contribution is the problem class, the measurement, and the resource — not
+the mechanism. Full argument, including the contributions that did **not**
+survive contact with data, in [RESULTS.md](RESULTS.md).
 
 ## License
 
-The pipeline code is open source. The Bhagavad Gita As It Is text (translations and purports) is copyright Bhaktivedanta Book Trust. Use of this system requires a content license from BBT for any commercial deployment.
+Pipeline code is open source. The Bhagavad-gita As It Is text is copyright
+Bhaktivedanta Book Trust; the enriched corpus is a derivative work and is not
+redistributed here. The benchmark ships as `(query, verse_id, grade)` triples
+with no BBT text, and the *Meditations* half of the artifact is public domain and
+fully releasable.
 
 ---
 

@@ -2,31 +2,31 @@
   "condition": "C10",
   "metric": "ndcg@10",
   "taxonomy": {
-    "acceptable": 69,
-    "ranked_away": 284,
-    "never_retrieved": 35,
-    "total": 388
+    "acceptable": 55,
+    "ranked_away": 265,
+    "never_retrieved": 61,
+    "total": 381
   },
   "by_register": {
     "first_person_distress": {
       "n": 78,
-      "mean": 0.3675048405758523
+      "mean": 0.34079944353403363
     },
     "terse": {
-      "n": 77,
-      "mean": 0.28770013182004606
+      "n": 76,
+      "mean": 0.2675621040510705
     },
     "rambling": {
       "n": 78,
-      "mean": 0.3758125429039837
+      "mean": 0.3550288096359717
     },
     "third_person": {
-      "n": 77,
-      "mean": 0.2219470034003709
+      "n": 71,
+      "mean": 0.19714999895734128
     },
     "abstract": {
       "n": 78,
-      "mean": 0.36032176913720315
+      "mean": 0.33039774715594905
     }
   },
   "concentration": {
@@ -104,6 +104,21 @@
       ]
     },
     {
+      "query_id": "q0071",
+      "query": "my daughter lost her long-term partner should I say something or just be there",
+      "score": 0.0,
+      "register": "third_person",
+      "returned": [
+        "13.12",
+        "16.3",
+        "1.18"
+      ],
+      "relevant": [
+        "17.15",
+        "2.11"
+      ]
+    },
+    {
       "query_id": "q0159",
       "query": "my sister keeps saying her husband is supportive but he never does anything around the house and criticizes her constantly, how do i help her see what's really happening?",
       "score": 0.0,
@@ -115,7 +130,7 @@
       ],
       "relevant": [
         "2.63",
-        "3.37"
+        "7.27"
       ]
     },
     {
@@ -129,25 +144,25 @@
         "16.2"
       ],
       "relevant": [
-        "2.63",
-        "12.13"
+        "12.13",
+        "16.1"
       ]
     }
   ],
   "unique_wins": {
-    "C0": 83,
-    "C1": 71,
-    "C10": 25,
-    "C12": 40,
-    "C2": 26,
-    "C3": 6,
-    "C3b": 88,
-    "C5": 93,
+    "C0": 56,
+    "C1": 58,
+    "C10": 16,
+    "C12": 33,
+    "C2": 17,
+    "C3": 4,
+    "C3b": 64,
+    "C5": 74,
     "C5b": 0,
-    "C6": 56,
-    "C7": 126,
-    "C8": 86,
-    "C9": 29,
-    "P0": 329
+    "C6": 39,
+    "C7": 93,
+    "C8": 60,
+    "C9": 24,
+    "P0": 295
   }
 }
