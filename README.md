@@ -75,9 +75,10 @@ query
   │                             extra arms: emotion probe, transliteration
   │                             RRF fusion → group by verse → top 10
   │
-  ├─ rerank ────────────────── cross-encoder → sigmoid-calibrated relevance
-  │                             MMR diversity
-  │                             (measured: this stage currently HURTS — §6)
+  ├─ ranking ───────────────── RRF fusion order
+  │                             (the cross-encoder was here until it measured
+  │                              ROC AUC 0.4579 — worse than random — and was
+  │                              removed; +0.0455 nDCG@10, RESULTS.md §6)
   │
   ├─ generation ────────────── per verse, concurrent, grounded in the ±1
   │                             paragraph window around the matched chunk
@@ -113,13 +114,13 @@ served one last time.
       "devanagari": "कर्मण्येवाधिकारस्ते...",
       "sanskrit": "karmaṇy evādhikāras te...",
       "translation": "You have a right to perform your prescribed duties...",
-      "score": 0.0959,
+      "score": 0.5,
       "ai_guidance": "The anxiety you feel about failing comes from..."
     }
   ],
   "query_meta": {
     "status": "ok",
-    "score_type": "cross_encoder",
+    "score_type": "rrf",
     "query_route": "semantic",
     "low_confidence": false,
     "degraded_stages": [],
@@ -132,10 +133,15 @@ served one last time.
 and off-topic are expected outcomes, not errors, and previously returned 422,
 which was indistinguishable from a schema validation failure.
 
-`score` is an **absolute** relevance probability when `score_type` is
-`cross_encoder`, comparable across queries. When it is `rrf` the value is ordinal
-only and must not be thresholded. It is deliberately not a within-result-set
-rank: that bug silently deleted the last result of every search.
+`score_type` says what `score` means, and the client must respect it. `rrf` — the
+current default — is **ordinal**: it ranks, it does not measure, and it must
+never be thresholded. `cross_encoder` would be an absolute relevance probability
+comparable across queries, and is available if a domain-tuned reranker is fitted
+(see `eval/calibrate.py`).
+
+Either way the score is deliberately *not* a within-result-set normalisation.
+That was the bug that silently deleted the last result of every search and
+reported 1.0 for the best of three bad matches.
 
 Other endpoints: `GET /health`, `GET /metrics`, `POST /feedback`.
 
@@ -147,6 +153,8 @@ The harness is the point of this repository as much as the search engine is.
 
 ```bash
 python -m eval.run                        # 14 conditions over 389 queries
+python -m eval.run --include-multilingual --include-generalisation
+python -m eval.calibrate                  # fit thresholds on graded data
 python scripts/pool_and_judge.py          # pooled graded judgments
 python scripts/analyze.py                 # CIs, Holm correction, strata
 python scripts/error_analysis.py          # failure taxonomy, bias diagnostics
@@ -234,11 +242,11 @@ pytest                            # 223 tests, ~3s, no network
 | | |
 |---|---|
 | Pipeline | serving, with crisis routing and graceful degradation |
-| Evaluation | 14 conditions, 389 queries, silver judgments |
+| Evaluation | 18 conditions, 389 queries, silver judgments (α = 0.709) |
 | Human validation | **not started** — blocks publication |
-| Second corpus | *Meditations* segmented (410 passages); grid not yet run |
-| Cross-lingual | Hindi query set built (133); L1–L3 in progress |
-| Reranker | measured as harmful; needs replacing or removing |
+| Second corpus | *Meditations*: 410 passages enriched, indexed, replication run |
+| Cross-lingual | 133 Hindi queries; translate-then-retrieve wins, equity gap measured |
+| Reranker | measured at ROC AUC 0.4579 — removed from the served pipeline |
 
 ## Research
 
