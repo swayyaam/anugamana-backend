@@ -42,12 +42,13 @@ n = 381 queries with at least one relevant verse.
 |---|---|---|---|---|---|---|
 | **P0** | **0.5619** | 0.7526 | 0.2497 | 0.4051 | 0.6509 | no retrieval — LLM parametric memory |
 | C6 | 0.3527 | 0.5611 | 0.1539 | 0.2791 | 0.4094 | HyDE, generic prompt |
+| **C13** | **0.3457** | **0.5725** | 0.1613 | 0.2569 | **0.4226** | **the served system (after acting on these results)** |
 | C8 | 0.3444 | 0.5473 | 0.1531 | 0.2588 | 0.4094 | + expansion + sparse (hybrid RRF) |
 | C7 | 0.3430 | 0.5250 | 0.1551 | 0.2777 | 0.3491 | HyDE, domain-calibrated |
 | C12 | 0.3205 | 0.4171 | 0.1317 | 0.2735 | 0.2441 | + emotion arm |
 | **C5** | **0.3088** | 0.4969 | 0.1348 | 0.2307 | 0.3438 | **enrichment alone** |
 | C9 | 0.3065 | 0.4019 | 0.1220 | 0.2689 | 0.2178 | + cross-encoder rerank |
-| C10 | 0.3002 | 0.3868 | 0.1204 | 0.2588 | 0.2257 | **the served system** |
+| C10 | 0.3002 | 0.3868 | 0.1204 | 0.2588 | 0.2257 | the *previously* served system |
 | C5b | 0.2984 | 0.4984 | 0.1333 | 0.2151 | 0.3438 | enrichment + translation + purport |
 | C3 | 0.2424 | 0.4492 | 0.1063 | 0.1572 | 0.3281 | raw dense + purport chunks |
 | **C2** | **0.1845** | 0.3831 | 0.0849 | 0.1104 | 0.3255 | **unenriched control** |
@@ -74,6 +75,7 @@ across the family.
 | Does the out-of-domain cross-encoder help or hurt? | C8→C9 | **−0.0379** | [−0.0512, −0.0246] | 0.0008 | 138/238/5 | **HURTS** |
 | What does MMR cost in relevance? | C9→C10 | −0.0063 | [−0.0173, +0.0048] | 0.5483 | 171/187/23 | not shown |
 | Does an explicit emotion arm beat semantic similarity alone? | C10→C12 | **+0.0203** | [+0.0083, +0.0323] | 0.0024 | 214/149/18 | **YES** |
+| Does dropping the out-of-domain reranker improve the served system? | C10→C13 | **+0.0455** | [+0.0318, +0.0598] | 0.0010 | 252/123/6 | **YES** |
 
 ---
 
@@ -157,10 +159,67 @@ pipeline or replaced with a domain-tuned reranker.
 **MMR is not paying for itself either**, though the effect is not significant
 (−0.0063, p = 0.55). It remains defensible on user-experience grounds.
 
-**The served system is not the best system.** C10 (0.3002) ranks below C6, C7,
-C8 and C12. The ranking stages that were added for product polish cost retrieval
-quality. C8 + the emotion arm, without cross-encoder reranking, is the
-configuration the evidence currently supports.
+**The served system was not the best system — so it was changed.** C10 (0.3002)
+ranked below C6, C7, C8 and C12: the ranking stages added for product polish were
+costing retrieval quality.
+
+`eval/calibrate.py` then settled it. Scoring 4,000 judged (query, verse) pairs
+with the cross-encoder and measuring how well it separates relevant from
+irrelevant:
+
+```
+ROC AUC 0.4579          — worse than random
+relevant      n=687   median 0.0000  mean 0.0005
+not relevant  n=3313  median 0.0000  mean 0.0003
+```
+
+The two distributions are indistinguishable and the ordering is slightly
+inverted. This is not a weak signal; it is no signal. The cross-encoder was
+removed from the served pipeline, which became **C13** — and C13 was added to the
+grid, because the moment the served system stops being a measured condition, the
+"evaluated system is the served system" property this repository is built on
+would be false again.
+
+The change is worth **+0.0455 nDCG@10** (95% CI [+0.0318, +0.0598], p < 0.001,
+winning on 252 of 381 queries), and C13 has the best MRR@10 and P@1 of any
+retrieval condition — the metrics that matter when a user reads the top result.
+
+---
+
+## 6b. Cross-lingual retrieval
+
+133 Hindi queries, sharing the English judgments because the information need is
+identical and only its surface language changes.
+
+| run | language | nDCG@10 | MRR@10 | R@10 | strategy |
+|---|---|---|---|---|---|
+| L3 | Hindi | 0.3148 | 0.4803 | 0.2521 | fuse both query forms |
+| L1 | Hindi | 0.2992 | 0.4610 | 0.2429 | translate to English pivot, then retrieve |
+| L2 | Hindi | 0.2247 | 0.3172 | 0.2018 | embed the Hindi query directly |
+| C13 | English | 0.3898 | 0.6304 | 0.2746 | the same needs, asked in English |
+
+| question | contrast | Δ | 95% CI | p (Holm) | verdict |
+|---|---|---|---|---|---|
+| Is translate-then-retrieve better than direct multilingual? | L2→L1 | **+0.0744** | [+0.0441, +0.1052] | 0.0004 | **YES** |
+| Does fusing both query forms beat translating alone? | L1→L3 | +0.0156 | [−0.0011, +0.0328] | 0.0743 | not shown |
+| What does asking in Hindi cost, versus English? | L1→C13 | **+0.0907** | [+0.0638, +0.1188] | 0.0003 | **large penalty** |
+
+Two things follow.
+
+**Translation is worth it.** Pivoting through English beats embedding the Hindi
+query directly by 33% relative, despite BGE-M3 being a multilingual model.
+Fusing both forms is directionally better still but not significant at n=133.
+
+**There is a real equity gap.** The same information need, asked in Hindi rather
+than English, retrieves measurably worse — 0.2992 against 0.3898, losing on 99 of
+133 queries. For a text whose audience is overwhelmingly Indian, that is a
+finding about who the system currently serves well, and it is not a footnote.
+
+*Limitation:* the Hindi queries were produced by translating English ones with
+Mayura, so L1 translates back with the same model and enjoys a round-trip
+advantage a native Hindi query would not confer. L1 is therefore an optimistic
+bound; L2 carries no such advantage, and the penalty measured against C13 is
+if anything understated.
 
 ---
 

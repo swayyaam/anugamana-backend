@@ -110,9 +110,13 @@ class TestConfidenceFilterDoesNotEatResults:
 
         from app.services import pipeline
 
-        # Above every achievable sigmoid, so nothing clears the bar.
+        # Above every achievable sigmoid, so nothing clears the bar. The
+        # cross-encoder is enabled explicitly: SERVED no longer runs it (it
+        # measured ROC AUC 0.4579), and the confidence filter only applies when
+        # a calibrated scorer is active.
         monkeypatch.setattr(pipeline, "MIN_RELEVANCE", 0.9999)
-        config = replace(pipeline.SERVED, top_k=3, rerank_top_n=3)
+        config = replace(pipeline.SERVED, top_k=3, rerank_top_n=3,
+                         use_cross_encoder=True)
         result = await pipeline.run("something obscure", config)
         assert len(result.verses) == 1
         assert result.low_confidence is True
@@ -128,7 +132,8 @@ class TestConfidenceFilterDoesNotEatResults:
 
         # Clears the top candidate (0.9933) but not the others.
         monkeypatch.setattr(pipeline, "MIN_RELEVANCE", 0.99)
-        config = replace(pipeline.SERVED, top_k=3, rerank_top_n=3)
+        config = replace(pipeline.SERVED, top_k=3, rerank_top_n=3,
+                         use_cross_encoder=True)
         result = await pipeline.run("I keep failing at work", config)
         assert len(result.verses) == 1
         assert result.confidence_filtered == 2
@@ -151,4 +156,7 @@ class TestConfidenceFilterDoesNotEatResults:
         assert result.score_type == "rrf"
         assert len(result.verses) == 3
         assert result.confidence_filtered == 0
-        assert result.low_confidence is True
+        # No calibrated scorer is active, so there is no confidence signal.
+        # Flagging every result would make the flag meaningless; score_type
+        # already tells the client the value is ordinal.
+        assert result.low_confidence is False

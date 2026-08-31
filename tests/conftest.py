@@ -208,7 +208,8 @@ def stub_retrieval(monkeypatch, verses):
         pipeline.retrieval, "retrieve_by_verse_id", retrieval.retrieve_by_verse_id
     )
 
-    def fake_rerank(query, candidates, *, use_cross_encoder=True, use_mmr=True, top_n=5):
+    def fake_rerank(query, candidates, *, use_cross_encoder=True,
+                    cross_encoder_reorders=True, use_mmr=True, top_n=5):
         if not candidates:
             return [], [], "none"
         if not use_cross_encoder:
@@ -219,7 +220,11 @@ def stub_retrieval(monkeypatch, verses):
         for i, verse in enumerate(candidates):
             verse["cross_score"] = 5.0 - i
             verse["relevance"] = reranker._sigmoid(5.0 - i)
-        ordered = sorted(candidates, key=lambda v: v["relevance"], reverse=True)
+        key = (
+            (lambda v: v["relevance"]) if cross_encoder_reorders
+            else (lambda v: v["rrf_score"])
+        )
+        ordered = sorted(candidates, key=key, reverse=True)
         return ordered[:top_n], [], "cross_encoder"
 
     monkeypatch.setattr(reranker, "rerank", fake_rerank)

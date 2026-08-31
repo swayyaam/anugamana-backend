@@ -175,6 +175,16 @@ GRID: list[Condition] = [
               ENRICHED_HYBRID, use_hyde=True, use_expansion=True,
               use_cross_encoder=True, use_mmr=True, use_emotion_arm=True,
               requires="anthropic_api"),
+
+    # ---- the served system, after acting on the measurements --------------
+    # C10 was the served system until the grid showed the cross-encoder hurts
+    # ranking and eval/calibrate.py showed its scores have AUC 0.4579. This is
+    # the configuration that replaced it, and it is measured like any other so
+    # the "evaluated system is the served system" property still holds.
+    _pipeline("C13", "C8 + emotion arm, no cross-encoder — THE SERVED SYSTEM",
+              "the configuration the evidence supports",
+              ENRICHED_HYBRID, use_hyde=True, use_expansion=True,
+              use_emotion_arm=True, requires="anthropic_api"),
 ]
 
 #: Cross-lingual strategies. Run only over the Indic query subset, and only when
@@ -211,5 +221,6 @@ PLANNED_CONTRASTS = [
     ("C8", "C9", "Does the out-of-domain cross-encoder help or hurt?"),
     ("C9", "C10", "What does MMR cost in relevance?"),
     ("C10", "C12", "Does an explicit emotion arm beat semantic similarity alone?"),
+    ("C10", "C13", "Does dropping the out-of-domain reranker improve the served system?"),
     ("L2", "L1", "Is translate-then-retrieve better than direct multilingual?"),
 ]

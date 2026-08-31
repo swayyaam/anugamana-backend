@@ -74,7 +74,12 @@ def _mmr(candidates: list[dict], top_n: int, lambda_: float) -> list[dict]:
     norms = np.linalg.norm(vecs, axis=1, keepdims=True)
     vecs = vecs / np.where(norms == 0, 1, norms)
 
-    scores = np.array([c["relevance"] for c in candidates], dtype=float)
+    # Relevance for the MMR trade-off comes from the candidates' current order,
+    # so MMR cannot smuggle the cross-encoder's ranking back in when that has
+    # deliberately been switched off.
+    scores = np.array(
+        [1.0 / (i + 1) for i in range(len(candidates))], dtype=float
+    )
 
     selected: list[int] = []
     remaining = list(range(len(candidates)))
@@ -101,6 +106,7 @@ def rerank(
     verses: list[dict],
     *,
     use_cross_encoder: bool = True,
+    cross_encoder_reorders: bool = True,
     use_mmr: bool = True,
     top_n: int = TOP_RESULTS,
 ) -> tuple[list[dict], list[str], str]:
@@ -110,6 +116,14 @@ def rerank(
     Returns (verses, degraded_stages, score_type) where score_type is
     "cross_encoder" (relevance is an absolute probability, safe to threshold) or
     "rrf" (relevance is ordinal only — never threshold it).
+
+    `cross_encoder_reorders` separates two jobs the cross-encoder was doing at
+    once. Measured on the benchmark, letting it *reorder* costs 0.0379 nDCG@10
+    (p < 0.001, losing on 238 queries) because ms-marco is badly out of domain
+    here. But it is still the only source of an absolute relevance probability,
+    which the API needs for a meaningful score and a usable confidence
+    threshold. With this False we keep the calibrated score and drop the
+    reordering, which is what the evidence supports. See RESULTS.md section 6.
     """
     if not verses:
         return [], [], "none"
@@ -139,7 +153,11 @@ def rerank(
             verse["cross_score"] = verse.get("rrf_score", 0.0)
             verse["relevance"] = round(1.0 / (position + 1), 4)
 
-    ranked = sorted(verses, key=lambda v: v["relevance"], reverse=True)
+    if score_type == "cross_encoder" and not cross_encoder_reorders:
+        # Keep fusion order; the cross-encoder contributes calibration only.
+        ranked = sorted(verses, key=lambda v: v.get("rrf_score", 0.0), reverse=True)
+    else:
+        ranked = sorted(verses, key=lambda v: v["relevance"], reverse=True)
 
     if use_mmr:
         try:

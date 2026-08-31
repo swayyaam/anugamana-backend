@@ -67,6 +67,10 @@ class PipelineConfig:
 
     # ranking
     use_cross_encoder: bool = True
+    #: Let the cross-encoder decide order, not just calibrate scores. Measured
+    #: as harmful on this corpus (RESULTS.md section 6), so the served system
+    #: sets this False while keeping calibrated scores.
+    cross_encoder_reorders: bool = True
     use_mmr: bool = True
     rerank_top_n: int = 5
     apply_confidence_filter: bool = True
@@ -101,10 +105,24 @@ class PipelineConfig:
 
 
 #: The configuration the API serves. The grid measures this as condition C10.
+#: The configuration the API serves.
+#:
+#: Changed 2026-08-31 in response to our own measurements, in two steps.
+#:
+#: 1. The grid showed cross-encoder *reordering* costs 0.0379 nDCG@10
+#:    (p < 0.001), and that the previously served configuration ranked below
+#:    four simpler ones. So it was demoted to scoring only.
+#: 2. eval/calibrate.py then showed its scores have ROC AUC 0.4579 on this
+#:    corpus — worse than random. A score that cannot separate relevant from
+#:    irrelevant is not a score, so the stage is off entirely.
+#:
+#: The emotion arm stays: measured +0.0203 nDCG@10, p = 0.0024.
+#: Ordering is therefore RRF fusion, and `score` is reported as ordinal.
 SERVED = PipelineConfig(
     name="served",
-    description="Full pipeline: enriched hybrid retrieval + HyDE + expansion "
-                "+ cross-encoder + MMR",
+    description="Enriched hybrid retrieval + HyDE + expansion + emotion arm, "
+                "ranked by RRF fusion",
+    use_cross_encoder=False,
 )
 
 
@@ -291,6 +309,7 @@ async def run(query: str, config: PipelineConfig = SERVED) -> PipelineResult:
         working_query,
         candidates,
         use_cross_encoder=config.use_cross_encoder,
+        cross_encoder_reorders=config.cross_encoder_reorders,
         use_mmr=config.use_mmr,
         top_n=config.rerank_top_n,
     )
@@ -316,7 +335,11 @@ async def run(query: str, config: PipelineConfig = SERVED) -> PipelineResult:
         result.confidence_filtered = len(ranked) - len(kept)
         ranked = kept
     elif ranked:
-        result.low_confidence = score_type != "cross_encoder"
+        # No calibrated scorer is active, so there is no confidence signal to
+        # report. Flagging every result low-confidence would make the flag
+        # meaningless; `score_type` already tells the client the score is
+        # ordinal and must not be thresholded.
+        result.low_confidence = False
 
     result.verses = ranked
     return await _finish(working_query, result, config, started)

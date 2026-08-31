@@ -118,7 +118,11 @@ class TestBackendSelection:
         assert result.backend == "claude"
 
     @pytest.mark.asyncio
-    async def test_total_failure_yields_an_undetected_result(self, monkeypatch):
+    async def test_total_failure_yields_an_undetected_result(
+        self, stub_llms, monkeypatch
+    ):
+        # stub_llms forces Sarvam offline; here we break the remaining backend
+        # too, so every route to a label is unavailable.
         class Broken:
             messages = type("M", (), {})()
 

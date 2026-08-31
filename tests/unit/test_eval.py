@@ -292,11 +292,19 @@ class TestGrid:
         assert c6.hyde_calibrated is False and c7.hyde_calibrated is True
         assert c6.retrieval == c7.retrieval
 
-    def test_c10_is_the_served_system(self):
+    def test_the_served_system_is_a_measured_condition(self):
+        """
+        The evaluated system must be the served system. When SERVED changed in
+        response to the results — cross-encoder removed after it measured
+        ROC AUC 0.4579 — a matching condition had to be added, or the grid
+        would no longer contain the thing users actually get.
+        """
         from app.services.pipeline import SERVED
-        c10 = BY_KEY["C10"].config
-        for flag in ("use_hyde", "use_expansion", "use_cross_encoder", "use_mmr"):
-            assert getattr(c10, flag) == getattr(SERVED, flag), flag
+        served_condition = BY_KEY["C13"].config
+        for flag in ("use_hyde", "use_expansion", "use_cross_encoder",
+                     "use_emotion_arm"):
+            assert getattr(served_condition, flag) == getattr(SERVED, flag), flag
+        assert SERVED.use_cross_encoder is False
 
     def test_grid_conditions_never_generate_or_gate(self):
         """Evaluation must measure retrieval, not the user-facing wrapper."""
