@@ -35,17 +35,27 @@ logger = structlog.get_logger(__name__)
 
 _CE_LOCK = threading.Lock()
 _PREDICT_LOCK = threading.Lock()
-_cross_encoder: CrossEncoder | None = None
+_cross_encoders: dict[str, CrossEncoder] = {}
 
 
-def _load_cross_encoder() -> CrossEncoder:
-    """Serialised construction — see the note in retrieval._load_model."""
-    global _cross_encoder
-    if _cross_encoder is None:
-        with _CE_LOCK:
-            if _cross_encoder is None:
-                _cross_encoder = CrossEncoder(RERANK_MODEL)
-    return _cross_encoder
+def _load_cross_encoder(model_name: str = RERANK_MODEL) -> CrossEncoder:
+    """
+    Serialised construction, cached per model — see retrieval._load_model.
+
+    Parameterised by model so a reranker can be swapped as an ablation
+    condition rather than a code change. ms-marco-MiniLM measured ROC AUC
+    0.4579 on this corpus (worse than random) and was removed from the served
+    pipeline; any replacement has to earn its place the same way.
+    """
+    cached = _cross_encoders.get(model_name)
+    if cached is not None:
+        return cached
+    with _CE_LOCK:
+        cached = _cross_encoders.get(model_name)
+        if cached is None:
+            cached = CrossEncoder(model_name)
+            _cross_encoders[model_name] = cached
+        return cached
 
 
 @lru_cache(maxsize=1)
@@ -107,6 +117,7 @@ def rerank(
     *,
     use_cross_encoder: bool = True,
     cross_encoder_reorders: bool = True,
+    reranker_model: str = RERANK_MODEL,
     use_mmr: bool = True,
     top_n: int = TOP_RESULTS,
 ) -> tuple[list[dict], list[str], str]:
@@ -133,7 +144,7 @@ def rerank(
 
     if use_cross_encoder:
         try:
-            cross_encoder = _load_cross_encoder()
+            cross_encoder = _load_cross_encoder(reranker_model)
             pairs = [(query, v["translation"]) for v in verses]
             for verse, logit in zip(verses, cross_encoder.predict(pairs)):
                 verse["cross_score"] = float(logit)

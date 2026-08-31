@@ -113,7 +113,13 @@ async def _hyde_call(query: str, system_prompt: str, use_cache: bool) -> str:
     return text
 
 
-async def _expansion_call(query: str) -> list[str]:
+async def _expansion_call(query: str, use_cache: bool = True) -> list[str]:
+    key = _cache_key(query, EXPANSION_SYSTEM)
+    if use_cache:
+        cached = _cache_read(key)
+        if cached and cached.get("expansions"):
+            return cached["expansions"]
+
     response = await _client.messages.create(
         model=LLM_MODEL,
         max_tokens=200,
@@ -124,8 +130,10 @@ async def _expansion_call(query: str) -> list[str]:
         line.strip()
         for line in response.content[0].text.strip().splitlines()
         if line.strip()
-    ]
-    return lines[:3]
+    ][:3]
+    if use_cache and lines:
+        _cache_write(key, {"query": query, "expansions": lines})
+    return lines
 
 
 async def transform(
@@ -151,7 +159,8 @@ async def transform(
         else asyncio.sleep(0, result=query)
     )
     tasks.append(
-        _expansion_call(query) if use_expansion else asyncio.sleep(0, result=[])
+        _expansion_call(query, use_cache) if use_expansion
+        else asyncio.sleep(0, result=[])
     )
 
     hyde_result, expansion_result = await asyncio.gather(

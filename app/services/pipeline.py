@@ -26,6 +26,7 @@ from app.config import (
     MIN_RELEVANCE,
     MULTILINGUAL_STRATEGY,
     PIVOT_LANGUAGE,
+    RERANK_MODEL,
 )
 from app.services import (
     emotion as emotion_service,
@@ -71,6 +72,8 @@ class PipelineConfig:
     #: as harmful on this corpus (RESULTS.md section 6), so the served system
     #: sets this False while keeping calibrated scores.
     cross_encoder_reorders: bool = True
+    #: Which cross-encoder to use. Swapping it is an ablation, not an edit.
+    reranker_model: str = RERANK_MODEL
     use_mmr: bool = True
     rerank_top_n: int = 5
     apply_confidence_filter: bool = True
@@ -104,7 +107,6 @@ class PipelineConfig:
         )
 
 
-#: The configuration the API serves. The grid measures this as condition C10.
 #: The configuration the API serves.
 #:
 #: Changed 2026-08-31 in response to our own measurements, in two steps.
@@ -317,6 +319,7 @@ async def run(query: str, config: PipelineConfig = SERVED) -> PipelineResult:
         candidates,
         use_cross_encoder=config.use_cross_encoder,
         cross_encoder_reorders=config.cross_encoder_reorders,
+        reranker_model=config.reranker_model,
         use_mmr=config.use_mmr,
         top_n=config.rerank_top_n,
     )

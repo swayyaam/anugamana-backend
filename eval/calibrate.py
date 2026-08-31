@@ -100,6 +100,8 @@ def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--sample", type=int, default=4000)
     parser.add_argument("--seed", type=int, default=20260831)
+    parser.add_argument("--model", default=None,
+                        help="cross-encoder to calibrate (default: config)")
     args = parser.parse_args()
 
     qrels_path = BENCHMARK_DIR / "qrels.json"
@@ -123,9 +125,10 @@ def main() -> int:
     ]
     random.Random(args.seed).shuffle(pairs)
     pairs = pairs[: args.sample]
-    print(f"scoring {len(pairs)} judged pairs with the cross-encoder...")
+    print(f"scoring {len(pairs)} judged pairs with "
+          f"{args.model or 'the configured cross-encoder'}...")
 
-    model = _load_cross_encoder()
+    model = _load_cross_encoder(args.model) if args.model else _load_cross_encoder()
     logits = model.predict([(q, t) for q, t, _ in pairs])
     scores = [_sigmoid(float(x)) for x in logits]
 
@@ -190,6 +193,7 @@ def main() -> int:
 
     OUT_FILE.parent.mkdir(parents=True, exist_ok=True)
     OUT_FILE.write_text(json.dumps({
+        "model": args.model or "config default",
         "n_pairs": len(pairs),
         "n_relevant": len(positives),
         "n_not_relevant": len(negatives),

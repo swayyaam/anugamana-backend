@@ -209,7 +209,8 @@ def stub_retrieval(monkeypatch, verses):
     )
 
     def fake_rerank(query, candidates, *, use_cross_encoder=True,
-                    cross_encoder_reorders=True, use_mmr=True, top_n=5):
+                    cross_encoder_reorders=True, reranker_model=None,
+                    use_mmr=True, top_n=5):
         if not candidates:
             return [], [], "none"
         if not use_cross_encoder:

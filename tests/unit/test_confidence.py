@@ -43,7 +43,9 @@ class TestRerankContract:
     def test_reports_cross_encoder_score_type(self, verses, monkeypatch):
         monkeypatch.setattr(
             reranker, "_load_cross_encoder",
-            lambda: type("CE", (), {"predict": lambda self, pairs: [3.0, 1.0, -2.0]})(),
+            lambda *a, **k: type(
+                "CE", (), {"predict": lambda self, pairs: [3.0, 1.0, -2.0]}
+            )(),
         )
         monkeypatch.setattr(reranker, "_mmr", lambda c, n, l: c[:n])
         ranked, degraded, score_type = reranker.rerank("q", verses, top_n=3)
@@ -53,7 +55,7 @@ class TestRerankContract:
         assert ranked[0]["relevance"] > ranked[-1]["relevance"]
 
     def test_falls_back_to_rrf_and_says_so(self, verses, monkeypatch):
-        def boom():
+        def boom(*args, **kwargs):
             raise RuntimeError("model unavailable")
 
         monkeypatch.setattr(reranker, "_load_cross_encoder", boom)
@@ -76,7 +78,9 @@ class TestRerankContract:
     def test_mmr_failure_degrades_gracefully(self, verses, monkeypatch):
         monkeypatch.setattr(
             reranker, "_load_cross_encoder",
-            lambda: type("CE", (), {"predict": lambda self, pairs: [3.0, 1.0, -2.0]})(),
+            lambda *a, **k: type(
+                "CE", (), {"predict": lambda self, pairs: [3.0, 1.0, -2.0]}
+            )(),
         )
 
         def boom(*args, **kwargs):

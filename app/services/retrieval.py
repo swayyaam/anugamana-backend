@@ -111,6 +111,12 @@ class RetrievalConfig:
     use_purport: bool = True
     top_k: int = TOP_K
     top_verses: int = TOP_VERSES
+    #: Per-arm fusion weights. None means uniform, i.e. classic RRF.
+    arm_weights: tuple[tuple[str, float], ...] | None = None
+
+    @property
+    def weights(self) -> dict[str, float] | None:
+        return dict(self.arm_weights) if self.arm_weights else None
 
     def describe(self) -> str:
         arms = []
@@ -251,6 +257,10 @@ def _dense_search(
     return list(results["ids"][0])
 
 
+def _probe_arms(probes: list[tuple[str, str]]) -> list[str]:
+    return [arm for arm, _ in probes]
+
+
 def _rrf_score(rank: int) -> float:
     return 1.0 / (RRF_K + rank + 1)
 
@@ -262,20 +272,44 @@ def _verse_id_of(doc_id: str) -> str:
     return doc_id.rsplit("_", 1)[0]
 
 
+#: Retrieval arms, for weighted fusion. Plain RRF treats every arm as equally
+#: trustworthy, which is certainly false — the sparse arm and the dense meaning
+#: arm are not equally good at this task. Weights are fitted on the benchmark by
+#: eval/fit_fusion_weights.py; the defaults below are uniform, i.e. classic RRF.
+ARMS = (
+    "dense_meaning",
+    "dense_translation",
+    "purport",
+    "sparse",
+    "emotion",
+    "transliteration",
+)
+
+DEFAULT_ARM_WEIGHTS: dict[str, float] = {arm: 1.0 for arm in ARMS}
+
+
 def _fuse_and_group(
-    ranked_lists: list[list[str]],
+    ranked_lists: list[tuple[str, list[str]]],
+    arm_weights: dict[str, float] | None = None,
 ) -> tuple[dict[str, float], dict[str, str]]:
     """
-    RRF-fuse several ranked doc-id lists, then group to verses.
+    Weighted-RRF fuse several labelled ranked lists, then group to verses.
+
+    Each entry is (arm_name, doc_ids). A document's contribution from one list
+    is `weight[arm] / (RRF_K + rank + 1)`.
 
     Returns:
         verse_scores      {verse_id: fused score}
         best_purport_doc  {verse_id: highest-scoring purport chunk id}, where one exists
     """
+    weights = arm_weights or DEFAULT_ARM_WEIGHTS
     doc_scores: dict[str, float] = {}
-    for ranked in ranked_lists:
+    for arm, ranked in ranked_lists:
+        weight = weights.get(arm, 1.0)
+        if weight == 0.0:
+            continue
         for rank, doc_id in enumerate(ranked):
-            doc_scores[doc_id] = doc_scores.get(doc_id, 0.0) + _rrf_score(rank)
+            doc_scores[doc_id] = doc_scores.get(doc_id, 0.0) + weight * _rrf_score(rank)
 
     verse_scores: dict[str, float] = {}
     best_purport_doc: dict[str, str] = {}
@@ -322,39 +356,12 @@ def retrieve(
     `chunk_index`, `parent_start`, `parent_end` for the generation stage.
     """
     verses_col, purport_col = _load_collections(config.index)
-
-    probes = [p for p in (extra_probes or []) if p and p.strip()]
-    texts_to_embed = [hyde_text] + list(all_queries) + probes
-    dense_vecs, sparse_weights = _embed(texts_to_embed)
-
-    ranked_lists: list[list[str]] = []
-
-    if config.dense:
-        type_filters = [{"type": t} for t in config.doc_types]
-        for vec in dense_vecs:
-            for where in type_filters:
-                ranked_lists.append(
-                    _dense_search(verses_col, vec, config.top_k, where=where)
-                )
-            if config.use_purport and purport_col is not None:
-                ranked_lists.append(_dense_search(purport_col, vec, config.top_k))
-
-    if config.sparse:
-        sparse_index = _load_sparse(config.index.sparse_file)
-        # Restrict the lexical arm to the same document population the dense arm
-        # sees, otherwise conditions are not comparable.
-        suffixes = tuple(f"_{t}" for t in config.doc_types)
-        if config.use_purport:
-            suffixes = suffixes + ("_purport_",)
-        for weights in sparse_weights:
-            ranked_lists.append(
-                _sparse_search(sparse_index, weights, config.top_k, id_filter=suffixes)
-            )
+    ranked_lists = arm_lists(hyde_text, all_queries, config, extra_probes)
 
     if not ranked_lists:
         return []
 
-    verse_scores, best_purport_doc = _fuse_and_group(ranked_lists)
+    verse_scores, best_purport_doc = _fuse_and_group(ranked_lists, config.weights)
     top_verse_ids = sorted(
         verse_scores, key=lambda v: verse_scores[v], reverse=True
     )[: config.top_verses]
@@ -365,6 +372,76 @@ def retrieve(
     return _hydrate(
         verses_col, purport_col, top_verse_ids, verse_scores, best_purport_doc, config
     )
+
+
+def arm_lists(
+    hyde_text: str,
+    all_queries: list[str],
+    config: RetrievalConfig = DEFAULT_CONFIG,
+    extra_probes: list | None = None,
+) -> list[tuple[str, list[str]]]:
+    """
+    Every retrieval arm's ranked doc-id list, labelled and unfused.
+
+    Separated from `retrieve` so fusion weights can be fitted offline: the arms
+    are computed once per query and then re-fused thousands of times during
+    optimisation, instead of re-running retrieval on every iteration.
+    """
+    verses_col, purport_col = _load_collections(config.index)
+
+    # extra_probes may be plain strings (legacy) or (arm, text) pairs.
+    probes: list[tuple[str, str]] = []
+    for probe in extra_probes or []:
+        if isinstance(probe, tuple):
+            arm, text = probe
+        else:
+            arm, text = "emotion", probe
+        if text and text.strip():
+            probes.append((arm, text))
+    texts_to_embed = [hyde_text] + list(all_queries) + [text for _, text in probes]
+    dense_vecs, sparse_weights = _embed(texts_to_embed)
+
+    ranked_lists: list[tuple[str, list[str]]] = []
+
+    # Which embedded text produced which vector, so probe arms can be labelled.
+    # Order matches texts_to_embed: [hyde] + all_queries + probes.
+    n_query_vecs = 1 + len(all_queries)
+    probe_arms = _probe_arms(probes)
+
+    if config.dense:
+        for index, vec in enumerate(dense_vecs):
+            probe_arm = None if index < n_query_vecs else probe_arms[index - n_query_vecs]
+            for doc_type in config.doc_types:
+                arm = probe_arm or f"dense_{doc_type}"
+                ranked_lists.append((
+                    arm,
+                    _dense_search(verses_col, vec, config.top_k,
+                                  where={"type": doc_type}),
+                ))
+            if config.use_purport and purport_col is not None:
+                ranked_lists.append((
+                    probe_arm or "purport",
+                    _dense_search(purport_col, vec, config.top_k),
+                ))
+
+    if config.sparse:
+        sparse_index = _load_sparse(config.index.sparse_file)
+        # Restrict the lexical arm to the same document population the dense arm
+        # sees, otherwise conditions are not comparable.
+        suffixes = tuple(f"_{t}" for t in config.doc_types)
+        if config.use_purport:
+            suffixes = suffixes + ("_purport_",)
+        for index, weights in enumerate(sparse_weights):
+            probe_arm = (
+                None if index < n_query_vecs else probe_arms[index - n_query_vecs]
+            )
+            ranked_lists.append((
+                probe_arm or "sparse",
+                _sparse_search(sparse_index, weights, config.top_k,
+                               id_filter=suffixes),
+            ))
+
+    return ranked_lists
 
 
 def _hydrate(
