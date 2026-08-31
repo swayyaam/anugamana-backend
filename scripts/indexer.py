@@ -29,7 +29,6 @@ Usage:
 import argparse
 import json
 import pickle
-import re
 import shutil
 import sys
 from pathlib import Path
@@ -38,6 +37,9 @@ import chromadb
 import numpy as np
 from FlagEmbedding import BGEM3FlagModel
 from tqdm import tqdm
+
+sys.path.insert(0, str(Path(__file__).parent.parent))
+from app.services.chunking import chunk_purport, get_parent_window  # noqa: E402
 
 ROOT = Path(__file__).parent.parent
 DATA_DIR = ROOT / "data"
@@ -48,64 +50,6 @@ SPARSE_FILE = DATA_DIR / "sparse_index.pkl"
 EMBED_BATCH = 32
 MAX_LENGTH = 512
 
-MIN_CHUNK_WORDS = 40
-MAX_CHUNK_WORDS = 350
-TARGET_SPLIT_WORDS = 200
-
-
-# ---------------------------------------------------------------------------
-# Purport chunking
-# ---------------------------------------------------------------------------
-
-def split_sentences(text: str) -> list[str]:
-    sentences = re.split(r'(?<=[.!?])\s+', text.strip())
-    return [s for s in sentences if s]
-
-
-def chunk_purport(purport: str) -> list[str]:
-    if not purport or not purport.strip():
-        return []
-
-    raw_paragraphs = [p.strip() for p in purport.split("\n\n") if p.strip()]
-
-    # Merge short paragraphs forward
-    merged: list[str] = []
-    i = 0
-    while i < len(raw_paragraphs):
-        para = raw_paragraphs[i]
-        if len(para.split()) < MIN_CHUNK_WORDS and i + 1 < len(raw_paragraphs):
-            raw_paragraphs[i + 1] = para + "\n\n" + raw_paragraphs[i + 1]
-            i += 1
-            continue
-        merged.append(para)
-        i += 1
-
-    # Split oversized paragraphs at sentence boundaries
-    chunks: list[str] = []
-    for para in merged:
-        if len(para.split()) <= MAX_CHUNK_WORDS:
-            chunks.append(para)
-        else:
-            sentences = split_sentences(para)
-            current: list[str] = []
-            current_words = 0
-            for sent in sentences:
-                sent_words = len(sent.split())
-                if current_words + sent_words > TARGET_SPLIT_WORDS and current:
-                    chunks.append(" ".join(current))
-                    current = [sent]
-                    current_words = sent_words
-                else:
-                    current.append(sent)
-                    current_words += sent_words
-            if current:
-                chunks.append(" ".join(current))
-
-    return chunks
-
-
-def get_parent_window(chunks: list[str], child_idx: int) -> tuple[int, int]:
-    return max(0, child_idx - 1), min(len(chunks) - 1, child_idx + 1)
 
 
 # ---------------------------------------------------------------------------

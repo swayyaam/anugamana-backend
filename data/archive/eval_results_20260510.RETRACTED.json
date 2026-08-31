@@ -1,0 +1,36 @@
+{
+  "_RETRACTED": true,
+  "_retracted_on": "2026-08-31",
+  "_reason": "Test-set contamination: 80/80 benchmark queries appear verbatim in the indexed text_for_embedding field. No unenriched control condition existed. The 'full' condition contained no HyDE, reranker, MMR, expansion or purport retrieval. See RETRACTION.md. These numbers must not be cited.",
+  "_superseded_by": "eval/ harness (conditions C0-C10, P0) \u2014 not yet run",
+  "retracted_runs": [
+    {
+      "timestamp": "2026-05-10T09:01:51.940391",
+      "dataset": "/Users/swayammishra/Projects/Anugamana/anugamana-backend/data/golden_dataset.json",
+      "n_pairs": 10,
+      "conditions": {
+        "baseline": {
+          "mrr_at_5": 0.9333,
+          "recall_at_5": 1.0,
+          "ndcg_at_5": 0.95,
+          "n_queries": 10,
+          "elapsed_s": 3.0
+        },
+        "no_hyde": {
+          "mrr_at_5": 0.9,
+          "recall_at_5": 1.0,
+          "ndcg_at_5": 0.9262,
+          "n_queries": 10,
+          "elapsed_s": 0.4
+        },
+        "full": {
+          "mrr_at_5": 0.8,
+          "recall_at_5": 1.0,
+          "ndcg_at_5": 0.8524,
+          "n_queries": 10,
+          "elapsed_s": 0.3
+        }
+      }
+    }
+  ]
+}

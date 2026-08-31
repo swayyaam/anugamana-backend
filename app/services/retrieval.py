@@ -1,59 +1,151 @@
 """
-Hybrid retrieval: dense (ChromaDB) + sparse (BGE-M3 lexical weights) fused with RRF.
+Hybrid retrieval: dense (ChromaDB) + sparse (BGE-M3 lexical weights), fused with RRF.
 
-Architecture:
-  - HyDE vector + expansion query vectors all searched
-  - Dense: gita_verses collection + gita_purport collection (top_k=15 each)
-  - Sparse: sparse_index (top_k=15)
-  - RRF fusion: score = 1/(60 + rank)
-  - Group by verse_id: verse score = max score across all its vectors
-  - Return top 10 verses for reranking
+The retriever is parameterised by an `IndexSpec` (which physical index) and a
+`RetrievalConfig` (which arms are switched on). The API uses ENRICHED_FULL; the
+evaluation harness instantiates the ablation conditions from the same code, so
+the evaluated system is the served system by construction.
+
+Chunk provenance (fixed 2026-08-31 — audit E-03)
+------------------------------------------------
+RRF fusion groups document-level hits into verses. The previous implementation
+threw away *which* purport chunk won, then re-read metadata from the verse-level
+`_meaning` document — which carries no chunk fields. rag.py therefore always fell
+back to paragraphs 0-2 and the documented parent-child retrieval never ran.
+`_fuse_and_group` now returns the winning purport chunk id per verse, and
+`retrieve()` attaches that chunk's parent window to the verse dict.
 """
 
-import asyncio
+from __future__ import annotations
+
 import pickle
+from dataclasses import dataclass, field
 from functools import lru_cache
 from pathlib import Path
-from typing import Any
 
-import numpy as np
 import chromadb
+import numpy as np
+import structlog
 from FlagEmbedding import BGEM3FlagModel
 
-ROOT = Path(__file__).parent.parent.parent
-DATA_DIR = ROOT / "data"
-CHROMA_DIR = DATA_DIR / "chroma_db"
-SPARSE_FILE = DATA_DIR / "sparse_index.pkl"
+from app.config import (
+    CHROMA_DIR,
+    EMBEDDING_MODEL,
+    RRF_K,
+    SPARSE_FILE,
+    TOP_K,
+    TOP_VERSES,
+)
 
-TOP_K = 15          # candidates per search
-RRF_K = 60          # RRF constant
-TOP_VERSES = 10     # verses passed to reranker
+logger = structlog.get_logger(__name__)
 
+DATA_DIR = CHROMA_DIR.parent
+RAW_CHROMA_DIR = DATA_DIR / "chroma_raw"
+RAW_SPARSE_FILE = DATA_DIR / "sparse_index_raw.pkl"
+
+
+# ---------------------------------------------------------------------------
+# Index / retrieval specification
+# ---------------------------------------------------------------------------
+
+@dataclass(frozen=True)
+class IndexSpec:
+    """A physical index on disk."""
+    name: str
+    chroma_dir: Path
+    verses_collection: str
+    purport_collection: str
+    sparse_file: Path
+
+
+#: The enriched index — verse vectors built from `text_for_embedding`.
+ENRICHED_INDEX = IndexSpec(
+    name="enriched",
+    chroma_dir=CHROMA_DIR,
+    verses_collection="gita_verses",
+    purport_collection="gita_purport",
+    sparse_file=SPARSE_FILE,
+)
+
+#: The control index — identical construction, but verse vectors are built from
+#: the raw translation only. Built by scripts/build_raw_index.py. Without this
+#: index the effect of enrichment cannot be isolated (audit F-02).
+RAW_INDEX = IndexSpec(
+    name="raw",
+    chroma_dir=RAW_CHROMA_DIR,
+    verses_collection="raw_verses",
+    purport_collection="raw_purport",
+    sparse_file=RAW_SPARSE_FILE,
+)
+
+
+@dataclass(frozen=True)
+class RetrievalConfig:
+    """Which retrieval arms are active. One ablation condition = one instance."""
+    index: IndexSpec = ENRICHED_INDEX
+    dense: bool = True
+    sparse: bool = True
+    #: verse-level vector types to search: "meaning" and/or "translation"
+    doc_types: tuple[str, ...] = ("meaning", "translation")
+    use_purport: bool = True
+    top_k: int = TOP_K
+    top_verses: int = TOP_VERSES
+
+    def describe(self) -> str:
+        arms = []
+        if self.dense:
+            arms.append("dense[" + "+".join(self.doc_types) + "]")
+        if self.use_purport:
+            arms.append("purport")
+        if self.sparse:
+            arms.append("sparse")
+        return f"{self.index.name}:{'|'.join(arms) or 'none'}"
+
+
+DEFAULT_CONFIG = RetrievalConfig()
+
+
+# ---------------------------------------------------------------------------
+# Lazily-loaded shared resources
+# ---------------------------------------------------------------------------
 
 @lru_cache(maxsize=1)
 def _load_model() -> BGEM3FlagModel:
-    return BGEM3FlagModel("BAAI/bge-m3", use_fp16=True)
+    return BGEM3FlagModel(EMBEDDING_MODEL, use_fp16=True)
 
 
-@lru_cache(maxsize=1)
-def _load_chroma():
-    client = chromadb.PersistentClient(path=str(CHROMA_DIR))
-    verses_col = client.get_collection("gita_verses")
-    purport_col = client.get_collection("gita_purport")
+@lru_cache(maxsize=4)
+def _load_collections(spec: IndexSpec):
+    client = chromadb.PersistentClient(path=str(spec.chroma_dir))
+    verses_col = client.get_collection(spec.verses_collection)
+    try:
+        purport_col = client.get_collection(spec.purport_collection)
+    except Exception:
+        purport_col = None
+        logger.warning("purport_collection_missing", index=spec.name)
     return verses_col, purport_col
 
 
-@lru_cache(maxsize=1)
-def _load_sparse() -> dict:
-    with open(SPARSE_FILE, "rb") as f:
+@lru_cache(maxsize=4)
+def _load_sparse(sparse_file: Path) -> dict:
+    with open(sparse_file, "rb") as f:
         return pickle.load(f)
+
+
+# Backwards-compatible warm-up hooks used by app.main's lifespan.
+def _load_chroma():
+    return _load_collections(ENRICHED_INDEX)
+
+
+def _load_sparse_default():
+    return _load_sparse(ENRICHED_INDEX.sparse_file)
 
 
 def _embed(texts: list[str]) -> tuple[np.ndarray, list[dict]]:
     model = _load_model()
     out = model.encode(
         texts,
-        batch_size=len(texts),
+        batch_size=max(1, len(texts)),
         max_length=512,
         return_dense=True,
         return_sparse=True,
@@ -61,145 +153,214 @@ def _embed(texts: list[str]) -> tuple[np.ndarray, list[dict]]:
     return out["dense_vecs"], out["lexical_weights"]
 
 
-def _sparse_search(query_weights: dict, top_k: int) -> list[tuple[str, float]]:
-    """Score all docs against query lexical weights, return top_k (doc_id, score)."""
-    sparse_index = _load_sparse()
+# ---------------------------------------------------------------------------
+# Individual search arms
+# ---------------------------------------------------------------------------
+
+def _sparse_search(
+    sparse_index: dict,
+    query_weights: dict,
+    top_k: int,
+    id_filter: tuple[str, ...] | None = None,
+) -> list[str]:
+    """Score docs against query lexical weights; return top_k doc ids."""
     scores: dict[str, float] = {}
     for token_id, q_weight in query_weights.items():
-        token_key = str(token_id)
-        if token_key not in sparse_index:
+        postings = sparse_index.get(str(token_id))
+        if not postings:
             continue
-        for doc_id, d_weight in sparse_index[token_key].items():
-            scores[doc_id] = scores.get(doc_id, 0.0) + float(q_weight) * float(d_weight)
+        qw = float(q_weight)
+        for doc_id, d_weight in postings.items():
+            if id_filter and not any(suffix in doc_id for suffix in id_filter):
+                continue
+            scores[doc_id] = scores.get(doc_id, 0.0) + qw * float(d_weight)
 
     ranked = sorted(scores.items(), key=lambda x: x[1], reverse=True)
-    return ranked[:top_k]
+    return [doc_id for doc_id, _ in ranked[:top_k]]
 
 
-def _dense_search(collection, vector: np.ndarray, top_k: int) -> list[dict]:
-    results = collection.query(
-        query_embeddings=[vector.tolist()],
-        n_results=top_k,
-        include=["metadatas", "distances"],
-    )
-    hits = []
-    for doc_id, meta, dist in zip(
-        results["ids"][0],
-        results["metadatas"][0],
-        results["distances"][0],
-    ):
-        hits.append({"id": doc_id, "metadata": meta, "distance": dist})
-    return hits
+def _dense_search(
+    collection,
+    vector: np.ndarray,
+    top_k: int,
+    where: dict | None = None,
+) -> list[str]:
+    kwargs = {"query_embeddings": [vector.tolist()], "n_results": top_k}
+    if where:
+        kwargs["where"] = where
+    results = collection.query(**kwargs)
+    return list(results["ids"][0])
 
 
 def _rrf_score(rank: int) -> float:
     return 1.0 / (RRF_K + rank + 1)
 
 
-def _fuse_and_group(all_hit_lists: list[list[tuple[str, float | dict]]]) -> dict[str, float]:
+def _verse_id_of(doc_id: str) -> str:
+    """'2.47_meaning' -> '2.47'; '2.47_purport_3' -> '2.47'."""
+    if "_purport_" in doc_id:
+        return doc_id.split("_purport_")[0]
+    return doc_id.rsplit("_", 1)[0]
+
+
+def _fuse_and_group(
+    ranked_lists: list[list[str]],
+) -> tuple[dict[str, float], dict[str, str]]:
     """
-    RRF fusion across multiple ranked lists.
-    Each list is either dense hits (list of dicts with 'id') or sparse hits (list of (id, score)).
-    Returns {verse_id: rrf_score} grouped by verse.
+    RRF-fuse several ranked doc-id lists, then group to verses.
+
+    Returns:
+        verse_scores      {verse_id: fused score}
+        best_purport_doc  {verse_id: highest-scoring purport chunk id}, where one exists
     """
     doc_scores: dict[str, float] = {}
-
-    for hit_list in all_hit_lists:
-        for rank, hit in enumerate(hit_list):
-            if isinstance(hit, dict):
-                doc_id = hit["id"]
-            else:
-                doc_id = hit[0]
+    for ranked in ranked_lists:
+        for rank, doc_id in enumerate(ranked):
             doc_scores[doc_id] = doc_scores.get(doc_id, 0.0) + _rrf_score(rank)
 
-    # Group by verse_id (take max score across all vectors for same verse)
     verse_scores: dict[str, float] = {}
-    for doc_id, score in doc_scores.items():
-        # doc_id format: "2.47_meaning", "2.47_purport_0", etc.
-        verse_id = doc_id.rsplit("_", 1)[0]
-        # Handle purport IDs: "2.47_purport_0" → verse_id = "2.47"
-        if "_purport_" in doc_id:
-            verse_id = doc_id.split("_purport_")[0]
-        elif "_meaning" in doc_id or "_translation" in doc_id:
-            verse_id = doc_id.rsplit("_", 1)[0]
+    best_purport_doc: dict[str, str] = {}
+    best_purport_score: dict[str, float] = {}
 
-        if verse_id not in verse_scores or score > verse_scores[verse_id]:
+    for doc_id, score in doc_scores.items():
+        verse_id = _verse_id_of(doc_id)
+
+        # Verse score = best evidence from any of its vectors.
+        if score > verse_scores.get(verse_id, float("-inf")):
             verse_scores[verse_id] = score
 
-    return verse_scores
+        # Track the strongest purport chunk separately — this is the provenance
+        # that generation needs and that used to be discarded.
+        if "_purport_" in doc_id and score > best_purport_score.get(verse_id, float("-inf")):
+            best_purport_score[verse_id] = score
+            best_purport_doc[verse_id] = doc_id
+
+    return verse_scores, best_purport_doc
 
 
-def retrieve(hyde_text: str, all_queries: list[str]) -> list[dict]:
+# ---------------------------------------------------------------------------
+# Public API
+# ---------------------------------------------------------------------------
+
+def retrieve(
+    hyde_text: str,
+    all_queries: list[str],
+    config: RetrievalConfig = DEFAULT_CONFIG,
+) -> list[dict]:
     """
-    Full hybrid retrieval.
-    Returns list of verse dicts (top TOP_VERSES), each with verse metadata + rrf_score.
-    """
-    verses_col, purport_col = _load_chroma()
+    Hybrid retrieval over one index.
 
-    # Embed HyDE text + all expansion queries
-    texts_to_embed = [hyde_text] + all_queries
+    Returns up to `config.top_verses` verse dicts carrying verse metadata,
+    `rrf_score`, and — when a purport chunk was the source of evidence —
+    `chunk_index`, `parent_start`, `parent_end` for the generation stage.
+    """
+    verses_col, purport_col = _load_collections(config.index)
+
+    texts_to_embed = [hyde_text] + list(all_queries)
     dense_vecs, sparse_weights = _embed(texts_to_embed)
 
-    hyde_vec = dense_vecs[0]
-    query_vecs = dense_vecs[1:]
-    hyde_sparse = sparse_weights[0]
-    query_sparse_list = sparse_weights[1:]
+    ranked_lists: list[list[str]] = []
 
-    all_hit_lists = []
+    if config.dense:
+        type_filters = [{"type": t} for t in config.doc_types]
+        for vec in dense_vecs:
+            for where in type_filters:
+                ranked_lists.append(
+                    _dense_search(verses_col, vec, config.top_k, where=where)
+                )
+            if config.use_purport and purport_col is not None:
+                ranked_lists.append(_dense_search(purport_col, vec, config.top_k))
 
-    # Dense: HyDE vector → verses + purport
-    all_hit_lists.append(_dense_search(verses_col, hyde_vec, TOP_K))
-    all_hit_lists.append(_dense_search(purport_col, hyde_vec, TOP_K))
+    if config.sparse:
+        sparse_index = _load_sparse(config.index.sparse_file)
+        # Restrict the lexical arm to the same document population the dense arm
+        # sees, otherwise conditions are not comparable.
+        suffixes = tuple(f"_{t}" for t in config.doc_types)
+        if config.use_purport:
+            suffixes = suffixes + ("_purport_",)
+        for weights in sparse_weights:
+            ranked_lists.append(
+                _sparse_search(sparse_index, weights, config.top_k, id_filter=suffixes)
+            )
 
-    # Dense: each expansion query → verses + purport
-    for q_vec in query_vecs:
-        all_hit_lists.append(_dense_search(verses_col, q_vec, TOP_K))
-        all_hit_lists.append(_dense_search(purport_col, q_vec, TOP_K))
+    if not ranked_lists:
+        return []
 
-    # Sparse: HyDE + each expansion
-    all_hit_lists.append(_sparse_search(hyde_sparse, TOP_K))
-    for q_sparse in query_sparse_list:
-        all_hit_lists.append(_sparse_search(q_sparse, TOP_K))
+    verse_scores, best_purport_doc = _fuse_and_group(ranked_lists)
+    top_verse_ids = sorted(
+        verse_scores, key=lambda v: verse_scores[v], reverse=True
+    )[: config.top_verses]
 
-    # RRF fusion + group by verse
-    verse_scores = _fuse_and_group(all_hit_lists)
-
-    # Sort by score, take top TOP_VERSES
-    top_verse_ids = sorted(verse_scores, key=lambda v: verse_scores[v], reverse=True)[:TOP_VERSES]
-
-    # Fetch full metadata for top verses from ChromaDB
     if not top_verse_ids:
         return []
 
-    meaning_ids = [f"{vid}_meaning" for vid in top_verse_ids]
-    results = verses_col.get(ids=meaning_ids, include=["metadatas"])
+    return _hydrate(
+        verses_col, purport_col, top_verse_ids, verse_scores, best_purport_doc, config
+    )
 
-    id_to_meta = {
-        doc_id: meta
-        for doc_id, meta in zip(results["ids"], results["metadatas"])
-    }
 
-    verses = []
-    for vid in top_verse_ids:
-        meta = id_to_meta.get(f"{vid}_meaning")
-        if meta:
-            verses.append({**meta, "rrf_score": verse_scores[vid]})
+def _hydrate(
+    verses_col,
+    purport_col,
+    verse_ids: list[str],
+    verse_scores: dict[str, float],
+    best_purport_doc: dict[str, str],
+    config: RetrievalConfig,
+) -> list[dict]:
+    """Attach verse metadata + winning purport-chunk provenance."""
+    # Verse metadata. Prefer the meaning doc; fall back to translation for
+    # indexes that carry no meaning vectors (the raw control index).
+    primary_type = config.doc_types[0] if config.doc_types else "translation"
+    wanted = [f"{vid}_{primary_type}" for vid in verse_ids]
+    fetched = verses_col.get(ids=wanted, include=["metadatas"])
+    meta_by_id = dict(zip(fetched["ids"], fetched["metadatas"]))
+
+    # Purport provenance, batched.
+    chunk_meta_by_id: dict[str, dict] = {}
+    chunk_ids = [best_purport_doc[v] for v in verse_ids if v in best_purport_doc]
+    if chunk_ids and purport_col is not None:
+        got = purport_col.get(ids=chunk_ids, include=["metadatas"])
+        chunk_meta_by_id = dict(zip(got["ids"], got["metadatas"]))
+
+    verses: list[dict] = []
+    for vid in verse_ids:
+        meta = meta_by_id.get(f"{vid}_{primary_type}")
+        if not meta:
+            continue
+        verse = {**meta, "rrf_score": verse_scores[vid]}
+
+        chunk_id = best_purport_doc.get(vid)
+        chunk_meta = chunk_meta_by_id.get(chunk_id) if chunk_id else None
+        if chunk_meta:
+            verse["chunk_index"] = int(chunk_meta.get("chunk_index", 0))
+            verse["parent_start"] = int(chunk_meta.get("parent_start", 0))
+            verse["parent_end"] = int(chunk_meta.get("parent_end", 0))
+            verse["evidence"] = "purport"
+        else:
+            # No purport chunk was retrieved for this verse — generation will
+            # fall back to the head of the purport, and says so explicitly.
+            verse["evidence"] = "verse"
+        verses.append(verse)
 
     return verses
 
 
-def retrieve_by_verse_id(verse_id: str) -> list[dict]:
+def retrieve_by_verse_id(
+    verse_id: str, config: RetrievalConfig = DEFAULT_CONFIG
+) -> list[dict]:
     """
     Direct verse lookup — bypasses embedding and search entirely.
-    Used by the direct_lookup query route for queries like "verse 2.47".
-    Returns a list with one verse dict (rrf_score=1.0) or [] if not found.
+    Returns a one-element list, or [] when the verse does not exist.
     """
-    verses_col, _ = _load_chroma()
-    results = verses_col.get(
-        ids=[f"{verse_id}_meaning"],
-        include=["metadatas"],
-    )
+    verses_col, _ = _load_collections(config.index)
+    primary_type = config.doc_types[0] if config.doc_types else "translation"
+    try:
+        results = verses_col.get(
+            ids=[f"{verse_id}_{primary_type}"], include=["metadatas"]
+        )
+    except Exception as e:
+        logger.warning("direct_lookup_failed", verse_id=verse_id, error=str(e))
+        return []
     if not results["ids"]:
         return []
-    meta = results["metadatas"][0]
-    return [{**meta, "rrf_score": 1.0}]
+    return [{**results["metadatas"][0], "rrf_score": 1.0, "evidence": "direct"}]

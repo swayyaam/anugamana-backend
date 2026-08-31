@@ -3,20 +3,41 @@ __pycache__/
 *.pyc
 *.pyo
 .env
-chroma_gita/
-*.pkl
+.DS_Store
+.pytest_cache/
 dist/
 *.egg-info/
-.DS_Store
 
-# docs — kept local only
-docs/
-
-# generated data files — reproduce by running scripts in order
-data/*.json
-data/*.md
+# --- generated corpora and indexes (rebuild with scripts/, in order) --------
+data/gita_full.json
+data/gita_enriched.json
+data/gita_chapter_analyses.json
+data/gita_analysis.md
+data/enrich_errors.json
 data/chroma_db/
+data/chroma_raw/
 data/chroma_devanagari/
 data/sparse_index.pkl
+data/sparse_index_raw.pkl
 data/audio_cache/
+data/cache/
 data/feedback.db
+data/feedback.db-wal
+data/feedback.db-shm
+
+# --- research artifacts: DELIBERATELY TRACKED ------------------------------
+# The benchmark, the judgments, the evaluation output and the retraction record
+# are the artifacts a reviewer needs and the ones a paper's numbers must trace
+# to. They were previously swept up by a blanket `data/*.json` rule, which meant
+# the only files under version control were the ones that did not matter.
+#   data/benchmark/**   queries, pooled judgments, dataset card
+#   data/eval/**        condition results, bootstrap CIs, error analyses
+#   data/archive/**     retracted runs, kept for provenance
+
+# --- local notes -----------------------------------------------------------
+docs/scratch/
+
+# --- private planning docs (kept local, as before) -------------------------
+docs/business.md
+docs/bbt_partnership_email.md
+docs/archive/

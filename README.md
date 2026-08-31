@@ -358,6 +358,12 @@ python scripts/evaluate.py
 
 ---
 
+## Frontend Integration
+
+See [`integration.md`](integration.md) for the complete frontend integration guide — all pages, TypeScript types, Clerk auth setup, API reference, error states, and component structure.
+
+---
+
 ## Research
 
 This project is the basis for an academic paper on **vocabulary-gap bridging in ancient text retrieval** — using synthetic semantic enrichment to close the gap between modern casual queries and 5000-year-old Sanskrit commentary. Target venue: EMNLP 2026 / ACL workshops.

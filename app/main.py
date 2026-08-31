@@ -3,8 +3,8 @@ from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from slowapi.errors import RateLimitExceeded
 from slowapi import _rate_limit_exceeded_handler
+from slowapi.errors import RateLimitExceeded
 
 from app.config import ALLOWED_ORIGINS
 from app.limiter import limiter
@@ -24,13 +24,18 @@ logger = structlog.get_logger(__name__)
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    # Pre-warm BGE-M3 and cross-encoder on startup so first request isn't slow
+    """Warm the heavy models so the first user request is not the slow one."""
     logger.info("startup_begin")
+
     try:
-        from app.services.retrieval import _load_model, _load_chroma, _load_sparse
+        from app.services.retrieval import (
+            _load_chroma,
+            _load_model,
+            _load_sparse_default,
+        )
         _load_model()
         _load_chroma()
-        _load_sparse()
+        _load_sparse_default()
         logger.info("retrieval_models_loaded")
     except Exception as e:
         logger.error("retrieval_warmup_failed", error=str(e))
@@ -54,7 +59,12 @@ async def lifespan(app: FastAPI):
     logger.info("shutdown")
 
 
-app = FastAPI(title="Anugamana", lifespan=lifespan)
+app = FastAPI(
+    title="Anugamana",
+    description="Semantic search and RAG over the Bhagavad-gita As It Is.",
+    version="2.0.0",
+    lifespan=lifespan,
+)
 
 app.state.limiter = limiter
 app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
@@ -63,7 +73,7 @@ app.add_middleware(
     CORSMiddleware,
     allow_origins=ALLOWED_ORIGINS,
     allow_credentials=True,
-    allow_methods=["*"],
+    allow_methods=["GET", "POST"],
     allow_headers=["*"],
 )
 

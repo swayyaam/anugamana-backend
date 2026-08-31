@@ -1,0 +1,402 @@
+[
+  {
+    "query": "You're cooking a meal for your family and wondering if it's really a spiritual act or just mundane work",
+    "verse_id": "17.27",
+    "source": "mined"
+  },
+  {
+    "query": "Staying busy with projects and responsibilities but feeling like you're on a treadmill going nowhere",
+    "verse_id": "4.18",
+    "source": "mined"
+  },
+  {
+    "query": "Wondering why the same task done by different people produces different results and different moods",
+    "verse_id": "18.19",
+    "source": "mined"
+  },
+  {
+    "query": "You set a goal—whether it's daily prayer, exercise, creative work, or study—but your attention fractures and you restart constantly",
+    "verse_id": "18.33",
+    "source": "mined"
+  },
+  {
+    "query": "Standing at a crossroads and having someone you depend on refuse to abandon you, even when the path ahead is dangerous or unclear",
+    "verse_id": "1.22",
+    "source": "mined"
+  },
+  {
+    "query": "Practicing meditation or mindfulness without any deeper purpose beyond stress relief",
+    "verse_id": "6.14",
+    "source": "mined"
+  },
+  {
+    "query": "You mentor a talented person at work, teach them everything about your field, and they leave to start a competing company using what you taught them. You give a family member honest advice about how to handle money, and they use that knowledge to manipulate a financial situation in their favor. You're honest with a colleague about your business strategy, and they use it to undercut you with a client. You train someone in your craft or art, and they become more skilled than you and take over your position. You share your deepest insecurities with a friend to help them feel less alone, and they weaponize that vulnerability against you later",
+    "verse_id": "1.3",
+    "source": "mined"
+  },
+  {
+    "query": "You feel paralyzed trying to control every detail because you believe everything depends on your willpower alone",
+    "verse_id": "18.13",
+    "source": "mined"
+  },
+  {
+    "query": "You quit your job for spiritual practice, but you're still secretly hoping it impresses people or leads to special recognition. You follow all the rules of a disciplined life—vegetarian diet, celibacy, daily meditation—but inwardly you're keeping score of your spiritual progress and comparing yourself to others. You renounce material pleasure but find yourself seeking subtle rewards: the reputation of being \"spiritual,\" the comfort of feeling superior to those still entangled in desires, or the secret hope that your discipline will lead to special powers or divine favor. You perform service at your temple or retreat but catch yourself doing it to be seen, praised, or acknowledged as devoted. You meditate regularly but realize deep down you're doing it hoping for peace and happiness as a personal gain rather than as an offering",
+    "verse_id": "6.2",
+    "source": "mined"
+  },
+  {
+    "query": "Presenting yourself as enlightened on social media while your actual daily behavior contradicts everything you preach",
+    "verse_id": "3.7",
+    "source": "mined"
+  },
+  {
+    "query": "Staying committed to a relationship or responsibility even when external rewards disappear",
+    "verse_id": "4.23",
+    "source": "mined"
+  },
+  {
+    "query": "Your life has reorganized itself around this commitment without feeling like you forced it",
+    "verse_id": "10.9",
+    "source": "mined"
+  },
+  {
+    "query": "Witnessing a devastating news story and feeling helpless before forces of destruction too large to comprehend",
+    "verse_id": "11.49",
+    "source": "mined"
+  },
+  {
+    "query": "Being drawn to nature and beauty but unsure if those experiences have spiritual meaning",
+    "verse_id": "7.8",
+    "source": "mined"
+  },
+  {
+    "query": "You meet someone in your field who is simply better than you at what they do — sharper, more resourceful, more brilliant — and you feel both respect and a hunger to understand how they think. You study a military commander or political leader whose strategy shaped history and you're struck by the depth of their foresight. You read the work of a spiritual teacher or philosopher whose explanations of difficult texts suddenly make everything click into place. You encounter someone from your own family or community who clearly excels beyond their peers — better judgment, clearer thinking, more grounded wisdom. You wonder why certain individuals seem to possess a quality or intelligence that transcends mere training or luck",
+    "verse_id": "10.37",
+    "source": "mined"
+  },
+  {
+    "query": "Feeling dwarfed by time slipping away, watching deadlines approach and knowing nothing stops the clock",
+    "verse_id": "10.33",
+    "source": "mined"
+  },
+  {
+    "query": "Working so hard to build something you can keep that you never actually experience peace",
+    "verse_id": "2.51",
+    "source": "mined"
+  },
+  {
+    "query": "Judging someone harshly for their weakness and forgetting that you have the same capacity for that same weakness",
+    "verse_id": "10.5",
+    "source": "mined"
+  },
+  {
+    "query": "Practicing meditation techniques correctly but remaining spiritually empty and restless",
+    "verse_id": "6.13",
+    "source": "mined"
+  },
+  {
+    "query": "You're watching a storm roll in and feel small before nature's raw power",
+    "verse_id": "10.31",
+    "source": "mined"
+  },
+  {
+    "query": "A mentor gives you encouragement before a challenge you're about to face, even though you both know deep down the odds are against you",
+    "verse_id": "1.12",
+    "source": "mined"
+  },
+  {
+    "query": "Making a life decision and later realizing it wasn't really your choice to make—something or someone was directing events all along",
+    "verse_id": "13.23",
+    "source": "mined"
+  },
+  {
+    "query": "Lying awake at night reviewing every decision you made that day, convinced you alone are responsible for what happened",
+    "verse_id": "18.14",
+    "source": "mined"
+  },
+  {
+    "query": "Sitting down to pray or contemplate but finding your thoughts scatter in a hundred directions within seconds",
+    "verse_id": "6.25",
+    "source": "mined"
+  },
+  {
+    "query": "Confronting the fear that nothing you build will last or matter a thousand years from now",
+    "verse_id": "9.7",
+    "source": "mined"
+  },
+  {
+    "query": "Feeling torn between the contemplative life and engaged life, thinking one must exclude the other",
+    "verse_id": "18.1",
+    "source": "mined"
+  },
+  {
+    "query": "Convinced you have to clean yourself up perfectly before you can ask for help or reach toward something greater",
+    "verse_id": "18.66",
+    "source": "mined"
+  },
+  {
+    "query": "Living through a time of widespread social breakdown or crisis and seeing institutions you believed in crumble",
+    "verse_id": "11.30",
+    "source": "mined"
+  },
+  {
+    "query": "You've hurt someone badly and worry that no amount of good behavior will ever make up for it",
+    "verse_id": "9.30",
+    "source": "mined"
+  },
+  {
+    "query": "Feeling lost and homeless despite material security, sensing that no external achievement will ever satisfy the ache inside",
+    "verse_id": "18.62",
+    "source": "mined"
+  },
+  {
+    "query": "Being satisfied with knowledge about God instead of yearning to know God directly",
+    "verse_id": "13.19",
+    "source": "mined"
+  },
+  {
+    "query": "Remaining calm when people attack your reputation or social status because you're not identified with those external measures of worth",
+    "verse_id": "12.16",
+    "source": "mined"
+  },
+  {
+    "query": "You realize that all your independence, strength, and abilities have never actually belonged to you but have always been borrowed",
+    "verse_id": "10.13",
+    "source": "mined"
+  },
+  {
+    "query": "Someone disagrees with you and you feel a flash of rage that makes you want to hurt them with words",
+    "verse_id": "16.21",
+    "source": "mined"
+  },
+  {
+    "query": "Catching yourself judging someone as \"less than\" because of their job, appearance, or social status and realizing the judgment is baseless",
+    "verse_id": "13.31",
+    "source": "mined"
+  },
+  {
+    "query": "Stuck in a job or life situation where you can't pursue your ideal spiritual practice, and wondering if your current work has any spiritual value at all",
+    "verse_id": "4.32",
+    "source": "mined"
+  },
+  {
+    "query": "You avoid a responsibility you're actually qualified for because you obsess over how others will judge the outcome",
+    "verse_id": "2.50",
+    "source": "mined"
+  },
+  {
+    "query": "You're paralyzed by conflicting loyalties—duty to family versus duty to yourself—and you shut down rather than choose",
+    "verse_id": "2.9",
+    "source": "mined"
+  },
+  {
+    "query": "You see fire warming your home and cooking your food but never wonder who or what is actually providing this energy",
+    "verse_id": "15.12",
+    "source": "mined"
+  },
+  {
+    "query": "Being promoted to leadership but realizing you're still reactive and controlling",
+    "verse_id": "18.42",
+    "source": "mined"
+  },
+  {
+    "query": "You grew up in a household where nobody questioned tradition, and now you practice religion the same way your parents did, without ever wondering if there's something deeper. You're genuinely devoted to your spiritual path, but you've never studied scripture or worked with a qualified teacher — you just do what feels natural to you. You want to change your life but keep falling back into the same patterns of behavior, diet, and thinking because nobody has shown you how to actually break the cycle. You're sincere in your faith but realize your spiritual practices aren't producing the real transformation you're seeking, and you don't know why. You know what the scriptures say you *should* be doing, but you keep cutting corners because following them strictly feels unnatural to you",
+    "verse_id": "17.2",
+    "source": "mined"
+  },
+  {
+    "query": "Discovering that the person you thought was teaching you real wisdom actually got their ideas from secondhand sources or invented them",
+    "verse_id": "4.1",
+    "source": "mined"
+  },
+  {
+    "query": "Half-heartedly trying to meditate or pray while secretly doubting whether it's real",
+    "verse_id": "10.7",
+    "source": "mined"
+  },
+  {
+    "query": "Watching your mind construct elaborate justifications for behavior you know is destructive, and feeling powerless to stop the machinery once it starts",
+    "verse_id": "3.40",
+    "source": "mined"
+  },
+  {
+    "query": "Taking on extra responsibilities to support family but feeling invisible and unappreciated",
+    "verse_id": "5.7",
+    "source": "mined"
+  },
+  {
+    "query": "Wracked with guilt over past mistakes and feeling like your life is permanently ruined because of what you've done",
+    "verse_id": "13.32",
+    "source": "mined"
+  },
+  {
+    "query": "You're using the argument that your corporate work is beneath you spiritually to justify stepping back from responsibilities you find difficult or uncomfortable",
+    "verse_id": "3.1",
+    "source": "mined"
+  },
+  {
+    "query": "You're trying to quit a bad habit but keep white-knuckling through willpower, collapsing each time. You wonder if there's a way to genuinely lose the craving rather than just fighting it forever. You notice that people who are deeply passionate about a worthy cause naturally stop wanting destructive things—not because they're repressing, but because their attention and desire have moved. You're disciplined but burnt out, controlling your senses through sheer effort, wondering if real freedom feels different. You see others who seem genuinely unaffected by temptations that would destroy you, and you want to know their secret",
+    "verse_id": "2.64",
+    "source": "mined"
+  },
+  {
+    "query": "Your children are growing up without the moral and spiritual guidance that shaped your own childhood, and you feel complicit in something breaking",
+    "verse_id": "1.41",
+    "source": "mined"
+  },
+  {
+    "query": "Starting a business venture with no thought for how it might harm competitors or employees",
+    "verse_id": "18.25",
+    "source": "mined"
+  },
+  {
+    "query": "Experiencing a moment of profound clarity where you see how all your past struggles, relationships, and choices fit into a meaningful pattern",
+    "verse_id": "11.15",
+    "source": "mined"
+  },
+  {
+    "query": "Watching your country develop increasingly destructive military capabilities while the leaders openly reject spiritual or moral foundation",
+    "verse_id": "16.9",
+    "source": "mined"
+  },
+  {
+    "query": "Experiencing the weight of family legacy or ancestral obligation and questioning what grounds it",
+    "verse_id": "10.29",
+    "source": "mined"
+  },
+  {
+    "query": "You're scrolling through pictures of people with more money, more status, more possessions, and the envy turns to frustration",
+    "verse_id": "16.21",
+    "source": "mined"
+  },
+  {
+    "query": "Hearing that God has no form and feeling spiritually stranded because all your natural longing is directed toward something personal you can love and serve",
+    "verse_id": "12.3",
+    "source": "mined"
+  },
+  {
+    "query": "You feel drawn to Krishna consciousness but worry that you're not pure enough or disciplined enough to truly be \"dear\" to God",
+    "verse_id": "12.20",
+    "source": "mined"
+  },
+  {
+    "query": "Attending religious services or practices without any real belief, just out of social obligation or habit",
+    "verse_id": "17.13",
+    "source": "mined"
+  },
+  {
+    "query": "You notice that people in your family or social circle naturally fall into certain patterns (your mother is always worried, your friend is always chasing money, another friend is just lazy) and you can't understand why they can't just choose differently",
+    "verse_id": "14.5",
+    "source": "mined"
+  },
+  {
+    "query": "Feeling trapped by the sense that you've surrendered control over your own life and outcomes to forces beyond your influence",
+    "verse_id": "5.29",
+    "source": "mined"
+  },
+  {
+    "query": "You're a professional with a demanding career and you've convinced yourself that you can only be \"truly spiritual\" after retirement",
+    "verse_id": "8.7",
+    "source": "mined"
+  },
+  {
+    "query": "Finding courage in knowing that someone who loves you sees past your fear to who you really are",
+    "verse_id": "1.25",
+    "source": "mined"
+  },
+  {
+    "query": "You realize most of your desires come from comparing yourself to others or from advertising and social pressure rather than from genuine need",
+    "verse_id": "2.55",
+    "source": "mined"
+  },
+  {
+    "query": "Finally getting the job or relationship you've been dreaming about and expecting it to fix everything, only to find the elation fades",
+    "verse_id": "12.17",
+    "source": "mined"
+  },
+  {
+    "query": "Feeling caught between two sages or authorities who contradict each other on whether a specific practice is beneficial or harmful",
+    "verse_id": "18.3",
+    "source": "mined"
+  },
+  {
+    "query": "You feel guilty working while others are in monasteries or ashrams, thinking you're less serious about God because you haven't renounced the world",
+    "verse_id": "18.46",
+    "source": "mined"
+  },
+  {
+    "query": "Realizing that even when you solve someone's immediate crisis, they still seem lost and unfulfilled",
+    "verse_id": "5.25",
+    "source": "mined"
+  },
+  {
+    "query": "Refusing to make a decision about your career and letting circumstances force an outcome you didn't choose",
+    "verse_id": "18.60",
+    "source": "mined"
+  },
+  {
+    "query": "You finally succeed at something you worked hard for and feel proud that you made it happen",
+    "verse_id": "3.27",
+    "source": "mined"
+  },
+  {
+    "query": "You wake up with a fragmentary memory of a dream decision you made years ago and suddenly understand its consequence—somehow the right knowledge arrives exactly when needed. You're struggling to understand something spiritual or moral, and after sincere effort, the confusion suddenly clears—you realize the understanding came from somewhere deeper than your own thinking. You've lived one way for decades, then everything changes and you start fresh in a new place or relationship, wondering who you'll become—realizing you'll be building on impressions you can't remember but that are still shaping you. You lie awake worrying that no one truly understands what you're going through, then feel an inexplicable sense of being known and held. You're making an important decision and realize you cannot trust your own mind to choose correctly—you need something beyond your own intelligence to guide you",
+    "verse_id": "15.15",
+    "source": "mined"
+  },
+  {
+    "query": "Blaming others entirely for a problem when your own actions clearly played a role",
+    "verse_id": "18.15",
+    "source": "mined"
+  },
+  {
+    "query": "Caught between ambition and the sense that chasing achievement leaves you empty",
+    "verse_id": "18.50",
+    "source": "mined"
+  },
+  {
+    "query": "Feeling trapped by compulsive habits—checking your phone, scrolling, eating—that you know undermine your peace",
+    "verse_id": "5.28",
+    "source": "mined"
+  },
+  {
+    "query": "Realizing that the outcome of something you've fought for is completely outside your control and having to accept it",
+    "verse_id": "11.21",
+    "source": "mined"
+  },
+  {
+    "query": "Eating whatever is sitting around — stale bread, old takeout, spoiled leftovers — because you're too rushed to care about food quality",
+    "verse_id": "17.10",
+    "source": "mined"
+  },
+  {
+    "query": "You lose your temper at work and say something to your boss that damages your reputation",
+    "verse_id": "2.63",
+    "source": "mined"
+  },
+  {
+    "query": "Being drawn to extreme diets or sleep deprivation thinking it's \"spiritual\" and discovering it makes concentration impossible",
+    "verse_id": "6.16",
+    "source": "mined"
+  },
+  {
+    "query": "Discovering a genuine passion or purpose (music, art, service to others) and noticing that activities you used to crave no longer interest you",
+    "verse_id": "2.59",
+    "source": "mined"
+  },
+  {
+    "query": "You're working constantly just to survive, exhausted by the endless struggle to keep up financially or professionally",
+    "verse_id": "4.36",
+    "source": "mined"
+  },
+  {
+    "query": "Standing before something genuinely awe-inspiring in nature and feeling your sense of self shrink",
+    "verse_id": "11.19",
+    "source": "mined"
+  },
+  {
+    "query": "Someone encountering teachings about God and feeling pulled to accept them fully, despite never having verified them independently",
+    "verse_id": "10.14",
+    "source": "mined"
+  }
+]

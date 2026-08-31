@@ -1,113 +1,196 @@
-import numpy as np
-import pytest
+"""
+Shared fixtures.
+
+The previous suite mocked a Pinecone-era architecture that the pipeline no longer
+imports: 16 of 52 tests failed outright and all but two of the passing ones
+exercised dead modules. Everything here targets the code that actually ships.
+
+Tests are fast by default — the BGE-M3 / ChromaDB / cross-encoder stack is never
+loaded unless a test is marked `requires_index`, which is deselected unless
+RUN_INDEX_TESTS=1 is set.
+"""
+
+import os
+import sys
+from pathlib import Path
 from unittest.mock import AsyncMock, MagicMock
-from fastapi.testclient import TestClient
+
+import pytest
+
+ROOT = Path(__file__).parent.parent
+sys.path.insert(0, str(ROOT))
+
+
+def pytest_configure(config):
+    config.addinivalue_line(
+        "markers",
+        "requires_index: needs the real ChromaDB index and embedding models",
+    )
+
+
+def pytest_collection_modifyitems(config, items):
+    if os.getenv("RUN_INDEX_TESTS") == "1":
+        return
+    skip = pytest.mark.skip(reason="set RUN_INDEX_TESTS=1 to run against the real index")
+    for item in items:
+        if "requires_index" in item.keywords:
+            item.add_marker(skip)
 
 
 # ---------------------------------------------------------------------------
-# Shared fake data
+# Fake corpus
 # ---------------------------------------------------------------------------
 
-FAKE_VERSE = {
-    "id": "c2v47",
-    "chapter": 2,
-    "verse": 47,
-    "text": "karmany evadhikaras te",
-    "translation": "You have a right to perform your duty",
-    "meaning": "Act without attachment to the fruits of action",
-    "score": 0.95,
-}
+def make_verse(verse_id="2.47", chapter=2, verse=47, **extra):
+    base = {
+        "verse_id": verse_id,
+        "chapter": chapter,
+        "verse": verse,
+        "devanagari": "कर्मण्येवाधिकारस्ते",
+        "sanskrit": "karmaṇy evādhikāras te",
+        "translation": "You have a right to perform your prescribed duties, "
+                       "but you are not entitled to the fruits of action.",
+        "rrf_score": 0.05,
+        "evidence": "verse",
+    }
+    base.update(extra)
+    return base
 
-FAKE_PC_RESULTS = {
-    "matches": [
-        {
-            "id": "c2v47",
-            "score": 0.95,
-            "metadata": {
-                "chapter": 2,
-                "verse": 47,
-                "text": "karmany evadhikaras te",
-                "translation": "You have a right to perform your duty",
-                "meaning": "Act without attachment to the fruits of action",
-            },
-        },
-        {
-            "id": "c3v19",
-            "score": 0.80,
-            "metadata": {
-                "chapter": 3,
-                "verse": 19,
-                "text": "tasmad asaktah satatam",
-                "translation": "Therefore without attachment perform your duty",
-                "meaning": "Perform action as a sacrifice",
-            },
-        },
+
+@pytest.fixture
+def verses():
+    return [
+        make_verse("2.47", 2, 47, rrf_score=0.060),
+        make_verse("3.19", 3, 19, rrf_score=0.055,
+                   translation="Therefore, without being attached to the fruits of "
+                               "activities, one should act as a matter of duty."),
+        make_verse("18.48", 18, 48, rrf_score=0.050,
+                   translation="Every endeavour is covered by some fault, as fire "
+                               "is covered by smoke."),
     ]
-}
-
-FAKE_EMBEDDING = np.array([[0.1, 0.2, 0.3, 0.4]], dtype=np.float32)
-FAKE_RERANK_LOGITS = np.array([[1.5], [0.8]], dtype=np.float32)
 
 
 # ---------------------------------------------------------------------------
-# State mock fixture
+# LLM stubs — no network in tests
 # ---------------------------------------------------------------------------
+
+def _text_response(text: str):
+    response = MagicMock()
+    response.content = [MagicMock(text=text)]
+    return response
+
 
 @pytest.fixture
-def mock_state(monkeypatch):
-    """Patch all global state with controllable mocks."""
-    mock_tokenizer = MagicMock()
-    mock_tokenizer.return_value = {
-        "input_ids": np.array([[1, 2, 3]]),
-        "attention_mask": np.array([[1, 1, 1]]),
+def stub_llms(monkeypatch):
+    """
+    Patch every Anthropic client in the service layer.
+
+    Returns a dict of controls so a test can change one verdict without
+    rebuilding the whole stack.
+    """
+    from app.services import guardrail, hyde, judge, rag, safety
+
+    controls = {
+        "safety_verdict": "safe",
+        "guardrail_verdict": "relevant",
+        "hyde_text": "The conditioned soul must perform prescribed duty without "
+                     "attachment to results, for such action purifies the heart.",
+        "expansions": "how do I stop caring about outcomes\nwhy do results torment me\n"
+                      "acting without attachment",
+        "guidance": "This verse speaks to the anxiety of tying your worth to outcomes.",
+        "judge_json": '{"grounded": 4, "relevant": 5, "restraint": 5, "unsupported": []}',
     }
 
-    mock_embedder = MagicMock()
-    mock_embedder.return_value = [FAKE_EMBEDDING]
+    def client_for(kind):
+        client = AsyncMock()
 
-    mock_reranker = MagicMock()
-    reranker_output = MagicMock()
-    reranker_output.logits = FAKE_RERANK_LOGITS
-    mock_reranker.return_value = reranker_output
+        async def create(**kwargs):
+            if kind == "safety":
+                return _text_response(controls["safety_verdict"])
+            if kind == "guardrail":
+                return _text_response(controls["guardrail_verdict"])
+            if kind == "judge":
+                return _text_response(controls["judge_json"])
+            if kind == "rag":
+                return _text_response(controls["guidance"])
+            system = kwargs.get("system", "")
+            if "alternative phrasings" in system:
+                return _text_response(controls["expansions"])
+            return _text_response(controls["hyde_text"])
 
-    mock_pc_index = MagicMock()
-    mock_pc_index.query.return_value = FAKE_PC_RESULTS
+        client.messages.create = create
+        return client
 
-    mock_claude = AsyncMock()
-    claude_response = MagicMock()
-    claude_response.content = [MagicMock(text="Seek peace within yourself.")]
-    mock_claude.messages.create = AsyncMock(return_value=claude_response)
+    monkeypatch.setattr(safety, "_client", client_for("safety"))
+    monkeypatch.setattr(guardrail, "_client", client_for("guardrail"))
+    monkeypatch.setattr(hyde, "_client", client_for("hyde"))
+    monkeypatch.setattr(rag, "_client", client_for("rag"))
+    monkeypatch.setattr(judge, "_client", client_for("judge"))
 
-    mock_redis = MagicMock()
-    mock_redis.get.return_value = None
-    mock_redis.set.return_value = True
+    # Never touch the on-disk HyDE cache from a test run.
+    monkeypatch.setattr(hyde, "_cache_read", lambda key: None)
+    monkeypatch.setattr(hyde, "_cache_write", lambda key, payload: None)
+    # Generation must not need the 5MB enriched corpus.
+    monkeypatch.setattr(rag, "_commentary_for", lambda verse: ("Commentary text.", "test"))
 
-    monkeypatch.setattr("app.state.embedder", mock_embedder)
-    monkeypatch.setattr("app.state.reranker", mock_reranker)
-    monkeypatch.setattr("app.state.pc_index", mock_pc_index)
-    monkeypatch.setattr("app.state.tokenizer_emb", mock_tokenizer)
-    monkeypatch.setattr("app.state.tokenizer_rerank", mock_tokenizer)
-    monkeypatch.setattr("app.state.claude", mock_claude)
-    monkeypatch.setattr("app.state.redis", mock_redis)
+    return controls
 
-    return {
-        "embedder": mock_embedder,
-        "reranker": mock_reranker,
-        "pc_index": mock_pc_index,
-        "tokenizer_emb": mock_tokenizer,
-        "tokenizer_rerank": mock_tokenizer,
-        "claude": mock_claude,
-        "redis": mock_redis,
-    }
-
-
-# ---------------------------------------------------------------------------
-# TestClient fixture
-# ---------------------------------------------------------------------------
 
 @pytest.fixture
-def client(mock_state):
-    """FastAPI TestClient with all external services mocked."""
-    from app.main import app
-    with TestClient(app) as c:
-        yield c
+def stub_retrieval(monkeypatch, verses):
+    """Patch the retrieval + reranking stack so no index or model is loaded."""
+    from app.services import pipeline, reranker, retrieval
+
+    state = {"verses": verses, "direct": [make_verse()]}
+
+    monkeypatch.setattr(
+        retrieval, "retrieve", lambda *a, **kw: [dict(v) for v in state["verses"]]
+    )
+    monkeypatch.setattr(
+        retrieval,
+        "retrieve_by_verse_id",
+        lambda vid, cfg=None: [dict(v) for v in state["direct"]],
+    )
+    monkeypatch.setattr(pipeline.retrieval, "retrieve", retrieval.retrieve)
+    monkeypatch.setattr(
+        pipeline.retrieval, "retrieve_by_verse_id", retrieval.retrieve_by_verse_id
+    )
+
+    def fake_rerank(query, candidates, *, use_cross_encoder=True, use_mmr=True, top_n=5):
+        if not candidates:
+            return [], [], "none"
+        if not use_cross_encoder:
+            ordered = sorted(candidates, key=lambda v: v["rrf_score"], reverse=True)
+            for i, v in enumerate(ordered):
+                v["relevance"] = round(1.0 / (i + 1), 4)
+            return ordered[:top_n], [], "rrf"
+        for i, verse in enumerate(candidates):
+            verse["cross_score"] = 5.0 - i
+            verse["relevance"] = reranker._sigmoid(5.0 - i)
+        ordered = sorted(candidates, key=lambda v: v["relevance"], reverse=True)
+        return ordered[:top_n], [], "cross_encoder"
+
+    monkeypatch.setattr(reranker, "rerank", fake_rerank)
+    monkeypatch.setattr(pipeline.reranker, "rerank", fake_rerank)
+    return state
+
+
+@pytest.fixture
+def client(stub_llms, stub_retrieval, tmp_path, monkeypatch):
+    """TestClient with a throwaway feedback database and no network."""
+    from fastapi.testclient import TestClient
+
+    from app.services import feedback_logger
+
+    monkeypatch.setattr(feedback_logger, "FEEDBACK_DB", tmp_path / "feedback.db")
+
+    import app.main as main_module
+
+    @main_module.asynccontextmanager
+    async def no_warmup(app):
+        feedback_logger.init_db()
+        yield
+
+    monkeypatch.setattr(main_module.app.router, "lifespan_context", no_warmup)
+    with TestClient(main_module.app) as test_client:
+        yield test_client
