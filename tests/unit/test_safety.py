@@ -92,3 +92,58 @@ class TestCrisisResponse:
     def test_does_not_offer_a_verse(self):
         lowered = safety.CRISIS_RESPONSE.lower()
         assert "verse" not in lowered or "with a verse" in lowered
+
+
+class TestOffTopicPrefilter:
+    """
+    The topical guardrail fails OPEN so an outage never turns away a real user.
+    The cost is that while the API is down, "how do I center a div in CSS" is
+    answered with verses — which happened in a live demo. An offline prefilter
+    catches the blatant cases so the degraded mode is still sensible.
+    """
+
+    @pytest.mark.parametrize("query", [
+        "how do I center a div in CSS",
+        "fix this javascript error",
+        "write me a python script",
+        "what is the weather today",
+        "what is the cricket score",
+        "npm install fails",
+        "my SQL query is slow",
+    ])
+    def test_obvious_off_topic_is_caught_offline(self, query):
+        from app.services.guardrail import lexical_off_topic_check
+        assert lexical_off_topic_check(query) is True
+
+    @pytest.mark.parametrize("query", [
+        "I keep failing at work and feel like giving up",
+        "my mother passed away last month",
+        "what is my duty when my family disagrees",
+        "I feel trapped in my job",
+        "how do I find peace as a software engineer",
+        "what does the Gita say about anger",
+        "मैं बार-बार असफल हो रहा हूँ",
+    ])
+    def test_real_questions_are_never_rejected_offline(self, query):
+        """A false positive here turns a real person away. Far worse than
+        letting an off-topic query through."""
+        from app.services.guardrail import lexical_off_topic_check
+        assert lexical_off_topic_check(query) is False
+
+    @pytest.mark.asyncio
+    async def test_prefilter_holds_when_the_api_is_down(self, monkeypatch):
+        from app.services import guardrail
+
+        class Broken:
+            messages = type("M", (), {})()
+
+        async def boom(**kwargs):
+            raise RuntimeError("API down")
+
+        broken = Broken()
+        broken.messages.create = boom
+        monkeypatch.setattr(guardrail, "_client", broken)
+
+        assert await guardrail.classify("how do I center a div in CSS") == "off_topic"
+        # ...and a real question still gets through.
+        assert await guardrail.classify("I feel lost in my career") == "relevant"
