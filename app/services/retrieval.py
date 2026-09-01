@@ -279,6 +279,7 @@ def _verse_id_of(doc_id: str) -> str:
 ARMS = (
     "dense_meaning",
     "dense_translation",
+    "dense_synonyms",
     "purport",
     "sparse",
     "emotion",

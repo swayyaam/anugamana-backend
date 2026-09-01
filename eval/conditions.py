@@ -103,6 +103,12 @@ ENRICHED_HYBRID = RetrievalConfig(
     index=ENRICHED_INDEX, dense=True, sparse=True,
     doc_types=("meaning", "translation"), use_purport=True,
 )
+#: Adds the word-by-word Sanskrit glosses, which were present on all 700 verses
+#: and indexed nowhere. Built by scripts/index_synonyms.py.
+ENRICHED_WITH_SYNONYMS = RetrievalConfig(
+    index=ENRICHED_INDEX, dense=True, sparse=True,
+    doc_types=("meaning", "translation", "synonyms"), use_purport=True,
+)
 
 
 # --- the grid --------------------------------------------------------------
@@ -187,6 +193,12 @@ GRID: list[Condition] = [
               "the configuration the evidence supports",
               ENRICHED_HYBRID, use_hyde=True, use_expansion=True,
               use_emotion_arm=True, requires="anthropic_api"),
+
+    # ---- further accuracy work --------------------------------------------
+    _pipeline("C17", "C13 + word-by-word Sanskrit glosses as a retrieval arm",
+              "value of the previously unindexed synonyms field",
+              ENRICHED_WITH_SYNONYMS, use_hyde=True, use_expansion=True,
+              use_emotion_arm=True, requires="synonyms_index"),
 ]
 
 #: Cross-lingual strategies. Run only over the Indic query subset, and only when
@@ -256,4 +268,5 @@ PLANNED_CONTRASTS = [
     ("L2", "L1", "Is translate-then-retrieve better than direct multilingual?"),
     ("M2", "M5", "Does the enrichment effect replicate on a second corpus?"),
     ("M0", "M5", "Does enrichment beat lexical search on the second corpus?"),
+    ("C13", "C17", "Do the word-by-word Sanskrit glosses add anything?"),
 ]

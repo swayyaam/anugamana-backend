@@ -53,7 +53,7 @@ def _load_cross_encoder(model_name: str = RERANK_MODEL) -> CrossEncoder:
     with _CE_LOCK:
         cached = _cross_encoders.get(model_name)
         if cached is None:
-            cached = CrossEncoder(model_name)
+            cached = CrossEncoder(model_name, device=_best_device())
             _cross_encoders[model_name] = cached
         return cached
 
@@ -62,6 +62,25 @@ def _load_cross_encoder(model_name: str = RERANK_MODEL) -> CrossEncoder:
 def _load_embed_model():
     from app.services.retrieval import _load_model
     return _load_model()
+
+
+def _best_device() -> str | None:
+    """
+    Prefer Apple Silicon's GPU when present. Not a micro-optimisation: on CPU a
+    568M-parameter reranker took so long over the benchmark that a comparison run
+    appeared to hang, while on MPS the same work takes under a minute.
+    Returns None so sentence-transformers picks for itself elsewhere.
+    """
+    try:
+        import torch
+
+        if torch.cuda.is_available():
+            return "cuda"
+        if torch.backends.mps.is_available():
+            return "mps"
+    except Exception:
+        pass
+    return None
 
 
 def _sigmoid(x: float) -> float:

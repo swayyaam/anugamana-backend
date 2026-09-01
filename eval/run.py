@@ -56,6 +56,7 @@ def availability() -> dict[str, bool]:
 
     return {
         "meditations_corpus": (MEDITATIONS_DIR / "enriched.json").exists(),
+        "synonyms_index": _has_synonyms_vectors(),
         "meditations_index": (MEDITATIONS_DIR / "chroma").exists(),
         "corpus": ENRICHED_FILE.exists(),
         "enriched_index": CHROMA_DIR.exists(),
@@ -63,6 +64,17 @@ def availability() -> dict[str, bool]:
         "anthropic_api": bool(ANTHROPIC_API_KEY),
         "sarvam": SARVAM_ENABLED,
     }
+
+
+def _has_synonyms_vectors() -> bool:
+    """The synonyms arm is only runnable once those vectors are indexed."""
+    try:
+        from app.services.retrieval import ENRICHED_INDEX, _load_collections
+
+        verses_col, _ = _load_collections(ENRICHED_INDEX)
+        return bool(verses_col.get(ids=["2.47_synonyms"], include=[])["ids"])
+    except Exception:
+        return False
 
 
 def load_benchmark(limit: int | None = None) -> list[dict]:
