@@ -34,7 +34,14 @@ JUDGE_MODEL = "claude-sonnet-4-5-20250929"
 ANTHROPIC_API_KEY = os.getenv("ANTHROPIC_API_KEY")
 
 # --- api ------------------------------------------------------------------
-ALLOWED_ORIGINS = os.getenv("ALLOWED_ORIGINS", "http://localhost:5173").split(",")
+# The web app's dev server runs on 3000 (vite.config.ts), not Vite's default
+# 5173. Both are allowed so the frontend works whichever port it lands on;
+# override with ALLOWED_ORIGINS in production.
+ALLOWED_ORIGINS = os.getenv(
+    "ALLOWED_ORIGINS",
+    "http://localhost:3000,http://127.0.0.1:3000,"
+    "http://localhost:5173,http://127.0.0.1:5173",
+).split(",")
 
 # --- retrieval tuning -----------------------------------------------------
 TOP_K = 15          # candidates fetched per individual search
