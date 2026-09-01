@@ -1,8 +1,10 @@
 import structlog
 from contextlib import asynccontextmanager
+from pathlib import Path
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import FileResponse
 from slowapi import _rate_limit_exceeded_handler
 from slowapi.errors import RateLimitExceeded
 
@@ -78,3 +80,15 @@ app.add_middleware(
 )
 
 app.include_router(search_router)
+
+STATIC_DIR = Path(__file__).parent / "static"
+
+
+@app.get("/demo", include_in_schema=False)
+def demo():
+    """
+    Self-contained local demo. Same origin as the API, so there is no CORS
+    setup, no build step and no auth to configure — start uvicorn, open
+    http://localhost:8000/demo.
+    """
+    return FileResponse(STATIC_DIR / "demo.html")

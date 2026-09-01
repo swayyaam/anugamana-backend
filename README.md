@@ -248,6 +248,19 @@ uvicorn app.main:app --reload     # http://localhost:8000/docs
 pytest                            # 223 tests, ~3s, no network
 ```
 
+### Demo
+
+```bash
+uvicorn app.main:app
+```
+
+Then open **http://localhost:8000/demo** — a self-contained page served by the
+API itself. No build step, no npm, no auth, no CORS: one command and a browser.
+It ships example queries covering the ordinary case, grief, a Hindi query, a
+direct verse lookup and an off-topic rejection, shows the pipeline stages while
+it works (a semantic query takes 5-15s), and reports the route, timings and any
+degraded stages underneath the results.
+
 ---
 
 ## Status
